@@ -1,20 +1,22 @@
 /*
-Class Simulation : abstract class.
-No inheritance
+	Class Simulation : abstract class.
+	No inheritance
 */
 
 export abstract class Simulation {
-    // attributes
-    readonly id: string;
+	// attributes
+	readonly id: string;
 
-    // Constructor
+	//-------------------------constructor-----------------------
 
-    public constructor(id: string) {
-        this.id = id;
-    }
+	public constructor(id: string) {
+		this.id = id;
+	}
 
-    
-
+	//----------------------getters & setters--------------------
+	
+	//---------------------------methods-------------------------
+	
     /** Fourth order Runge-Kutta method for second order derivatives.
      * 
      * Argument @funct takes one of the second derivative defined in a special lib
