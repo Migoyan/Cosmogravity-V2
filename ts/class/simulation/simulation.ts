@@ -14,6 +14,14 @@ export abstract class Simulation {
 	}
 
 	//----------------------getters & setters--------------------
+
+	/**
+	 * get_id
+	 * getter for id attribute
+	*/
+	public get_id() {
+		return this.id;
+	}
 	
 	//---------------------------methods-------------------------
 	
