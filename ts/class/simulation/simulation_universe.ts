@@ -229,7 +229,7 @@ export class Simulation_universe extends Simulation {
 	 * equa_diff_a
 	 * @param a variable
 	 */
-	public equa_diff_a(a: number) {
+	public equa_diff_a(t: number = 0, a:number, ap:number = 0) {
 		return -(this.calcul_omega_r() / (a**2)) -
 		0.5 * this.calcul_omega_r() / (a**2) +
 		this.get_dark_energy().parameter_value * (a * this.Y(a) + (a**2) *  this.dY(a)/ 2);
@@ -240,14 +240,7 @@ export class Simulation_universe extends Simulation {
 	 * @param n Number of computation points
 	*/
 	public compute_a_tau(n: number) {
-		let interval = this.get_interval_a();
-		let step = (interval[1] - interval[0]) / n
-		let x: Array;
-		for (let i = interval[0]; i <= interval[1]; i+n) {
-			x += [i];
-			
-		}
-		let result = this.runge_kutta();
+		let result = this.runge_kutta(n, this.get_interval_a(), this.equa_diff_a, 1, 1);
 	}
 
 
