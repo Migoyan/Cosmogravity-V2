@@ -17,6 +17,7 @@
 		- calcul_omega_r
 		- calcul_omega_k
 		- Y
+		- dY
 		- F
 		- get_interval_a
 		- compute_a_tau
@@ -182,12 +183,24 @@ export class Simulation_universe extends Simulation {
 		* Y function \
 		* see Theory about cosmology and dark_energy
 		* @param x variable
-		* @returns value of Y(x)
+		* @returns value of Y at position x
 	*/
 	public Y(x: number) {
 		return Math.exp(
 			-3 * (this.get_dark_energy().w_0 + this.get_dark_energy().w_1 + 1) * Math.log(x) -
 			3 * this.get_dark_energy().w_1 * (1 - x)
+		);
+	}
+
+	/**
+		* Y' function \
+		* see Theory about cosmology and dark_energy
+		* @param x variable
+		* @returns value of the derivative of Y at position x
+	*/
+	public dY(x: number) {
+		return this.Y(x) * (
+			3 * this.get_dark_energy().w_1 - 3 * (1 + this.get_dark_energy().w_0 + this.get_dark_energy().w_1)
 		);
 	}
 
@@ -219,7 +232,7 @@ export class Simulation_universe extends Simulation {
 	public equa_diff_a(a: number) {
 		return -(this.calcul_omega_r() / (a**2)) -
 		0.5 * this.calcul_omega_r() / (a**2) +
-		this.get_dark_energy().parameter_value * (a * this.Y(a) + (a**2) *  / 2);
+		this.get_dark_energy().parameter_value * (a * this.Y(a) + (a**2) *  this.dY(a)/ 2);
 	}
 
 	/**
@@ -228,7 +241,12 @@ export class Simulation_universe extends Simulation {
 	*/
 	public compute_a_tau(n: number) {
 		let interval = this.get_interval_a();
-		let pas = (interval[1] - interval[0]) / n
+		let step = (interval[1] - interval[0]) / n
+		let x: Array;
+		for (let i = interval[0]; i <= interval[1]; i+n) {
+			x += [i];
+			
+		}
 		let result = this.runge_kutta();
 	}
 

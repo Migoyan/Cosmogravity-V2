@@ -28,8 +28,7 @@ export abstract class Simulation {
      * 
      * Returns a list of 2 values.
     */
-    public runge_kutta(
-        funct: (arg0: number, arg1: number, arg2: number) => any, x_0: number, y_0: number, yp_0: number, h: number)
+    public runge_kutta(funct: (arg0: number, arg1: any, arg2: any) => any, x_0: number, y_0: number, yp_0: number, h: number)
     {
         let k_1 = funct(x_0, y_0, yp_0)
         let k_2 = funct(x_0 + h/2, y_0 + h/2 * yp_0, yp_0 + h/2 * k_1)

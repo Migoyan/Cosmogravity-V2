@@ -1,4 +1,4 @@
-// Physics constant
+// Physics constants
 const c: number = 299792458;           // Light constant
 const k: number = 1.38064852e-23;      // Boltzman constant
 const h: number = 6.62607004e-34;      // Plank constant
