@@ -15,6 +15,13 @@
 	methods names :
 		- modify_dark_energy
 		- calcul_omega_r
+		- calcul_omega_k
+		- Y
+		- dY
+		- F
+		- get_interval_a
+		- compute_a_tau
+
 */
 
 import { Simulation } from "./simulation";
@@ -123,11 +130,10 @@ export class Simulation_universe extends Simulation {
 		* modify_dark_energy \
 		* replace the setter for this attribute 
 		* 
-		* Parameters : 
-		*   - DE_parameter_value : value of the dark energy density parameter
-		*   - DE_w_0 : value of w_0
-		*   - DE_w_1 : value of w_1
-		* 
+		* @param DE_parameter_value value of the dark energy density parameter
+		* @param DE_w_0 value of w_0
+		* @param DE_w_1 value of w_1
+		*
 		* Note : w_0, w_1 are parameters that describe the nature of the dark energy.
 	*/
 	public modify_dark_energy(DE_parameter_value?: number, DE_w_0?: number, DE_w_1?: number) {
@@ -144,7 +150,7 @@ export class Simulation_universe extends Simulation {
 
 	/**
 		* calcul_omega_r \
-		* return the radiation density parameter
+		* @returns the radiation density parameter
 	*/
 	public calcul_omega_r() {
 		let sigma: number = (2 * Math.pow(Math.PI, 5) * Math.pow(k, 4)) / (15 * Math.pow(h, 3) * Math.pow(c, 2))
@@ -167,15 +173,17 @@ export class Simulation_universe extends Simulation {
 
 	/**
 		* calcul_omega_k \
-		* return the curvature density parameter
+		* @returns the curvature density parameter
 	*/
 	 public calcul_omega_k() {
 		return 1 - this.calcul_omega_r() - this.get_matter_parameter() - this.get_dark_energy().parameter_value;
 	}
 
 	/**
-		* Y \
+		* Y function \
 		* see Theory about cosmology and dark_energy
+		* @param x variable
+		* @returns value of Y at position x
 	*/
 	public Y(x: number) {
 		return Math.exp(
@@ -185,10 +193,55 @@ export class Simulation_universe extends Simulation {
 	}
 
 	/**
-		* F
+		* Y' function \
 		* see Theory about cosmology and dark_energy
+		* @param x variable
+		* @returns value of the derivative of Y at position x
+	*/
+	public dY(x: number) {
+		return this.Y(x) * (
+			3 * this.get_dark_energy().w_1 - 3 * (1 + this.get_dark_energy().w_0 + this.get_dark_energy().w_1)
+		);
+	}
+
+	/**
+		* F function \
+		* see Theory about cosmology and dark_energy
+		* @param x variable
+		* @returns value of F(x)
 	*/
 	public F(x: number) {
-		
+		return (x** -2) * this.calcul_omega_k() +
+		(x** -3) * this.get_matter_parameter() +
+		(x** -4) * this.calcul_omega_r() +
+		this.Y(x) * this.get_dark_energy().parameter_value;
 	}
+
+	/**
+	 * get_interval_a
+	 * @returns array [amin, amax]
+	*/
+	public get_interval_a() {
+		return [];
+	}
+
+	/**
+	 * equa_diff_a
+	 * @param a variable
+	 */
+	public equa_diff_a(t: number = 0, a:number, ap:number = 0) {
+		return -(this.calcul_omega_r() / (a**2)) -
+		0.5 * this.calcul_omega_r() / (a**2) +
+		this.get_dark_energy().parameter_value * (a * this.Y(a) + (a**2) *  this.dY(a)/ 2);
+	}
+
+	/**
+	 * compute_a_tau
+	 * @param n Number of computation points
+	*/
+	public compute_a_tau(n: number) {
+		let result = this.runge_kutta(n, this.get_interval_a(), this.equa_diff_a, 1, 1);
+	}
+
+
 }

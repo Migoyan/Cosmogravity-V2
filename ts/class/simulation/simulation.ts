@@ -14,32 +14,41 @@ export abstract class Simulation {
 	}
 
 	//----------------------getters & setters--------------------
+
+	/**
+	 * get_id
+	 * getter for id attribute
+	*/
+	public get_id() {
+		return this.id;
+	}
 	
 	//---------------------------methods-------------------------
 	
     /** Fourth order Runge-Kutta method for second order derivatives.
      * 
-     * Argument @funct takes one of the second derivative defined in a special lib
-     * depending on the type of the simulation.
+     * @param n Number of computation points
+	 * @param interval Array containing [xmin, xmax]
+	 * @param funct function or method that define the equation to resolve, your function has to accept 3 numbers and return a number
+	 * 
+	 * Cauchy's conditions
+	 * @param y_0 initial value of y
+	 * @param yp_0 initial value of the derivative of y
      * 
-     * Argument @h is the step
-     * 
-     * The notations are @x_0 for x(0), @yp_0 for y'(0), etc.
-     * 
-     * Returns a list of 2 values.
+     * @returns [step: number, x: number[], y:number[], yp: number[]].
     */
-    public runge_kutta(
-        funct: (arg0: number, arg1: number, arg2: number) => any, x_0: number, y_0: number, yp_0: number, h: number)
+    public runge_kutta(step: number, funct: (x: number, y: number, yp: number) => number, x_0, y_0: number, yp_0: number )
     {
         let k_1 = funct(x_0, y_0, yp_0);
-        let k_2 = funct(x_0 + h/2, y_0 + h/2 * yp_0, yp_0 + h/2 * k_1);
-        let k_3 = funct(x_0 + h/2, y_0 + h/2 * yp_0 + h**2/4 * k_1, yp_0 + h/2 * k_2);
-        let k_4 = funct(x_0 + h, y_0 + h * yp_0 + h**2/2 * k_2, yp_0 + h * k_3);
+        let k_2 = funct(x_0 + step/2, y_0 + step/2 * yp_0, yp_0 + step/2 * k_1);
+        let k_3 = funct(x_0 + step/2, y_0 + step/2 * yp_0 + (step**2)/4 * k_1, yp_0 + step/2 * k_2);
+        let k_4 = funct(x_0 + step, y_0 + step * yp_0 + (step**2)/2 * k_2, yp_0 + step * k_3);
 
-        let y_1 = y_0 + h * yp_0 + h**2/6 * (k_1 + k_2 + k_3);
-        let yp_1 = yp_0 + h/6 * (k_1 + 2*k_2 + 2*k_3 + k_4);
+        let y_1 = y_0 + step * yp_0 + step**2/6 * (k_1 + k_2 + k_3);
+        let yp_1 = yp_0 + step/6 * (k_1 + 2*k_2 + 2*k_3 + k_4);
 
-        return [y_1, yp_1]
+
+        return [x, y, yp];
     }
 
     /** Simple Simpson's rule implementation.

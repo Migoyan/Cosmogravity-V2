@@ -1,3 +1,4 @@
+
 // Physic constants
 const c: number = 2.99792458e8;         // Light constant
 const k: number = 1.38064852e-23;       // Boltzman constant
