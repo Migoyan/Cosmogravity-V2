@@ -31,13 +31,13 @@ export abstract class Simulation {
     public runge_kutta(
         funct: (arg0: number, arg1: number, arg2: number) => any, x_0: number, y_0: number, yp_0: number, h: number)
     {
-        let k_1 = funct(x_0, y_0, yp_0)
-        let k_2 = funct(x_0 + h/2, y_0 + h/2 * yp_0, yp_0 + h/2 * k_1)
-        let k_3 = funct(x_0 + h/2, y_0 + h/2 * yp_0 + h**2/4 * k_1, yp_0 + h/2 * k_2)
-        let k_4 = funct(x_0 + h, y_0 + h * yp_0 + h**2/2 * k_2, yp_0 + h * k_3)
+        let k_1 = funct(x_0, y_0, yp_0);
+        let k_2 = funct(x_0 + h/2, y_0 + h/2 * yp_0, yp_0 + h/2 * k_1);
+        let k_3 = funct(x_0 + h/2, y_0 + h/2 * yp_0 + h**2/4 * k_1, yp_0 + h/2 * k_2);
+        let k_4 = funct(x_0 + h, y_0 + h * yp_0 + h**2/2 * k_2, yp_0 + h * k_3);
 
-        let y_1 = y_0 + h * yp_0 + h**2/6 * (k_1 + k_2 + k_3)
-        let yp_1 = yp_0 + h/6 * (k_1 + 2*k_2 + 2*k_3 + k_4)
+        let y_1 = y_0 + h * yp_0 + h**2/6 * (k_1 + k_2 + k_3);
+        let yp_1 = yp_0 + h/6 * (k_1 + 2*k_2 + 2*k_3 + k_4);
 
         return [y_1, yp_1]
     }
