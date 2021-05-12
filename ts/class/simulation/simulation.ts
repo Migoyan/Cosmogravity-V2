@@ -37,33 +37,18 @@ export abstract class Simulation {
      * 
      * @returns [step: number, x: number[], y:number[], yp: number[]].
     */
-    public runge_kutta(n: number, interval: number[], funct: (x: number, y: number, yp: number) => number, y_0: number, yp_0: number )
+    public runge_kutta(step: number, funct: (x: number, y: number, yp: number) => number, x_0, y_0: number, yp_0: number )
     {
-		// Init parameters
-		let step: number = (interval[1] - interval[0]) / n
-		let x: number[] = [interval[0]];
-		let y: number[] = [y_0];
-		let yp: number[] = [yp_0];
+        let k_1 = funct(x_0, y_0, yp_0);
+        let k_2 = funct(x_0 + step/2, y_0 + step/2 * yp_0, yp_0 + step/2 * k_1);
+        let k_3 = funct(x_0 + step/2, y_0 + step/2 * yp_0 + (step**2)/4 * k_1, yp_0 + step/2 * k_2);
+        let k_4 = funct(x_0 + step, y_0 + step * yp_0 + (step**2)/2 * k_2, yp_0 + step * k_3);
 
-		// Create computing points
+        let y_1 = y_0 + step * yp_0 + step**2/6 * (k_1 + k_2 + k_3);
+        let yp_1 = yp_0 + step/6 * (k_1 + 2*k_2 + 2*k_3 + k_4);
 
-		for (let i = interval[0]; i <= interval[1]; i+n) {
-			x.push[i];
-		}
 
-		// Calculation loop
-
-		for (let i = 0; i < x.length; i++) {
-			let k_1 = funct(x[i], y[i], yp[i]);
-			let k_2 = funct(x[i] + step/2, y[i] + step/2 * yp[i], yp[i] + step/2 * k_1);
-			let k_3 = funct(x[i] + step/2, y[i] + step/2 * yp[i] + step**2/4 * k_1, yp[i] + step/2 * k_2);
-			let k_4 = funct(x[i] + step, y[i] + step * yp[i] + step**2/2 * k_2, yp[i] + step * k_3);
-
-			y.push(y[i] + step * yp[i] + step**2/6 * (k_1 + k_2 + k_3));
-			yp.push(yp[i] + step/6 * (k_1 + 2*k_2 + 2*k_3 + k_4));
-		}
-
-        return [step, x, y, yp];
+        return [x, y, yp];
     }
 
     /** Simple Simpson's rule implementation.
