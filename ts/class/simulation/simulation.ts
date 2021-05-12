@@ -27,7 +27,7 @@ export abstract class Simulation {
 	
     /** Fourth order Runge-Kutta method for second order derivatives.
      * 
-     * @param n Number of computation points
+     * @param step The step of computation
 	 * @param interval Array containing [xmin, xmax]
 	 * @param funct function or method that define the equation to resolve, your function has to accept 3 numbers and return a number
 	 * 
@@ -37,18 +37,20 @@ export abstract class Simulation {
      * 
      * @returns [step: number, x: number[], y:number[], yp: number[]].
     */
-    public runge_kutta(n: number, interval: number[], funct: (x: number, y: number, yp: number) => number, y_0: number, yp_0: number )
+    public runge_kutta(step: number, interval: number[], is_interval_y: boolean = false, funct: (x: number, y: number, yp: number) => number, y_0: number, yp_0: number )
     {
-		// Init parameters
-		let step: number = (interval[1] - interval[0]) / n
-		let x: number[] = [interval[0]];
-		let y: number[] = [y_0];
-		let yp: number[] = [yp_0];
-
-		// Create computing points
-
-		for (let i = interval[0]; i <= interval[1]; i+n) {
-			x.push[i];
+		// Init parameter
+		let x: number[];
+		let y: number[];
+		let yp: number[];
+		if (is_interval_y) {
+			x = [0];
+			y = [y_0];
+			yp = [yp_0];
+		} else {
+			x = [interval[0]];
+			y = [y_0];
+			yp = [yp_0];
 		}
 
 		// Calculation loop

@@ -239,8 +239,8 @@ export class Simulation_universe extends Simulation {
 	 * compute_a_tau
 	 * @param n Number of computation points
 	*/
-	public compute_a_tau(n: number) {
-		let result = this.runge_kutta(n, this.get_interval_a(), this.equa_diff_a, 1, 1);
+	public compute_a_tau(step: number) {
+		let result = this.runge_kutta(step, this.get_interval_a(), true, this.equa_diff_a, 1, 1);
 	}
 
 
