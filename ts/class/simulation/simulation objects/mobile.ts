@@ -2,8 +2,8 @@
 export class Mobile {
 
     id: string;
-    private mass: number;       //Mass
-    private r: number;          //Coordinate
+    readonly mass: number;       //Mass
+    readonly r: number;          //Coordinate
 
     constructor(id: string, mass: number, r: number) {
         this.id = id;

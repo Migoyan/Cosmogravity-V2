@@ -1,29 +1,29 @@
-/*
-	Simulation_universe.
-	inheritance from Simulation class
-
-	attributes :
-		- temperature : current temperature of the universe
-		- hubble_cst : current value of the Hubble-LeMaître constant
-		- matter_parameter : current value of the matter density parameter.
-		- dark_energy : object containing current value of dark energy density parameter, value of w_0 and value of w_1.
-			Note : When w_0 = -1 and w_0 = 0, the universe is equivalent to his counterpart with only a cosmologic constant.
-		- has_cmb : Has Cosmic Microwave Background (CMB).
-		- has_neutrino : self explanatory.
-		- is_flat : Forcing the curvature density parameter to 0.
-
-	methods names :
-		- modify_dark_energy
-		- calcul_omega_r
-		- calcul_omega_k
-		- Y
-		- dY
-		- F
-		- get_interval_a
-		- compute_a_tau
-*/
-
 import { Simulation } from "./simulation";
+/**
+ * @class Simulation_universe.
+ * inheritance from Simulation class
+ * 
+ * attributes :
+ * @param temperature : current temperature of the universe
+ * @param hubble_cst : current value of the Hubble-LeMaître constant
+ * @param matter_parameter : current value of the matter density parameter.
+ * @param dark_energy : object containing current value of dark energy density parameter, value of w_0 and value of w_1.\
+ * Note : When w_0 = -1 and w_0 = 0, the universe is equivalent to his counterpart with only a cosmologic constant.
+ * @param constants : contains the value of the physics constants defined for the universe.
+ * @param has_cmb : Has Cosmic Microwave Background (CMB).
+ * @param has_neutrino : self explanatory.
+ * @param is_flat : Forcing the curvature density parameter to 0.
+ * 
+ * methods names :
+ * @method modify_dark_energy
+ * @method calcul_omega_r
+ * @method calcul_omega_k
+ * @method Y
+ * @method dY
+ * @method F
+ * @method get_interval_a
+ * @method compute_a_tau
+ */
 export class Simulation_universe extends Simulation {
 
 	private temperature: number;
@@ -63,7 +63,7 @@ export class Simulation_universe extends Simulation {
 		this.is_flat = is_flat;
 	}
 
-	//----------------------getters & setters--------------------
+	//--------------------------Accessors------------------------
 	// temperature
 	public get_temperature() {
 		return this.temperature;
@@ -96,6 +96,11 @@ export class Simulation_universe extends Simulation {
 		return this.dark_energy;
 	}
 
+	// dark_energy
+	public get_constants() {
+		return this.constants;
+	}
+
 	// has_cmb
 	public get_has_cmb() {
 		return this.has_cmb;
@@ -114,7 +119,7 @@ export class Simulation_universe extends Simulation {
 		this.has_neutrino = has_neutrino;
 	}
 
-	// dark_energy
+	// is_flat
 	public get_is_flat() {
 		return this.is_flat;
 	}
@@ -124,9 +129,9 @@ export class Simulation_universe extends Simulation {
 	}
 
 	//---------------------------methods-------------------------
-	//                     redefined methods
+	//                      redefined methods
 
-	//                          new methods
+	//                         new methods
 
 	/**
 	 * replace the setter for the dark_energy attribute 
@@ -136,7 +141,7 @@ export class Simulation_universe extends Simulation {
 	 * @param DE_w_1 value of w_1
 	 *
 	 * Note : w_0, w_1 are parameters that describe the nature of the dark energy.
-	*/
+	 */
 	public modify_dark_energy(DE_parameter_value?: number, DE_w_0?: number, DE_w_1?: number) {
 		if (DE_parameter_value !== undefined) {
 			this.dark_energy.parameter_value = DE_parameter_value;
@@ -156,7 +161,7 @@ export class Simulation_universe extends Simulation {
 	 * @param k Boltzmann constant
 	 * @param h Planck constant
 	 * @param G Newton constant
-	*/
+	 */
 	public modify_constants(c?: number, k?: number, h?: number, G?: number) {
 		if (c !== undefined) {
 			this.constants.c = c;
@@ -177,12 +182,12 @@ export class Simulation_universe extends Simulation {
      * @param step The step of computation
 	 * @param x_0 x_point where the calcul start
 	 * @param y_0 initial value of y at x_0
-	 * @param yp_0 initial value of the derivative of y at x_0
+	 * @param initial value of the derivative of y at x_0
 	 * @param interval Array containing [ymin, ymax]
 	 * @param funct function or method that define the equation to resolve, your function has to accept 3 numbers and return a number
      * 
      * @returns [step: number, x: number[], y:number[], yp: number[]].
-    */
+     */
 	public runge_kutta_universe(
 		step: number,
 		x_0: number = 0,
@@ -228,7 +233,7 @@ export class Simulation_universe extends Simulation {
 
 	/**
 	 * @returns the radiation density parameter
-	*/
+	 */
 	public calcul_omega_r() {
 		let sigma: number = (2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) / (15 * Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2))
 		let rho_r: number = (4 * sigma * Math.pow(this.get_temperature(), 4)) / (Math.pow(this.constants.c, 3));
@@ -252,7 +257,7 @@ export class Simulation_universe extends Simulation {
 
 	/**
 	 * @returns the curvature density parameter
-	*/
+	 */
 	 public calcul_omega_k() {
 		return 1 - this.calcul_omega_r() - this.get_matter_parameter() - this.get_dark_energy().parameter_value;
 	}
@@ -262,7 +267,7 @@ export class Simulation_universe extends Simulation {
 	 * see Theory about cosmology and dark_energy
 	 * @param x variable
 	 * @returns value of Y at position x
-	*/
+	 */
 	public Y(x: number) {
 		return Math.exp(
 			-3 * (this.get_dark_energy().w_0 + this.get_dark_energy().w_1 + 1) * Math.log(x) -
@@ -275,7 +280,7 @@ export class Simulation_universe extends Simulation {
 	 * see Theory about cosmology and dark_energy
 	 * @param x variable
 	 * @returns value of the derivative of Y at position x
-	*/
+	 */
 	public dY(x: number) {
 		return this.Y(x) * (
 			3 * this.get_dark_energy().w_1 - 3 * (1 + this.get_dark_energy().w_0 + this.get_dark_energy().w_1)
@@ -287,7 +292,7 @@ export class Simulation_universe extends Simulation {
 	 * see Theory about cosmology and dark_energy
 	 * @param x variable
 	 * @returns value of F(x)
-	*/
+	 */
 	public F(x: number) {
 		return ((1 + x)**2) * this.calcul_omega_k() +
 		((1 + x)**3) * this.get_matter_parameter() +
@@ -298,20 +303,20 @@ export class Simulation_universe extends Simulation {
 	/**
 	 * 
 	 * @returns array [amin, amax]
-	*/
+	 */
 	public get_interval_a() {
 		return [];
 	}
 
 	/**
 	 * Right part of the differential equation of a(tau) designed to be used in runge_kutta_universe method
-	 * @param t time
+	 * @param tau time
 	 * @param a function a(t)
 	 * @param da derivative of a(t)
 	 * @returns result of the right part\
-	 * Note: da not used but as to be defined for this method to be used in the runge_kutta method of simulation class
-	*/
-	public equa_diff_a(t: number = 0, a:number, da:number = 0) {
+	 * Note: tau and da are not used but have to be defined for this method to be accepted in the runge_kutta method of simulation class
+	 */
+	public equa_diff_a(tau: number = 0, a:number, da:number = 0) {
 		return -(this.calcul_omega_r() / (a**2)) -
 		0.5 * this.calcul_omega_r() / (a**2) +
 		this.get_dark_energy().parameter_value * (a * this.Y(a) + (a**2) *  this.dY(a)/ 2);
@@ -320,10 +325,24 @@ export class Simulation_universe extends Simulation {
 	/**
 	 * compute_a_tau in point 
 	 * @param step Computation step
-	*/
+	 */
 	public compute_a_tau(step: number) {
 		return this.runge_kutta_universe(step, 0, 1, 1, this.equa_diff_a, this.get_interval_a());
 	}
 
+	/**
+	 * Compute the cosmologic shift z
+	 */
+	public cosmologic_shift() {
+		
+	}
 
+	/**
+	 * Compute the current universe age
+	 * @returns the current age of the universe
+	 */
+	public universe_age() {
+			let age:number;
+		return age;
+	}
 }

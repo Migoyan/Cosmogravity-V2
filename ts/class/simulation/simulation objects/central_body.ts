@@ -2,9 +2,9 @@
 export class Central_body {
 
     id: string;
-    private mass: number;       //Mass
-    private radius: number;     //Radius
-    private radius_s: number;   //Schwarzschild radius
+    readonly mass: number;       //Mass
+    readonly radius: number;     //Radius
+    readonly radius_s: number;   //Schwarzschild radius
 
     constructor(id: string, mass: number, radius: number) {
         this.id = id;
