@@ -25,7 +25,8 @@ export abstract class Simulation {
 	
 	//---------------------------methods-------------------------
 	
-    /** Fourth order Runge-Kutta method for second order derivatives.
+    /** 
+     * Fourth order Runge-Kutta method for second order derivatives.
      * 
      * @param n Number of computation points
 	 * @param interval Array containing [xmin, xmax]
@@ -51,33 +52,34 @@ export abstract class Simulation {
         return [x, y, yp];
     }
 
-    /** Simple Simpson's rule implementation.
+    /** 
+     * Simple Simpson's rule implementation.
      * 
-     * Argument @funct takes one of the second derivative defined in a special lib 
+     * @param funct takes one of the second derivative defined in a special lib 
      * depending on the type of the simulation.
      * 
-     * Arguments @infimum and @supremum define a segment where @n is the number of points.
+     * @param infimum and @param supremum define a segment where @param n is the number of points.
      * 
      * Returns a single value.
     */
-    public simpson(funct: (arg0: any) => any, infimum: number, supremum: number, n: number)
+    public simpson(funct: (x: number) => number, infimum: number, supremum: number, n: number)
     {
-        let h = (supremum - infimum) / n;
+        let step = (supremum - infimum) / n;
         let x = [];
         let y = [];
 
-        for (let i=0; i<=n; i++)
+        for (let i=0; i<n; i++)
         {  
             x[i] = infimum + i * h;
             y[i] = funct(x[i]);
         }
         let res = 0;
-        for (let i=0; i<=n; i++)
+        for (let i=0; i<n; i++)
         {
             if (i==0 || i==n)   { res += y[i]; }
             else if (i%2 != 0)  { res += 4 * y[i]; }
             else                { res += 2 * y[i]; }
         }
-        return res * h/3;
+        return res * step/3;
     }
 }
