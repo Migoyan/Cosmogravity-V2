@@ -46,6 +46,7 @@ export abstract class Simulation {
         let dy_1 = dy_0 + step/6 * (k_1 + 2*k_2 + 2*k_3 + k_4)
 
         return [x_1, y_1, dy_1];
+
     }
 
     /** Simple Simpson's rule implementation.
