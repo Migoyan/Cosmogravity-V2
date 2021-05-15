@@ -25,6 +25,7 @@ export class Schwarzchild extends Simulation_trajectory
 //---------------- Methods -----------------
 
 
+
 /** 
  * I/ The external Schwarzschild metric (ESM)
  * r > R
@@ -33,10 +34,13 @@ export class Schwarzchild extends Simulation_trajectory
  * R_s Schwarzschild radius
  * L_e and E_e are two integration constants determined with the 
  * initial conditions.
+ * The "trajectory" functions are to be called by the Runge-Kutta algorithm.
+ * The suffix A or DO refer to Astronaut or Distant Oberver.
 */
 
 
 //  1) For a massive particle (ESM_PM)
+
 
 //  Funct[0]=L_e, Funct[1]=E_e
     public ESM_PM_integration_constants(R_s: number, r_0: number, U_r_0: number, U_phi_0: number)
@@ -46,10 +50,19 @@ export class Schwarzchild extends Simulation_trajectory
         return [L_e, E_e];
     }
 
-//  Second derivative d²r/dtau², to be integrated with Runge_Kutta
-    public ESM_PM_trajectory(R_s: number, r: number, L_e: number)
+
+//  Second derivative d²r/dtau² for an astronaut (A)
+    public ESM_PM_trajectory_A(R_s: number, r: number, L_e: number)
     {
         return c**2 / (2 * r**4) * (-R_s * r**2 + (2*r - 3*R_s) * L_e**2);
+    }
+
+
+//  Second derivative d²r/dt² for a distant observer (DO)
+    public ESM_PM_trajectory_DO(R_s: number, r: number, L_e: number, E_e: number)
+    {
+        return c**2 * (r - R_s) * (2 * E_e**2 * r**3 * R_s + 2 * (L_e * r)**2 - 7 * L_e**2 * r * R_s
+        + 5 * (L_e * R_s)**2 - 3 * r**3 * R_s + 3 * (r * R_s)**2) / (2 * E_e**2 * r**6);
     }
 
 
@@ -63,11 +76,20 @@ export class Schwarzchild extends Simulation_trajectory
     }
 
 
-//  Second derivative d²r/dlambda², to be integrated with Runge_Kutta
-    public ESM_PH_trajectory(R_s: number, r: number, L_e: number)
+//  Second derivative d²r/dlambda² for an astronaut (A)
+    public ESM_PH_trajectory_A(R_s: number, r: number, L_e: number)
     {
         return c**2 / (2 * r**4) * (2*r - 3*R_s) * L_e**2;
     }
+
+
+//  Second derivative d²r/dt² for a distant observer (DO)
+    public ESM_PH_trajectory_DO(R_s: number, r: number, L_e: number, E_e: number)
+    {
+        return c**2 * (r - R_s) * (2 * E_e**2 * r**3 * R_s + 2 * (L_e * r)**2 - 7 * L_e**2 * r * R_s
+        + 5 * (L_e * R_s)**2) / (2 * E_e**2 * r**6);
+    }
+
 
 
 /** 
@@ -91,7 +113,6 @@ export class Schwarzchild extends Simulation_trajectory
 
 //  1) For a massive particle (ISM_PM)
 
-    
 
     public ISM_PM_integration_constants(r_0: number, U_r_0: number, U_phi_0: number, alpha_r_0: number, beta_r_0: number)
     {
@@ -101,8 +122,8 @@ export class Schwarzchild extends Simulation_trajectory
     }
 
 
-//  Second derivative d²r/dtau²
-    public ISM_PM_trajectory(R_s: number, radius: number, r: number, alpha_r: number, beta_r: number, L_i: number, E_i: number)
+//  Second derivative d²r/dtau² for an astronaut (A)
+    public ISM_PM_trajectory_A(R_s: number, radius: number, r: number, alpha_r: number, beta_r: number, L_i: number, E_i: number)
     {
         return -(c**2 * r * R_s / radius**3) * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2) - 1)
         + c**2 * alpha_r * .5 * (-(E_i**2 * r * R_s) / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L_i**2 / r**3);
@@ -120,8 +141,8 @@ export class Schwarzchild extends Simulation_trajectory
     }
 
 
-//  Second derivative 
-    public ISM_PH_trajectory(R_s: number, radius: number, r: number, alpha_r: number, beta_r: number, L_i: number, E_i: number)
+//  Second derivative d²r/dlambda² for an astronaut (A)
+    public ISM_PH_trajectory_A(R_s: number, radius: number, r: number, alpha_r: number, beta_r: number, L_i: number, E_i: number)
     {
         return -(c**2 * r * R_s / radius**3) * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2))
         + c**2 * alpha_r * .5 * (-(E_i**2 * r * R_s) / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L_i**2 / r**3);
