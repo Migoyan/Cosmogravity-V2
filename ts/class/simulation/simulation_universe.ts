@@ -4,11 +4,11 @@ import { Simulation } from "./simulation";
  * inheritance from Simulation class
  * 
  * attributes :
- * @param temperature : current temperature of the universe
- * @param hubble_cst : current value of the Hubble-LeMaître constant
+ * @param temperature : current temperature of the universe.
+ * @param hubble_cst : current value of the Hubble-LeMaître constant.
  * @param matter_parameter : current value of the matter density parameter.
  * @param dark_energy : object containing current value of dark energy density parameter, value of w_0 and value of w_1.\
- * Note : When w_0 = -1 and w_0 = 0, the universe is equivalent to his counterpart with only a cosmologic constant.
+ * 	Note : When w_0 = -1 and w_0 = 0, the universe is equivalent to his counterpart with only a cosmologic constant.
  * @param constants : contains the value of the physics constants defined for the universe.
  * @param has_cmb : Has Cosmic Microwave Background (CMB).
  * @param has_neutrino : self explanatory.
@@ -23,6 +23,10 @@ import { Simulation } from "./simulation";
  * @method F
  * @method get_interval_a
  * @method compute_a_tau
+ * @method cosmologic_shift
+ * @method integral_duration
+ * @method integral_duration_substituated
+ * @method universe_age
  */
 export class Simulation_universe extends Simulation {
 
@@ -96,7 +100,7 @@ export class Simulation_universe extends Simulation {
 		return this.dark_energy;
 	}
 
-	// dark_energy
+	// constants
 	public get_constants() {
 		return this.constants;
 	}
@@ -218,7 +222,7 @@ export class Simulation_universe extends Simulation {
 		/*
 			Computing with a negative step,
 			since we decrease the value of x we add the elements at the beginning of the arrays,
-			so for each step we take the first elements of the arrays to compute the next one
+			so for each step we take the first element of the array to compute the next one.
 		*/
 		while ( interval[0] <= y[0] && y[0] < interval[1]) {
 			result_runge_kutta = this.runge_kutta(-step, x[0], y[0], yp[0], funct);
@@ -297,7 +301,7 @@ export class Simulation_universe extends Simulation {
 		return ((1 + x)**2) * this.calcul_omega_k() +
 		((1 + x)**3) * this.get_matter_parameter() +
 		((1 + x)**4) * this.calcul_omega_r() +
-		this.Y(x) * this.get_dark_energy().parameter_value;
+		this.Y(1/(1 + x)) * this.get_dark_energy().parameter_value;
 	}
 
 	/**
@@ -338,11 +342,75 @@ export class Simulation_universe extends Simulation {
 	}
 
 	/**
+	 * @param x variable
+	 * @returns 1/(1 + x) * 1/sqrt(F(x))
+	 */
+	public integral_duration(x: number): number {
+		return 1/(1 + x) * 1/Math.sqrt(this.F(x));
+	}
+
+	/**
+	 * Function integral_duration with the substitution x = y/(1 - y)
+	 * @param y variable
+	 * @returns (1 - y) * 1/sqrt(F(x))
+	 * Note : 1/(1 - y)² is the term come from dx = dy/(1 - y)²
+	 */
+	public integral_duration_substituated(y: number): number {
+		return (1 - y) * 1/Math.pow(1 - y, 2) * 1/Math.sqrt(this.F(y/(1 - y)));
+	}
+
+	/**
+	 * 
+	 */
+	public integral_distance(x : number) {
+		
+	}
+
+	/**
 	 * Compute the current universe age
 	 * @returns the current age of the universe
 	 */
 	public universe_age() {
-			let age:number;
+		/*
+		To compute the age of the universe we need to integrate from x = 0 to x -> infinity. To resolve this problem we do a substitution with
+		x = y / (1 - y) which implies dx = dy / (1 - y)². This result with an integral from y = 0 to y = 1 that can be digitally resolved.
+		*/
+		let age: number;
+		let H0_si: number = this.get_hubble_cst() * 1e3 / ((AU * (180 * 3600)) / Math.PI * 1e6);
+		age = this.simpson(this.integral_duration_substituated, 0, 1, 100)
 		return age;
+	}
+
+	/**
+	 * Compute the cosmologic duration between two cosmologics shift z
+	 * @param z_1 the closest cosmologic shift from ours (z = 0)
+	 * @param z_2 the farest cosmologic shift from ours (z = 0)
+	 * @returns error if z_1 or z_2 < -1, duration if both value are accepted.
+	 */
+	public duration(z_1: number, z_2: number) {
+		if ( z_1 < -1 || z_2 < -1 ) return {
+			error: "Cosmologic shift z cannot be lower than -1"
+		}
+
+		let duration: number;
+		duration = this.simpson(this.integral_duration, z_2, z_1, 100);
+		return duration;
+	}
+
+	/**
+	 * 
+	 */
+	public metric_distance(z: number): number {
+		let distance: number;
+		let courbure: number = this.calcul_omega_k();
+		distance = this.simpson(this.F, 0, z, 100)
+		if (courbure < 0) {
+			
+		} else if (courbure > 0){
+			
+		} else {
+
+		}
+		return distance;
 	}
 }

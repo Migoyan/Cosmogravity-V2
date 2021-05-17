@@ -55,7 +55,9 @@ export abstract class Simulation {
      * @param funct takes one of the second derivative defined in a special lib 
      * depending on the type of the simulation.
      * 
-     * @param infimum and @param supremum define a segment where @param n is the number of points.
+     * @param infimum
+     * @param supremum
+     * @param n is the number of computation points.
      * 
      * Returns a single value.
     */
