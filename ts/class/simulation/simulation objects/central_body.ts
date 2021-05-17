@@ -2,11 +2,10 @@
 export class Central_body {
 
     id: string;
-    private mass: number;       //Mass
-    private radius: number;     //Radius
-    private R_s: number;        //Schwarzschild radius
+    readonly mass: number;       //Mass
+    readonly radius: number;     //Radius
+    readonly R_s: number;        //Schwarzschild radius
     private angular_v: number;  // Angular velocity 
-
 
     constructor(id: string, mass: number, radius: number) {
         this.id = id;

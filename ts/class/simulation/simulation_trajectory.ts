@@ -6,10 +6,13 @@
 import { Simulation } from "./simulation";
 
 export abstract class Simulation_trajectory extends Simulation {
+	//-------------------------constructor-----------------------
 
-	// Rayon de Schwarzschild
-	private r_s = 
+	//--------------------------Accessors------------------------
 
+	//---------------------------methods-------------------------
+	//                      redefined methods
 
-	// methods
+	//                         new methods
+
 }
