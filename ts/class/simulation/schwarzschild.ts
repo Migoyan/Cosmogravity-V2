@@ -1,13 +1,13 @@
 import { Simulation_trajectory } from "./simulation_trajectory";
 
 /** 
- * @class Schwarzschild inherited from Simulation_trajectory class.
+ * @class Schwarzschild 
+ * 
+ * Inherited from Simulation_trajectory class.
  * This class will implement the different equations for the Schwarzchild metric.
  * https://www.lupm.in2p3.fr/cosmogravity/theorie/theorie_trajectoires_FR.pdf
  * Note: This code uses acronyms to defferentiate between the different categories
  * covered by the theory (example: EMS_PH = External Schwarzschild Metric for a Photon).
- * 
- * Attributes:
  * 
  * Methods:
  * @method ESM_PM_integration_constants
@@ -25,11 +25,6 @@ import { Simulation_trajectory } from "./simulation_trajectory";
 */
 
 export class Schwarzchild extends Simulation_trajectory {
-
-
-
-
-
 
 
 
@@ -283,6 +278,6 @@ export class Schwarzchild extends Simulation_trajectory {
         return -(c**2 * r * R_s / radius**3) * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2))
         + c**2 * alpha_r * .5 * (-(E_i**2 * r * R_s) / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L_i**2 / r**3);
     }
-    
+
 }
 

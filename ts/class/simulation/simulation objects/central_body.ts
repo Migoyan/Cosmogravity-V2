@@ -1,7 +1,20 @@
+/**
+ * @class Central_body
+ * 
+ * This class is used to describe the central mass of a system in trajectory simulations.
+ * 
+ * Attributes:
+ * @param mass mass
+ * @param radius radius
+ * @param R_s schwarzschild radius
+ * @param angular_m angular momentum (J)
+ * @param a calculated parameter a=J/cM
+ * @param R_hp calculated parameter R_h+
+ * @param R_hm calculated parameter R_h-
+*/
 
 export class Central_body {
 
-    id: string;
     private mass: number;       // Mass
     private radius: number;     // Radius
     private R_s: number;        // Schwarzschild radius
@@ -13,9 +26,8 @@ export class Central_body {
 
 //-------------------------constructor-----------------------
 
-    constructor(id: string, mass: number, radius: number, angular_m?: number) 
+    constructor(mass: number, radius: number, angular_m?: number) 
     {
-        this.id = id;
         this.mass = mass;
         this.radius = radius;
         this.R_s = 2*G*mass / (c**2);
