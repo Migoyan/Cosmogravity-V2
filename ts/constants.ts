@@ -1,9 +1,9 @@
+// Physics constants
+const c: number = 2.99792458e8;        // Light constant
+const k: number = 1.38064852e-23;      // Boltzmann constant
+const h: number = 6.62607004e-34;      // Planck constant
+const G: number = 6.67385e-11;         // Newton constant
 
-// Physic constants
-const c: number = 2.99792458e8;         // Light constant
-const k: number = 1.38064852e-23;       // Boltzman constant
-const h: number = 6.62607004e-34;       // Plank constant
-const G: number = 6.67385e-11;          // Newton constant
 
 // Distances
 const AU: number = 1.495978707e11;      // Astronomical unit in meters

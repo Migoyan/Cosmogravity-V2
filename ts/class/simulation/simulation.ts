@@ -16,9 +16,9 @@ export abstract class Simulation {
 	//----------------------getters & setters--------------------
 
 	/**
-	 * get_id
-	 * getter for id attribute
-	*/
+	 	* get_id
+	 	* getter for id attribute
+	 */
 	public get_id() {
 		return this.id;
 	}
@@ -28,28 +28,25 @@ export abstract class Simulation {
     /** 
      * Fourth order Runge-Kutta method for second order derivatives.
      * 
-     * @param n Number of computation points
-	 * @param interval Array containing [xmin, xmax]
-	 * @param funct function or method that define the equation to resolve, your function has to accept 3 numbers and return a number
-	 * 
-	 * Cauchy's conditions
+     * @param step The step of computation
+	 * @param x_0, 
 	 * @param y_0 initial value of y
-	 * @param yp_0 initial value of the derivative of y
+	 * @param dy_0 initial value of the derivative of y
+	 * @param funct function or method that define the equation to resolve
      * 
-     * @returns [step: number, x: number[], y:number[], yp: number[]].
-    */
-    public runge_kutta(step: number, funct: (x: number, y: number, yp: number) => number, x_0, y_0: number, yp_0: number )
-    {
-        let k_1 = funct(x_0, y_0, yp_0);
-        let k_2 = funct(x_0 + step/2, y_0 + step/2 * yp_0, yp_0 + step/2 * k_1);
-        let k_3 = funct(x_0 + step/2, y_0 + step/2 * yp_0 + (step**2)/4 * k_1, yp_0 + step/2 * k_2);
-        let k_4 = funct(x_0 + step, y_0 + step * yp_0 + (step**2)/2 * k_2, yp_0 + step * k_3);
+     * @returns [x_1, y_1, yp_1], value of the next point of computation
+     */
+    public runge_kutta(step: number, x_0: number, y_0: number, dy_0: number, funct: (x: number, y: number, dy: number) => number): number[] {
+		let k_1 = funct(x_0, y_0, dy_0)
+        let k_2 = funct(x_0 + step/2, y_0 + step/2 * dy_0, dy_0 + step/2 * k_1)
+        let k_3 = funct(x_0 + step/2, y_0 + step/2 * dy_0 + step**2/4 * k_1, dy_0 + step/2 * k_2)
+        let k_4 = funct(x_0 + step, y_0 + step * dy_0 + step**2/2 * k_2, dy_0 + step * k_3)
 
-        let y_1 = y_0 + step * yp_0 + step**2/6 * (k_1 + k_2 + k_3);
-        let yp_1 = yp_0 + step/6 * (k_1 + 2*k_2 + 2*k_3 + k_4);
+		let x_1 = x_0 + step;
+		let y_1 = y_0 + step * dy_0 + step**2/6 * (k_1 + k_2 + k_3)
+        let dy_1 = dy_0 + step/6 * (k_1 + 2*k_2 + 2*k_3 + k_4)
 
-
-        return [x, y, yp];
+        return [x_1, y_1, dy_1];
     }
 
     /** 
@@ -63,6 +60,7 @@ export abstract class Simulation {
      * Returns a single value.
     */
     public simpson(funct: (x: number) => number, infimum: number, supremum: number, n: number)
+
     {
         let step = (supremum - infimum) / n;
         let x = [];
@@ -76,9 +74,15 @@ export abstract class Simulation {
         let res = 0;
         for (let i=0; i<n; i++)
         {
-            if (i==0 || i==n)   { res += y[i]; }
-            else if (i%2 != 0)  { res += 4 * y[i]; }
-            else                { res += 2 * y[i]; }
+            if (i==0 || i==n) {
+                res += y[i];
+            }
+            else if (i%2 != 0) {
+                res += 4 * y[i];
+            }
+            else {
+                res += 2 * y[i];
+            }
         }
         return res * step/3;
     }
