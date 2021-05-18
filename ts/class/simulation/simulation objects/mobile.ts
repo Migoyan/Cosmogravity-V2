@@ -8,7 +8,8 @@ export class Mobile {
 
     //-------------------------constructor-----------------------
 
-    constructor(id: string, mass: number, r: number) {
+    constructor(id: string, mass: number, r: number) 
+    {
         this.id = id;
         this.mass = mass;
         this.r = r;
