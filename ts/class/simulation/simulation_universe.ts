@@ -28,7 +28,10 @@ import { Simulation } from "./simulation";
  * @method duration
  * @method metric_distance
  * @method luminosity
+ * @method luminosity_distance
+ * @method angular_diameter_distance
  * @method apparent_magnitude
+ * @method apparent_diameter
  * @method integral_duration
  * @method integral_duration_substituated
  * @method integral_distance
@@ -162,7 +165,7 @@ export class Simulation_universe extends Simulation {
 			this.dark_energy.w_1 = DE_w_1;
 		}
 	}
-
+	
 	/**
 	 * replace the setter for the constants attribute 
 	 * 
@@ -186,7 +189,8 @@ export class Simulation_universe extends Simulation {
 		}
 	}
 
-	/** Fourth order Runge-Kutta method for second order derivatives for universe computation.
+	/** 
+	 * Fourth order Runge-Kutta method for second order derivatives for universe computation.
      * 
      * @param step The step of computation
 	 * @param x_0 x_point where the calcul start
@@ -200,11 +204,11 @@ export class Simulation_universe extends Simulation {
 	public runge_kutta_universe(
 		step: number,
 		x_0: number = 0,
-		y_0: number,
-		yp_0: number,
+		y_0: number = 1,
+		yp_0: number = 1,
 		funct: (x: number, y: number, yp: number) => number,
 		interval: number[] = [0, 5],
-	): number[][]
+	)
     {
 		// Init parameter
 		let x: number[] = [x_0];
@@ -237,7 +241,7 @@ export class Simulation_universe extends Simulation {
 			i++;
 		}
 
-		return [x, y, yp];
+		return {x: x, y: y, dy: yp};
 	}
 
 	/**
@@ -325,7 +329,7 @@ export class Simulation_universe extends Simulation {
 	 * @returns result of the right part\
 	 * Note: tau and da are not used but have to be defined for this method to be accepted in the runge_kutta method of simulation class
 	 */
-	public equa_diff_a(tau: number = 0, a:number, da:number = 0): number {
+	public equa_diff_a(tau: number = 0, a: number, da: number = 0): number {
 		return -(this.calcul_omega_r() / (a**2)) -
 		0.5 * this.calcul_omega_r() / (a**2) +
 		this.get_dark_energy().parameter_value * (a * this.Y(a) + (a**2) *  this.dY(a)/ 2);
@@ -335,7 +339,7 @@ export class Simulation_universe extends Simulation {
 	 * compute_a_tau in point 
 	 * @param step Computation step
 	 */
-	public compute_a_tau(step: number): number[][] {
+	public compute_a_tau(step: number) {
 		return this.runge_kutta_universe(step, 0, 1, 1, this.equa_diff_a, this.get_interval_a());
 	}
 
@@ -397,6 +401,37 @@ export class Simulation_universe extends Simulation {
 	}
 
 	/**
+	 * Compute the luminosity distance
+	 * @param z Cosmologic shift
+	 * @param distance_metric optionnal parameters for optimisation (permit you to pass an already calculated distances for optimisation)
+	 * @returns luminosity distance
+	 */
+	public luminosity_distance (z: number, distance_metric?: number) {
+		let distance: number;
+		if (distance_metric === undefined) {
+			distance = this.metric_distance(z);
+		} else {
+			distance = distance_metric;
+		}
+
+		return distance * (1 + z)
+	}
+
+	/**
+	 * 
+	 */
+	public angular_diameter_distance(z: number, distance_metric?: number) {
+		let distance: number;
+		if (distance_metric === undefined) {
+			distance = this.metric_distance(z);
+		} else {
+			distance = distance_metric;
+		}
+
+		return distance / (1 + z)
+	}
+
+	/**
 	 * Compute the luminosity of an astronomical object of an unifrom intensity I
 	 * @param I intensity
 	 * @returns luminosity
@@ -419,7 +454,25 @@ export class Simulation_universe extends Simulation {
 			distance = distance_metric;
 		}
 		
-		return luminosity / (4 * Math.PI * Math.pow(distance * (1 + z), 2))
+		return luminosity / (4 * Math.PI * Math.pow(distance * (1 + z), 2));
+	}
+
+	/**
+	 * Compute the apparent diameter (Or the angle between 2 object of same shift z)
+	 * @param D_e Euclydien linear diameter
+	 * @param z Cosmologic shift
+	 * @param distance_metric optionnal parameters for optimisation (permit you to pass an already calculated distances for optimisation)
+	 * @returns The apparent diameter
+	 */
+	public apparent_diameter(D_e: number, z: number, distance_metric?: number) {
+		let distance: number;
+		if (distance_metric === undefined) {
+			distance = this.metric_distance(z);
+		} else {
+			distance = distance_metric;
+		}
+
+		return D_e * (1 + z) / distance;
 	}
 
 	/**
