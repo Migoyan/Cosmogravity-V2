@@ -10,7 +10,13 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * covered by the theory (example: KM_PH = Kerr Metric for a Photon).
  * 
  * Methods:
- * 
+ * @method KM_delta_r
+ * @method KM_MP_integration_constants
+ * @method KM_MP_trajectory_A
+ * @method KM_MP_trajectory_DO
+ * @method KM_PH_integration_constants
+ * @method KM_PH_trajectory_A
+ * @method KM_PH_trajectory_DO()
 */
 
 export class Kerr extends Simulation_trajectory {
@@ -34,10 +40,11 @@ export class Kerr extends Simulation_trajectory {
 	/**
 	 * Kerr metric (KM)
 	 * 
-	 * New variable delta(r)
+	 * Defines a new variable delta(r)
 	 * @param R_hp parameter of the central body R_h+
 	 * @param R_hm parameter of the central body R_h-
 	 * @param r radial coordinate
+	 * @returns delta(r)
 	 */
 	public KM_delta_r(R_hp: number, R_hm: number, r: number)
 	{
@@ -45,61 +52,139 @@ export class Kerr extends Simulation_trajectory {
 	}
 
 
-	//	1) For a massive particle (KM_PM)
+	//	1) For a massive particle (KM_MP)
 
 
 	/**
+	 * Kerr metric for a massive particle (KM_MP)
 	 * 
+	 * Integration constants in a list of two elements.
 	 * @param R_s schwarzschild radius
-	 * @param delta_r_0 delta(r_0), new variable at t=0
+	 * @param a calculated central mass parameter
+	 * @param delta_0 kerr metric variable delta(r) at t=0
 	 * @param r_0 r(0), radial coordinate at t=0
-	 * @param U_phi_0 U_phi(0), velocity angular coordinate at t=0
+	 * @param U_r_0 U_r(r_0), velocity's radial coordinate
+	 * @param U_phi_0 U_phi(r_0), velocity's angular coordinate at t=0
 	 * @returns list where list[0]=L and list[1]=E
 	 */
-	public KM_PM_integration_constants(R_s: number, delta_r_0: number, r_0: number, U_phi_0: number)
+	public KM_MP_integration_constants(R_s: number, a: number, delta_0: number, r_0: number, U_r_0: number, U_phi_0: number)
 	{
-        let L = 1 / (c * (r_0 - R_s)) * (delta_r_0 * U_phi_0 - R_s * )
-        let E = Math.sqrt(Math.pow(U_r_0 / c, 2) + (1 - R_s / r_0) * Math.pow(U_phi_0 / c, 2));
-        return [L_e, E_e];
+		let E = Math.sqrt(U_r_0**2 * (r_0 - R_s) * r_0**3 + c**2 * r_0 * (r_0 - R_s) * delta_0 + delta_0**2 * U_phi_0**2)
+		/ (c**2 * r_0**2 * delta_0);
+        let L = 1 / (c * (r_0 - R_s)) * (delta_0 * U_phi_0 - R_s * a * c * E);
+        return [L, E];
     }
 
 
-
-//	Second derivative d²r/dtau² for an astronaut (A)
-	public KM_PM_trajectory_A(R_s: number, r: number, a: number, L: number, E: number)
+	/**
+	 * Kerr metric for a massive particle (KM_MP)
+	 * 
+	 * Second derivative d²r/dtau² for an astronaut (A).
+	 * 
+	 * This method is to be used with Runge-Kutta.
+	 * @param R_s schwarzschild radius
+	 * @param r radial coordinate
+	 * @param a calculated central mass parameter
+	 * @param L integration constant
+	 * @param E integration constant
+	 */
+	public KM_MP_trajectory_A(R_s: number, r: number, a: number, L: number, E: number)
 	{
 		return c**2 / (2 * r**4) * (R_s * r**2 + 2*r * (a**2 * (E**2 - 1) - L**2) + 3*R_s * (L - a * E)**2);
 	}
 
 
-//	Second derivative d²r/dtau² for a distant observer (DO)
-	public KM_PM_trajectory_DO()
+	/**
+	 * Kerr metric for a massive particle (KM_MP)
+	 * 
+	 * Second derivative d²r/dt² for a distant observer (DO)
+	 * 
+	 * This method is to be used with Runge-Kutta.
+	 * @param R_s schwarzschild radius
+	 * @param r radial coordinate
+	 * @param a calculated central mass parameter
+	 * @param delta_r kerr metric variable delta(r)
+	 * @param L integration constant
+	 * @param E integration constant
+	 */
+	public KM_MP_trajectory_DO(R_s: number, r: number, a: number, delta_r: number, L: number, E: number)
 	{
+		let W = (r**2 + a**2 + R_s * a**2 / r) * E - R_s * a * L / r;
+		let X = E**2 * a**2 - L**2 - a**2;
+		let Y = R_s * (L - a * E)**2;
+		let Z = 2*(E**2 - 1 + R_s / r + X / r**2 + Y / r**3);
 
+		return c**2 * delta_r / (2 * W**2)
+		* ((-R_s / r**2 - 2*X / r**3 - 3*Y / r**4) * delta_r
+		+ Z * (2*r - R_s)
+		- Z * ((2*r - R_s * a**2 / r**2) * E + R_s * a * L / r**2) * delta_r / W);
 	}
 
 
+	//	2) For a photon (KM_PH)
 
 
-//	2) For a photon (KM_PH)
+	/**
+	 * Kerr metric for a photon (KM_PH)
+	 * 
+	 * Integration constants in a list of two elements.
+	 * @param R_s schwarzschild radius
+	 * @param a calculated central mass parameter
+	 * @param delta_0 delta(r_0), kerr metric variable at t=0
+	 * @param r_0 r(0), radial coordinate at t=0
+	 * @param U_r_0 U_r(r_0), velocity's radial coordinate
+	 * @param U_phi_0 U_phi(r_0), velocity's angular coordinate at t=0
+	 * @returns list where list[0]=L and list[1]=E
+	 */
+	public KM_PH_integration_constants(R_s: number, a: number, delta_0: number, r_0: number, U_r_0: number, U_phi_0: number)
+		{
+			let E = Math.sqrt(U_r_0**2 * (r_0 - R_s) * r_0**3 + delta_0**2 * U_phi_0**2) / (c**2 * r_0**2 * delta_0);
+        	let L = 1 / (c * (r_0 - R_s)) * (delta_0 * U_phi_0 - R_s * a * c * E);
+        	return [L, E];
+    	}
 
 
-	public KM_PH_integration_constants()
-	{
-
-	}
-
-
-//	Second derivative d²r/dlambda² for an astronaut (A)
+	/**
+	 * Kerr metric for a photon (KM_PH)
+	 * 
+	 * Second derivative d²r/dlambda² for an astronaut (A)
+	 * 
+	 * This method is to be used with Runge-Kutta.
+	 * @param R_s schwarzschild radius
+	 * @param r radial coordinate
+	 * @param a calculated central mass parameter
+	 * @param L integration constant
+	 * @param E integration constant
+	 */
 	public KM_PH_trajectory_A(R_s: number, r: number, a: number, L: number, E: number)
 	{
 		return -(c**2 / (2 * r**4)) * (2*r * (a**2 * E**2 - L**2) + 3*R_s * (L - a * E)**2);
 	}
 
-//	Second derivative d²r/dlambda² for a distant observer (DO)
-	public KM_PH_trajectory_DO()
+
+	/**
+	 * Kerr metric for a photon (KM_PH)
+	 * 
+	 * Second derivative d²r/dt² for a distant observer (DO)
+	 * 
+	 * This method is to be used with Runge-Kutta.
+	 * @param R_s schwarzschild radius
+	 * @param r radial coordinate
+	 * @param a calculated central mass parameter
+	 * @param delta_r kerr metric variable delta(r)
+	 * @param L integration constant
+	 * @param E integration constant
+	 */
+	public KM_PH_trajectory_DO(R_s: number, r: number, a: number, delta_r: number, L: number, E: number)
 	{
+		let W = (r**2 + a**2 + R_s * a**2 / r) * E - R_s * a * L / r;
+		let X = E**2 * a**2 - L**2;
+		let Y = R_s * (L - a * E)**2;
+		let Z = 2*(E**2 + X / r**2 + Y / r**3);
 
+		return c**2 * delta_r / (2 * W**2)
+		* ((-2*X / r**3 - 3*Y / r**4) * delta_r
+		+ Z * (2*r - R_s)
+		- Z * ((2*r - R_s * a**2 / r**2) * E + R_s * a * L / r**2) * delta_r / W);
 	}
-
 }
