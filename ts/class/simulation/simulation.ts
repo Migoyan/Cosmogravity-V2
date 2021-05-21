@@ -49,15 +49,16 @@ export abstract class Simulation {
         return [x_1, y_1, dy_1];
     }
 
-    /** 
-     * Simple Simpson's rule implementation.
-     * 
-     * @param funct takes one of the second derivative defined in a special lib 
-     * depending on the type of the simulation.
-     * 
-     * @param infimum and @param supremum define a segment where @param n is the number of points.
-     * 
-     * Returns a single value.
+
+   /**
+    * Simple Simpson's rule
+    * 
+    * @param funct takes one of the second derivative defined in a special lib
+    * depending on the type of the simulation.
+    * @param infimum 
+    * @param supremum 
+    * @param n number of points
+    * @returns a single value.
     */
     public simpson(funct: (x: number) => number, infimum: number, supremum: number, n: number)
 

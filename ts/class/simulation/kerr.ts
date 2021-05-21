@@ -16,17 +16,33 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * @method KM_MP_trajectory_DO
  * @method KM_PH_integration_constants
  * @method KM_PH_trajectory_A
- * @method KM_PH_trajectory_DO()
-*/
+ * @method KM_PH_trajectory_DO
+ */
 
 export class Kerr extends Simulation_trajectory {
 
 
+    //-------------------- Constructors --------------------
 
-	//---------------- Methods -----------------
+
+    constructor(
+		id: string,
+		central_body: Map<'mass' | 'radius' | 'angular_m', number>,
+		mobile_list: Map<'mass' | 'r' | 'phi', number>[])
+	{
+    	super(id, central_body, mobile_list);
+	}
+
+
+    //--------------------- Accessors ----------------------
+
+
+	//---------------------- Methods -----------------------
+
 
 	/*
 	 * The spacial and temporal coordinates are (r, theta, phi, t)
+	 * All simulations take place on the theta=pi/2 plane
 	 * U_r and U_phi are the velocity coordinates
 	 * R_s Schwarzschild radius. The Kerr metric also uses R_h+ and R_h-, see theory.
 	 * A new variable delta is defined for the Kerr metric relative to R_h+ and R_h-.
@@ -34,7 +50,7 @@ export class Kerr extends Simulation_trajectory {
 	 * initial conditions. L is a length and E is adimentional.
 	 * The "trajectory" functions are to be called by the Runge-Kutta algorithm.
 	 * The suffix A or DO refer to Astronaut or Distant Oberver.
-	*/ 
+	 */ 
 
 
 	/**
@@ -187,4 +203,6 @@ export class Kerr extends Simulation_trajectory {
 		+ Z * (2*r - R_s)
 		- Z * ((2*r - R_s * a**2 / r**2) * E + R_s * a * L / r**2) * delta_r / W);
 	}
+
+
 }

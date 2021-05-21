@@ -10,39 +10,53 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * covered by the theory (example: EMS_PH = External Schwarzschild Metric for a Photon).
  * 
  * Methods:
- * @method ESM_PM_integration_constants
- * @method ESM_PM_trajectory_A
- * @method ESM_PM_trajectory_DO
+ * @method ESM_MP_integration_constants
+ * @method ESM_MP_trajectory_A
+ * @method ESM_MP_trajectory_DO
  * @method ESM_PH_integration_constants
  * @method ESM_PH_trajectory_A
  * @method ESM_PH_trajectory_DO
  * @method ISM_alpha_r
  * @method ISM_beta_r
- * @method ISM_PM_integration_constants
- * @method ISM_PM_trajectory_A
+ * @method ISM_MP_integration_constants
+ * @method ISM_MP_trajectory_A
  * @method ISM_PH_integration_constants
  * @method ISM_PH_trajectory_A
-*/
+ */
 
 export class Schwarzchild extends Simulation_trajectory {
 
+ 
+    //-------------------- Constructor- --------------------
 
 
-    //---------------- Methods -----------------
+    constructor(
+		id: string,
+		central_body: Map<'mass' | 'radius' | 'angular_m', number>,
+		mobile_list: Map<'mass' | 'r' | 'phi', number>[])
+	{
+    	super(id, central_body, mobile_list);
+	}
 
+
+    //--------------------- Accessors ----------------------
+
+
+    //---------------------- Methods -----------------------
 
 
     /*
      * I/ The external Schwarzschild metric (ESM)
      * r > R
      * The spacial and temporal coordinates are (r, theta, phi, t)
+     * All simulations take place on the theta=pi/2 plane
      * U_r and U_phi are the velocity coordinates
      * R_s Schwarzschild radius
      * L_e and E_e are two integration constants determined with the 
      * initial conditions. L is a length and E is adimentional.
      * The "trajectory" functions are to be called by the Runge-Kutta algorithm.
      * The suffix A or DO refer to Astronaut or Distant Oberver.
-    */
+     */
 
 
     //  1) For a massive particle (ESM_MP)
@@ -160,7 +174,7 @@ export class Schwarzchild extends Simulation_trajectory {
      * r < R
      * The integration constants are now called L_i and E_i
      * Definition of two new variables alpha and beta.
-    */
+     */
 
 
     /**
@@ -275,5 +289,8 @@ export class Schwarzchild extends Simulation_trajectory {
         return -(c**2 * r * R_s / radius**3) * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2))
         + c**2 * alpha_r * .5 * (-(E_i**2 * r * R_s) / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L_i**2 / r**3);
     }
+
+
 }
+
 

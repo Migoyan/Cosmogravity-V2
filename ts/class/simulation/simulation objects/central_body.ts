@@ -15,6 +15,7 @@
 
 export class Central_body {
 
+
     private mass: number;       // Mass
     private radius: number;     // Radius
     private R_s: number;        // Schwarzschild radius
@@ -24,13 +25,14 @@ export class Central_body {
     private R_hm: number;       // R_h-
 
 
-//-------------------------constructor-----------------------
+    //-------------------- Constructors --------------------
+
 
     constructor(mass: number, radius: number, angular_m?: number) 
     {
         this.mass = mass;
         this.radius = radius;
-        this.R_s = 2*G*mass / (c**2);
+        this.R_s = 2*G*mass / c**2;
 
         if (angular_m == undefined)
         {
@@ -49,16 +51,25 @@ export class Central_body {
     }
 
 
-//--------------------------Accessors------------------------
+    //--------------------- Accessors ----------------------
 
+    // Mass
     public get_mass() { return this.mass; }
 
+
+    // Radius
     public get_radius() { return this.radius; }
 
-    public get_radius_s() { return this.R_s; }
 
+    // Schwarzschild radius
+    public get_R_s() { return this.R_s; }
+
+
+    // Angular momentum
     public get_angular_m() { return this.angular_m; }
 
+
+    // Calculated parameters
     public get_a() { return this.a; }
 
     public get_R_hp() { return this.R_hp; }
