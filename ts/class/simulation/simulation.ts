@@ -80,7 +80,7 @@ export abstract class Simulation {
      * @param n is the number of computation points.
      * 
      * @returns value of the integral.
-    */
+     */
     public simpson(funct: (x: number) => number, infimum: number, supremum: number, n: number)
 
     {
