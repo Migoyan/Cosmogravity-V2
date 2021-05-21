@@ -69,7 +69,7 @@ export class Simulation_universe extends Simulation {
 		has_cmb: boolean = true,
 		has_neutrino: boolean = true,
 		is_flat: boolean = false
-		) {
+	) {
 		super(id);
 		this.temperature = temperature;
 		this.hubble_cst = hubble_cst;
@@ -78,7 +78,7 @@ export class Simulation_universe extends Simulation {
 		this.has_neutrino = has_neutrino;
 		this.is_flat = is_flat;
 	}
-
+	
 	//--------------------------Accessors------------------------
 	// temperature
 	public get_temperature(): number {
