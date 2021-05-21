@@ -25,12 +25,9 @@ export class Kerr extends Simulation_trajectory {
     //-------------------- Constructors --------------------
 
 
-    constructor(
-		id: string,
-		central_body: Map<'mass' | 'radius' | 'angular_m', number>,
-		mobile_list: Map<'mass' | 'r' | 'phi', number>[])
+    constructor(id: string, collidable: boolean, mass: number, radius: number, angular_m: number)
 	{
-    	super(id, central_body, mobile_list);
+    	super(id, collidable, mass, radius, angular_m);
 	}
 
 

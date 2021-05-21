@@ -13,17 +13,19 @@
 export class Mobile {
 
 
-    private mass: number;      // Mass
-    private r: number;         // Radial coordinate
-    private phi: number;       // Angular coordinate
+    private is_photon: boolean;
+    private collidable: boolean;    // Can the object collide
+    private r: number;              // Radial coordinate
+    private phi: number;            // Angular coordinate
 
 
     //-------------------- Constructor- --------------------
 
 
-    constructor(mass: number, r: number, phi: number) 
+    constructor(is_photon: boolean, collidable: boolean, r: number, phi: number) 
     {
-        this.mass = mass;
+        this.is_photon = is_photon;
+        this.collidable = collidable;
         this.r = r;
         this.phi = phi;
     }
@@ -32,13 +34,20 @@ export class Mobile {
     //--------------------- Accessors ----------------------
 
 
-    public get_mass() { return this.mass; }
+    public get_is_photon() { return this.is_photon; }
 
-    public set_mass(mass: number) { this.mass = mass; }
+    public set_is_photon(is_photon: boolean) { this.is_photon = is_photon; }
+
+
+    public get_collidable() { return this.collidable; }
+
+    public set_collidable(collidable: boolean) { this.collidable = collidable; }
+
 
     public get_r() { return this.r; }
 
     public set_r(r: number) { this.r = r; }
+
 
     public get_phi() { return this.phi; }
 
