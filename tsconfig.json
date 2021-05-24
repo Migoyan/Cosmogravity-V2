@@ -4,6 +4,10 @@
 		"target": "es2016",
 		"jsx": "preserve",
 		"strictFunctionTypes": true,
-		"sourceMap": true
+		"sourceMap": true,
+		"noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true,
+		"forceConsistentCasingInFileNames": true
 	}
 }

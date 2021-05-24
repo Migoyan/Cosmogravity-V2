@@ -78,7 +78,7 @@ export class Simulation_universe extends Simulation {
 		this.has_neutrino = has_neutrino;
 		this.is_flat = is_flat;
 	}
-	
+
 	//--------------------------Accessors------------------------
 	// temperature
 	public get_temperature(): number {
