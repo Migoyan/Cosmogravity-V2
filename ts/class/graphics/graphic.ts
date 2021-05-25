@@ -15,10 +15,4 @@ export abstract class Graphic {
     //--------------------------Accessors------------------------
 
     //---------------------------methods-------------------------
-    // An abstract method is implemented in derived classes.
-    public abstract draw(): void;
-
-    public save(format: string): void {
-        
-    }
 }
