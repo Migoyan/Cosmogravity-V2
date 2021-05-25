@@ -12,6 +12,9 @@ export abstract class Graphic {
         this.simulation = simulation;
     }
 
+    //--------------------------Accessors------------------------
+
+    //---------------------------methods-------------------------
     // An abstract method is implemented in derived classes.
     public abstract draw(): void;
 
