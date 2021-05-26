@@ -36,9 +36,6 @@ export class Schwarzchild extends Simulation_trajectory {
 	}
 
 
-    //--------------------- Accessors ----------------------
-
-
     //---------------------- Methods -----------------------
 
 

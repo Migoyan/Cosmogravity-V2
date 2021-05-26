@@ -5,6 +5,15 @@ import { Mobile } from "./simulation objects/mobile";
 /**
  * @class Simulation_trajectory
  * inheritance from Simulation class
+ * 
+ * Attributes:
+ * @param central_body
+ * @param mobile_list
+ * @param c
+ * @param G
+ * 
+ * Methods:
+ * @method add_mobile 
  */
 
 export abstract class Simulation_trajectory extends Simulation {
@@ -53,7 +62,11 @@ export abstract class Simulation_trajectory extends Simulation {
 	//---------------------- Methods -----------------------
 
 
-	public add_mobile() {}
+	/**
+	 * Add a new mobile object to the simulation
+	 * @param mobile new mobile
+	 */
+	public add_mobile(mobile) { this.mobile_list.push(mobile); }
 
 
 }
