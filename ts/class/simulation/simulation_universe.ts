@@ -42,23 +42,23 @@ import { Simulation } from "./simulation";
  */
 export class Simulation_universe extends Simulation {
 
-	private temperature: number;
-	private hubble_cst: number;
-	private matter_parameter: number;
-	private dark_energy = {
+	private _temperature: number;
+	private _hubble_cst: number;
+	private _matter_parameter: number;
+	private _dark_energy = {
 		parameter_value: 6.9110e-1,
 		w_0: -1,
 		w_1: 0
 	};
-	private constants = {
+	private _constants = {
 		c: c,
 		k: k,
 		h: h,
 		G: G,
 	};
-	private has_cmb: boolean;
-	private has_neutrino: boolean;
-	private is_flat: boolean;
+	private _has_cmb: boolean;
+	private _has_neutrino: boolean;
+	private _is_flat: boolean;
 
 	//-------------------------constructor-----------------------
 	constructor(
@@ -71,77 +71,77 @@ export class Simulation_universe extends Simulation {
 		is_flat: boolean = false
 	) {
 		super(id);
-		this.temperature = temperature;
-		this.hubble_cst = hubble_cst;
-		this.matter_parameter = matter_parameter;
-		this.has_cmb = has_cmb;
-		this.has_neutrino = has_neutrino;
-		this.is_flat = is_flat;
+		this._temperature = temperature;
+		this._hubble_cst = hubble_cst;
+		this._matter_parameter = matter_parameter;
+		this._has_cmb = has_cmb;
+		this._has_neutrino = has_neutrino;
+		this._is_flat = is_flat;
 	}
 
 	//--------------------------Accessors------------------------
 	// temperature
-	public get_temperature(): number {
-		return this.temperature;
+	public get temperature(): number {
+		return this._temperature;
 	}
 
-	public set_temperature(temperature: number): void {
-		this.temperature = temperature;
+	public set temperature(temperature: number) {
+		this._temperature = temperature;
 	}
 
 	// hubble_cst
-	public get_hubble_cst(): number {
-		return this.hubble_cst;
+	public get hubble_cst(): number {
+		return this._hubble_cst;
 	}
 
-	public set_hubble_cst(hubble_cst: number): void {
-		this.hubble_cst = hubble_cst;
+	public set hubble_cst(hubble_cst: number) {
+		this._hubble_cst = hubble_cst;
 	}
 
 	// matter_parameter
-	public get_matter_parameter(): number {
-		return this.matter_parameter;
+	public get matter_parameter(): number {
+		return this._matter_parameter;
 	}
 
-	public set_matter_parameter(matter_parameter: number): void {
-		this.matter_parameter = matter_parameter;
+	public set matter_parameter(matter_parameter: number) {
+		this._matter_parameter = matter_parameter;
 	}
 
 	// dark_energy
-	public get_dark_energy() {
-		return this.dark_energy;
+	public get dark_energy() {
+		return this._dark_energy;
 	}
 
 	// constants
-	public get_constants() {
-		return this.constants;
+	public get constants() {
+		return this._constants;
 	}
 
 	// has_cmb
-	public get_has_cmb(): boolean {
-		return this.has_cmb;
+	public get has_cmb(): boolean {
+		return this._has_cmb;
 	}
 
-	public set_has_cmb(has_cmb: boolean): void {
-		this.has_cmb = has_cmb;
+	public set has_cmb(has_cmb: boolean) {
+		this._has_cmb = has_cmb;
 	}
 
 	// has_neutrino
-	public get_has_neutrino(): boolean {
-		return this.has_neutrino;
+	public get has_neutrino(): boolean {
+		return this._has_neutrino;
 	}
 
-	public set_has_neutrino(has_neutrino: boolean): void {
-		this.has_neutrino = has_neutrino;
+	public set has_neutrino(has_neutrino: boolean) {
+		this._has_neutrino = has_neutrino;
 	}
 
 	// is_flat
-	public get_is_flat(): boolean {
+	public get is_flat(): boolean {
 		return this.is_flat;
 	}
 
-	public set_is_flat(is_flat: boolean): void {
-		this.is_flat = is_flat;
+	public set is_flat(is_flat: boolean) {
+		this._is_flat = is_flat;
 	}
 
 	//---------------------------methods-------------------------
@@ -160,13 +160,13 @@ export class Simulation_universe extends Simulation {
 	 */
 	public modify_dark_energy(DE_parameter_value?: number, DE_w_0?: number, DE_w_1?: number): void {
 		if (DE_parameter_value !== undefined) {
-			this.dark_energy.parameter_value = DE_parameter_value;
+			this._dark_energy.parameter_value = DE_parameter_value;
 		}
 		if (DE_w_0 !== undefined) {
-			this.dark_energy.w_0 = DE_w_0;
+			this._dark_energy.w_0 = DE_w_0;
 		}
 		if (DE_w_1 !== undefined) {
-			this.dark_energy.w_1 = DE_w_1;
+			this._dark_energy.w_1 = DE_w_1;
 		}
 	}
 	
@@ -180,16 +180,16 @@ export class Simulation_universe extends Simulation {
 	 */
 	public modify_constants(c?: number, k?: number, h?: number, G?: number): void {
 		if (c !== undefined) {
-			this.constants.c = c;
+			this._constants.c = c;
 		}
 		if (k !== undefined) {
-			this.constants.k = k;
+			this._constants.k = k;
 		}
 		if (h !== undefined) {
-			this.constants.h = h;
+			this._constants.h = h;
 		}
-		if (G!== undefined) {
-			this.constants.G = G;
+		if (G !== undefined) {
+			this._constants.G = G;
 		}
 	}
 
@@ -303,19 +303,19 @@ export class Simulation_universe extends Simulation {
 	 */
 	public calcul_omega_r(): number {
 		let sigma: number = (2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) / (15 * Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2))
-		let rho_r: number = (4 * sigma * Math.pow(this.get_temperature(), 4)) / (Math.pow(this.constants.c, 3));
+		let rho_r: number = (4 * sigma * Math.pow(this.temperature, 4)) / (Math.pow(this.constants.c, 3));
 
 		// Hubble-Lemaître constant in international system units (Système International)
-		let H0_si: number = this.get_hubble_cst() * 1e3 / ((AU * (180 * 3600)) / Math.PI * 1e6);
+		let H0_si: number = this.hubble_cst * 1e3 / ((AU * (180 * 3600)) / Math.PI * 1e6);
 		let omega_r: number = (8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(H0_si, 2));
 
-		if (this.get_has_neutrino()) {
+		if (this.has_neutrino) {
 			omega_r *= 1.68;
 		}
-		if (this.get_has_cmb()) {
+		if (this.has_cmb) {
 			omega_r **= 3;
 		}
-		if(!(this.get_has_neutrino() && this.get_has_cmb())) {
+		if(!(this.has_neutrino && this.has_cmb)) {
 			omega_r = 0;
 		}
 
@@ -326,7 +326,7 @@ export class Simulation_universe extends Simulation {
 	 * @returns the curvature density parameter
 	 */
 	 public calcul_omega_k(): number {
-		return 1 - this.calcul_omega_r() - this.get_matter_parameter() - this.get_dark_energy().parameter_value;
+		return 1 - this.calcul_omega_r() - this.matter_parameter - this.dark_energy.parameter_value;
 	}
 
 	/**
@@ -337,8 +337,8 @@ export class Simulation_universe extends Simulation {
 	 */
 	public Y(x: number): number {
 		return Math.exp(
-			-3 * (this.get_dark_energy().w_0 + this.get_dark_energy().w_1 + 1) * Math.log(x) -
-			3 * this.get_dark_energy().w_1 * (1 - x)
+			-3 * (this.dark_energy.w_0 + this.dark_energy.w_1 + 1) * Math.log(x) -
+			3 * this.dark_energy.w_1 * (1 - x)
 		);
 	}
 
@@ -350,7 +350,7 @@ export class Simulation_universe extends Simulation {
 	 */
 	public dY(x: number): number {
 		return this.Y(x) * (
-			3 * this.get_dark_energy().w_1 - 3 * (1 + this.get_dark_energy().w_0 + this.get_dark_energy().w_1)
+			3 * this.dark_energy.w_1 - 3 * (1 + this.dark_energy.w_0 + this.dark_energy.w_1)
 		);
 	}
 
@@ -362,9 +362,9 @@ export class Simulation_universe extends Simulation {
 	 */
 	public F(x: number): number {
 		return ((1 + x)**2) * this.calcul_omega_k() +
-		((1 + x)**3) * this.get_matter_parameter() +
+		((1 + x)**3) * this.matter_parameter +
 		((1 + x)**4) * this.calcul_omega_r() +
-		this.Y(1/(1 + x)) * this.get_dark_energy().parameter_value;
+		this.Y(1/(1 + x)) * this.dark_energy.parameter_value;
 	}
 
 	/**
@@ -412,7 +412,7 @@ export class Simulation_universe extends Simulation {
 		x = y / (1 - y) which implies dx = dy / (1 - y)². This result with an integral from y = 0 to y = 1 that can be digitally resolved.
 		*/
 		let age: number;
-		let H0_si: number = this.get_hubble_cst() * 1e3 / ((AU * (180 * 3600)) / Math.PI * 1e6);
+		let H0_si: number = this.hubble_cst * 1e3 / ((AU * (180 * 3600)) / Math.PI * 1e6);
 		age = this.simpson(this.integral_duration_substituated, 0, 1, 100) / H0_si
 		return age;
 	}
@@ -441,14 +441,14 @@ export class Simulation_universe extends Simulation {
 	public metric_distance(z: number): number {
 		let distance: number;
 		let courbure: number = this.calcul_omega_k();
-		let H0_si: number = this.get_hubble_cst() * 1e3 / ((AU * (180 * 3600)) / Math.PI * 1e6);
+		let H0_si: number = this.hubble_cst * 1e3 / ((AU * (180 * 3600)) / Math.PI * 1e6);
 		distance = this.simpson(this.integral_distance, 0, z, 100)
 		if (courbure < 0) {
 			distance = Math.sinh(Math.sqrt(Math.abs(courbure)) * distance) / Math.sqrt(Math.abs(courbure));
 		} else if (courbure > 0) {
 			distance = Math.sin(Math.sqrt(Math.abs(courbure)) * distance) / Math.sqrt(Math.abs(courbure));
 		}
-		distance *= (this.get_constants().c / H0_si)
+		distance *= (this.constants.c / H0_si)
 		return distance;
 	}
 
@@ -567,7 +567,7 @@ export class Simulation_universe extends Simulation {
 	 public equa_diff_a(tau: number = 0, a: number, da: number = 0): number {
 		return -(this.calcul_omega_r() / a**2) -
 		0.5 * this.calcul_omega_r() / a**2 +
-		this.get_dark_energy().parameter_value * (a * this.Y(a) + a**2 *  this.dY(a)/ 2);
+		this.dark_energy.parameter_value * (a * this.Y(a) + a**2 *  this.dY(a)/ 2);
 	}
 
 	/**
@@ -578,7 +578,7 @@ export class Simulation_universe extends Simulation {
 	 * Note: t is not used but has to be defined for this method to be accepted in the runge_kutta_equation_order1 method of simulation class
 	 */
 	public equa_diff_time(z: number, t: number = 0) {
-		let H0_si: number = this.get_hubble_cst() * 1e3 / ((AU * (180 * 3600)) / Math.PI * 1e6);
+		let H0_si: number = this.hubble_cst * 1e3 / ((AU * (180 * 3600)) / Math.PI * 1e6);
 		return 1 / (H0_si * (1 + z) * Math.sqrt(this.F(z)));
 	}
 }
