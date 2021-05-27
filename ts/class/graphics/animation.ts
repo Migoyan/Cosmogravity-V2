@@ -8,9 +8,9 @@ import { Graphic } from './graphic'
 
 class Animation extends Graphic
 {
-    constructor(simulation: Simulation)
+    constructor(id_graph: string, simulation: Simulation)
     {
-        super(simulation);
+        super(id_graph, simulation);
     }
     
     public draw(): void {}

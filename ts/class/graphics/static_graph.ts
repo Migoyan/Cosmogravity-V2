@@ -1,7 +1,7 @@
-import Plotly = require('../../lib/plotly.js/index.js');
+import { ToImgopts } from 'plotly.js';
+import Plotly = require('plotly.js');
 import { Simulation } from '../simulation/simulation'
 import { Graphic } from './graphic';
-import { ToImgopts } from '../../lib/plotly.js/index.js';
 /**
  * This is one of the two inherited class from Graphic.
  * It shouldn't be used for dynamic graphic representation.

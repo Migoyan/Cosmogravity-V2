@@ -9,6 +9,9 @@
         "noImplicitThis": true,
         "strictNullChecks": true,
 		"forceConsistentCasingInFileNames": true,
-		"outDir": "../js"
+		"typeRoots": [
+			"node_modules/@types"
+		],
+		"outDir": "./js"
 	}
 }

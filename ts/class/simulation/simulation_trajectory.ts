@@ -66,7 +66,7 @@ export abstract class Simulation_trajectory extends Simulation {
 	 * Add a new mobile object to the simulation
 	 * @param mobile new mobile
 	 */
-	public add_mobile(mobile) { this.mobile_list.push(mobile); }
+	public add_mobile(mobile: Mobile) { this.mobile_list.push(mobile); }
 
 
 }
