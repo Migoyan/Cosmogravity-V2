@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<html class="nav-no-js">
+
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="js/Langues/gestion_langues.js"></script>
+		<link rel="stylesheet" href="Css/Resp-Menu/normalize.min.css">
+		<link rel="stylesheet" href="Css/Resp-Menu/defaults.min.css">
+		<link rel="stylesheet" href="Css/Resp-Menu/nav-core.min.css">
+		<link rel="stylesheet" href="Css/Resp-Menu/nav-layout.min.css">
+		<script src="js/Graphisme/Menu/rem.min.js"></script>
+		<script src="./Lib/jquery-1.12.3.min.js"></script>
+		<link rel="apple-touch-icon" sizes="180x180" href="./Images/Icones/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="./Images/Icones/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="./Images/Icones/favicon-16x16.png">
+		<link rel="manifest" href="./Images/Icones/site.webmanifest">
+		<link rel="mask-icon" href="./Images/Icones/safari-pinned-tab.svg" color="#5bbad5">
+		<meta name="apple-mobile-web-app-title" content="Cosmogravity">
+		<meta name="application-name" content="Cosmogravity">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="msapplication-TileImage" content="./Images/Icones/mstile-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+		<title>A propos</title>
+	</head>
+
+	<body>
+		<!-- Script Google analytics -->
+		<script>
+			(function(i, s, o, g, r, a, m) {
+				i['GoogleAnalyticsObject'] = r;
+				i[r] = i[r] || function() {
+					(i[r].q = i[r].q || []).push(arguments)
+				}, i[r].l = 1 * new Date();
+				a = s.createElement(o),
+					m = s.getElementsByTagName(o)[0];
+				a.async = 1;
+				a.src = g;
+				m.parentNode.insertBefore(a, m)
+			})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+			ga('create', 'UA-98631213-3', 'auto');
+			ga('send', 'pageview');
+		</script>
+
+		<!-- Menu -->
+		<header>
+			<h1>Cosmogravity</h1>
+		</header>
+
+		<div id="nav-ici"></div>
+
+		<div id="contact" style="margin: 20px 20px">
+			<p id="txt_contact"></p>
+			<form method="POST" action="https://formspree.io/henri.reboul@umontpellier.fr">
+				<input type="email" name="email" style="width:200px;" placeholder="Your email"><br/>
+				<textarea name="message" style="height:100px;width:300px;" placeholder="Your message"></textarea>
+				<button id="bouton_envoyer" type="submit"></button>
+			</form>
+		</div>
+
+		<div style="margin: 20px 20px;">
+			<p id="txt_descriptif"></p>
+			<p id="txt_directeurs"></p>							   
+			<p id="txt_encadrants"></p>
+			<p id="txt_participants"></p>								 
+			<p id="txt_remerciements"></p>
+			<p id="txt_version"></p>
+			<p id="txt_version_2020"></p>
+			<p id="txt_version_2019"></p>	
+			<p>
+				<strong>Version 2018 :</strong><br/>
+				Matthieu Carrère & Massimo Chanson & Léo Sénique
+			</p>
+
+			<p><strong>Version 2017 :</strong><br/>
+				Dentan Aurélien & Cranny Ronan & Leroit Quentin
+			</p>
+
+			<p>
+				<strong>Version 2016 :</strong><br/> Anthony Gourdin & Tamatoa Mahuta & Hamza Alhousseini
+			</p>
+
+			<p>
+				<strong>Version 2015 :</strong><br/> Thibault Jarossay & Samir Loukyly & Franck Malet
+			</p>
+
+			<p>
+				<strong>Version 2014 :</strong><br/> Pierre Barbotin & Thomas Vicario & Damien Maurin
+			</p>
+
+			<p>
+				<strong>Version 2013 :</strong><br/> Nicolas Boulay & Alexandra Grabon & Dwight Smite & El Hadj Modou Thiam
+			</p>
+
+			<p>
+				<strong>Version 2009 :</strong><br/> Karim Bammou & Brice Cervera & Gaëlle Daste
+			</p>
+			<p><strong>Licence :</strong> CC-BY-NC-SA </p>
+			<p><object type="image/svg+xml" data="./Images/by-nc-sa.eu.svg" width="180" height="50">Le navigateur ne peut lire ce kiwi</object></p>
+		</div>
+
+
+
+		<script src="js/Graphisme/Menu/nav.jquery.min.js"></script>
+		<script>
+			$(function() {
+				$("#nav-ici").load("Menu.html");
+			});
+			texteApropos();
+		</script>
+	</body>
+</html>

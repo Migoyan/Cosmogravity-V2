@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<html class="nav-no-js">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="Css/tuto.css" />
+
+  <!-- Scripts pour le chargement -->
+  <script src="./Lib/jquery-1.12.3.min.js"></script>
+  <script src="./js/Graphisme/Spin.js"></script>
+  <script src="./Lib/Spin/spin-min.js"></script>
+  <script src="./Lib/Spin/spin.js"></script>
+  <script src="./Lib/d3_min.js"></script>
+
+    <script src="js/Langues/gestion_langues.js"></script>
+    <script src="js/tuto/tuto.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+
+
+    <!-- Latex pour HTML -->
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} });
+    </script>
+
+    <!-- MENUS
+Source: http://www.cssscript.com/multi-level-toggle-responsive-navigation-menu-using-pure-css/
+                                                -->
+    <link rel="stylesheet" href="Css/Resp-Menu/normalize.min.css">
+    <link rel="stylesheet" href="Css/Resp-Menu/defaults.min.css">
+    <link rel="stylesheet" href="Css/Resp-Menu/nav-core.min.css">
+    <link rel="stylesheet" href="Css/Resp-Menu/nav-layout.min.css">
+    <script src="js/Graphisme/Menu/rem.min.js"></script>
+
+    <!-- Menu si internet explorer 9 -->
+    <!--[if lt IE 9]>
+    <link rel="stylesheet" href="css/ie8-core.min.css">
+    <link rel="stylesheet" href="css/ie8-layout.min.css">
+    <script src="js/Graphisme/Menu/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- chargement de l'icone en fonction du support -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./Images/Icones/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./Images/Icones/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./Images/Icones/favicon-16x16.png">
+    <link rel="manifest" href="./Images/Icones/site.webmanifest">
+    <link rel="mask-icon" href="./Images/Icones/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="apple-mobile-web-app-title" content="Cosmogravity">
+    <meta name="application-name" content="Cosmogravity">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="./Images/Icones/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Tutoriel de la page Simulation Univers</title>
+</head>
+
+<body>
+
+  <div id="haut_de_page">
+
+            <p class="titre">Tutoriel d'utilisation du site.</p>
+           
+ 
+          </div>
+
+            <div id="corps">
+
+             <div data-html2canvas-ignore="true"><button  id="html2pdf"  type="button" onclick="lance_telechargementpdf()">Télécharger en pdf.</button>
+             <div id="gif" style="position:relative;display: inline-block;margin-left: 13px;"></div>
+              <hr class="separation_titre">
+    </div> 
+
+           <div id="schwarzschild" >
+            <p class="titre1">Tutoriel de la partie univers</p>
+            
+            <div id="Sexterne" >
+            <p class="titre2">$\textbf{Partie avec constante cosmologique}$</p>
+          </div>
+
+   <p> Dans cette partit, on peut changer les paramètres cosmique de l'univers pour voir les différent facteur d’échelle que cela donne. On peut aussi passer a un modèle monofluides ou ouvrir une page de calcul Annexe qui nous permet de calculer différent paramétré cosmologique ou des paramètres géométrique sur l'univers considérer.</p>
+
+   
+  <figure>  
+    <img src="./Images/tuto/univers_FL.PNG" border="15" align="center" height="95%" width="95%" style="position:relative;display: inline-block;margin-left: 100px;"/>  
+  </figure>
+
+  <p><strong>1 Entrées:</strong>  les paramètres cosmologique de l'univers a l'instant présent <br>
+  <strong>2 Modèles monofluides:</strong>  permet d'aller dans une simulation ou l'univers n'est composé que d'un seul fluide<br>
+  <strong>3 Tracer:</strong>  permet de tracer un univers avec les valeurs saisie plus haut<br>
+  <strong>4 Avertissement:</strong> appuyer dessus pour afficher des informations relative a la simulation <br>
+  <strong>5 Sorties:</strong> les informations principale de l'univers calculer a partir de l'entrées<br>
+  <strong>6 Calculs Annexes:</strong>  permet d'ouvrir une page de calcul pour un univers avec une constante cosmologique <br>
+  <strong>7 Constante:</strong>  permet d'ouvrir une page ou l'on peut changer les Constantes de l'univers comme la vitesse de la lumière ou la constante de planck<br>
+  <strong>8 Graphique:</strong> montre le facteur d’échelle réduit en fonction du temps calculé a partir des entrées
+</p>
+  <p><strong>9 Oméga:</strong> montre les univers possible en fonction des differente proportion de matiere et d'energie , On peut cliquer dessus pour voir le graphique correspondant 
+  <figure>
+			  <img id="gifuniv2" src=".\Images\tuto\gif univers\omega.gif" alt="Gif omega univers" width="50%" height="50%" style="position:relative; left: -450px" /><br>
+</figure>
+</p><br>
+  
+  <p><strong>10 Modifier le domaine:</strong> permet de faire un zoom précis sur le graphique<br>
+  <strong>11 Enregistrer:</strong> Permet d'enregistrer le graphique sous un format a choisir 
+  <figure>
+			  <img id="gifuniv" src=".\Images\tuto\gif univers\enregistrer.gif" alt="Gif enregistrer univers" width="50%" height="50%" style="position:relative; left: -450px" /><br>
+			</figure>
+</p><br>
+</div>

@@ -1,12 +1,13 @@
 Classes :
 	directory simulation :
-		class simulation
-			class simulation_universe
-			class simulation_trajectory
-				class kerr
-				class schwarzschild
+		class Simulation
+			class Simulation_universe
+			class Simulation_trajectory
+				class Kerr
+				class Schwarzschild
 	
 	directory graphics :
-		class graphic
-			class static_graph
-			class animation
+		class Graphic
+			class Static_graph
+			class Animation
+		class Image
