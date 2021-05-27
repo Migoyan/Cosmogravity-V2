@@ -5,6 +5,15 @@ import { Mobile } from "./simulation objects/mobile";
 /**
  * @class Simulation_trajectory
  * inheritance from Simulation class
+ * 
+ * Attributes:
+ * @param central_body
+ * @param mobile_list
+ * @param c
+ * @param G
+ * 
+ * Methods:
+ * @method add_mobile 
  */
 
 export abstract class Simulation_trajectory extends Simulation {
@@ -12,7 +21,7 @@ export abstract class Simulation_trajectory extends Simulation {
 
 	private central_body: Central_body;
 	private mobile_list: Mobile[];
-	// Allows for the possibility to modify the constants
+	// Allows the possibility to modify the constants
 	private c: number = c;
 	private G: number = G;
 
@@ -20,26 +29,11 @@ export abstract class Simulation_trajectory extends Simulation {
 	//-------------------- Constructors --------------------
 
 
-	constructor(
-		id: string,
-		central_body: Map<'mass' | 'radius' | 'angular_m', number>,
-		mobile_list: Map<'mass' | 'r' | 'phi', number>[])
+	constructor(id: string, collidable: boolean, mass: number, radius: number, angular_m: number)
 	{
 		super(id);
-		this.central_body = new Central_body(
-			central_body.get('mass'),
-			central_body.get('radius'),
-			central_body.get('angular_m'));
-		mobile_list.forEach(mobile => 
-		{
-			this.mobile_list.push(
-				new Mobile(
-					mobile.get('mass'),
-					mobile.get('r'),
-					mobile.get('phi')
-				)
-			);
-		});
+		this.central_body = new Central_body(collidable, mass, radius, angular_m);
+		this.mobile_list = [];
 	}
 
 
@@ -65,9 +59,14 @@ export abstract class Simulation_trajectory extends Simulation {
 	public set_G(G: number) { this.G = G; }
 
 
-	//---------------------------methods-------------------------
-	//                      redefined methods
+	//---------------------- Methods -----------------------
 
-	//                         new methods
+
+	/**
+	 * Add a new mobile object to the simulation
+	 * @param mobile new mobile
+	 */
+	public add_mobile(mobile) { this.mobile_list.push(mobile); }
+
 
 }

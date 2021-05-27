@@ -1,29 +1,32 @@
-/*
-	Class Simulation : abstract class.
-	No inheritance
-*/
+/**
+ * @class Simulation : abstract class.
+ * No inheritance
+ */
 
 export abstract class Simulation {
-	// attributes
+	
+    // attributes
 	readonly id: string;
 
-	//-------------------------constructor-----------------------
+
+	//-------------------- Constructors --------------------
+
 
 	public constructor(id: string) {
 		this.id = id;
 	}
 
-	//----------------------getters & setters--------------------
 
-	/**
-	 	* get_id
-	 	* getter for id attribute
-	 */
+	//--------------------- Accessors ----------------------
+
+
 	public get_id() {
 		return this.id;
 	}
 	
-	//---------------------------methods-------------------------
+
+	//---------------------- Methods -----------------------
+
 	
     /**
      * Fourth order Runge-Kutta method for first order derivatives.
@@ -46,6 +49,7 @@ export abstract class Simulation {
 
         return [x_1, y_1];
     }
+
 
     /** 
      * Fourth order Runge-Kutta method for second order derivatives.
@@ -70,6 +74,7 @@ export abstract class Simulation {
 
         return [x_1, y_1, dy_1];
     }
+
 
     /** 
      * Simple Simpson's rule implementation.

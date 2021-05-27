@@ -30,16 +30,10 @@ export class Schwarzchild extends Simulation_trajectory {
     //-------------------- Constructor- --------------------
 
 
-    constructor(
-		id: string,
-		central_body: Map<'mass' | 'radius' | 'angular_m', number>,
-		mobile_list: Map<'mass' | 'r' | 'phi', number>[])
+    constructor(id: string, collidable: boolean, mass: number, radius: number, angular_m: number)
 	{
-    	super(id, central_body, mobile_list);
+    	super(id, collidable, mass, radius, angular_m);
 	}
-
-
-    //--------------------- Accessors ----------------------
 
 
     //---------------------- Methods -----------------------
@@ -294,3 +288,20 @@ export class Schwarzchild extends Simulation_trajectory {
 }
 
 
+/*
+var central_mass = new Map<'mass' | 'radius' | 'angular_m', number>();
+
+central_mass.set('mass', 1000);
+central_mass.set('radius', 100);
+central_mass.set('angular_m', 10);
+
+var mobile_1 = new Map<'mass' | 'r' | 'phi', number>();
+var mobile_list = [mobile_1];
+
+mobile_1.set('mass', 0);
+mobile_1.set('r', 0);
+mobile_1.set('phi', 0);
+
+
+var simu = new Schwarzchild('1', central_mass, mobile_list);
+*/
