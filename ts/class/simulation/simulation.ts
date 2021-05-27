@@ -38,7 +38,7 @@ export abstract class Simulation {
      * 
      * @returns [x_1, y_1], value of the next point of computation
      */
-    public runge_kutta_equation_order1(step: number, x_0: number, y_0: number, funct: (x: number, y: number) => number): number[] {
+    protected runge_kutta_equation_order1(step: number, x_0: number, y_0: number, funct: (x: number, y: number) => number): number[] {
         let k_1 = funct(x_0, y_0);
         let k_2 = funct(x_0 + step/2, y_0 + step/2 * k_1);
         let k_3 = funct(x_0 + step/2, y_0 + step/2 * k_2);
@@ -62,7 +62,7 @@ export abstract class Simulation {
      * 
      * @returns [x_1, y_1, yp_1], value of the next point of computation
      */
-    public runge_kutta_equation_order2(step: number, x_0: number, y_0: number, dy_0: number, funct: (x: number, y: number, dy: number) => number): number[] {
+    protected runge_kutta_equation_order2(step: number, x_0: number, y_0: number, dy_0: number, funct: (x: number, y: number, dy: number) => number): number[] {
 		let k_1 = funct(x_0, y_0, dy_0);
         let k_2 = funct(x_0 + step/2, y_0 + step/2 * dy_0, dy_0 + step/2 * k_1);
         let k_3 = funct(x_0 + step/2, y_0 + step/2 * dy_0 + step**2/4 * k_1, dy_0 + step/2 * k_2);
@@ -86,7 +86,7 @@ export abstract class Simulation {
      * 
      * @returns value of the integral.
      */
-    public simpson(funct: (x: number) => number, infimum: number, supremum: number, n: number)
+    protected simpson(funct: (x: number) => number, infimum: number, supremum: number, n: number)
 
     {
         let step = (supremum - infimum) / n;
