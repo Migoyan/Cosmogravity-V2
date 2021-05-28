@@ -60,3 +60,4 @@
 //		
 //	}
 //}
+//# sourceMappingURL=static_graph.js.map
