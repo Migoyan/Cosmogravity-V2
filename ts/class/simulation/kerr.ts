@@ -31,9 +31,6 @@ export class Kerr extends Simulation_trajectory {
 	}
 
 
-    //--------------------- Accessors ----------------------
-
-
 	//---------------------- Methods -----------------------
 
 

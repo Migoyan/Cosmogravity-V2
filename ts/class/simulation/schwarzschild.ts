@@ -11,14 +11,20 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * 
  * Methods:
  * @method ESM_MP_integration_constants
+ * @method ESM_MP_potential_A
+ * @method ESM_MP_potential_DO
  * @method ESM_MP_trajectory_A
  * @method ESM_MP_trajectory_DO
  * @method ESM_PH_integration_constants
+ * @method ESM_PH_potential_A
+ * @method ESM_PH_potential_DO
  * @method ESM_PH_trajectory_A
  * @method ESM_PH_trajectory_DO
  * @method ISM_alpha_r
  * @method ISM_beta_r
  * @method ISM_MP_integration_constants
+ * @method ISM_MP_potential_A
+ * @method ISM_PH_potential_A
  * @method ISM_MP_trajectory_A
  * @method ISM_PH_integration_constants
  * @method ISM_PH_trajectory_A
@@ -77,7 +83,39 @@ export class Schwarzchild extends Simulation_trajectory {
     /**
      * External Schwarzschild Metric for a Massive Particle (ESM_MP)
      * 
-     * Second derivative d²r/dtau² for an astronaut (A).
+     * Potential for an astronaut (A) divided by c²
+     * @param R_s schwarzschild radius, attribute of @class Central_body
+     * @param r radial coordinate
+     * @param L_e integration constant
+     * @returns potential
+     */
+    public ESM_MP_potential_A(R_s: number, r: number, L_e: number)
+    {
+        return (1 - R_s / r) * (1 + (L_e / r)**2);
+    }
+
+
+    /**
+     * External Schwarzschild Metric for a Massive Particle (ESM_MP)
+     * 
+     * Potential for a distant observer (DO) divided by c²
+     * @param R_s schwarzschild radius, attribute of @class Central_body
+     * @param r radial coordinate
+     * @param E_e integration constant
+     * @param L_e integration constant
+     * @returns potential
+     */
+    public ESM_MP_potential_DO(R_s: number, r: number, E_e: number, L_e: number)
+    {
+        let V_a = (1 - R_s / r) * (1 + (L_e / r)**2);
+        return E_e**2 - (c**2 - V_a / E_e**2) * (1 - R_s / r)**2 / c**2;
+    }
+
+
+    /**
+     * External Schwarzschild Metric for a Massive Particle (ESM_MP)
+     * 
+     * Second derivative d²r/dtau² for an astronaut (A)
      * 
      * This method is to be used with Runge-Kutta.
      * @param R_s schwarzschild radius
@@ -126,6 +164,38 @@ export class Schwarzchild extends Simulation_trajectory {
         let L_e = U_phi_0 * r_0 / c;
         let E_e = Math.sqrt(Math.pow(U_r_0 / c, 2) + (1 - R_s / r_0) * Math.pow(U_phi_0 / c, 2));
         return [L_e, E_e];
+    }
+
+
+    /**
+     * External Schwarzschild Metric for a photon (ESM_PH)
+     * 
+     * Potential for an astronaut (A) divided by c²
+     * @param R_s schwarzschild radius
+     * @param r radial coordinate
+     * @param L_e integration constant
+     * @returns potential
+     */
+    public ESM_PH_potential_A(R_s: number, r: number, L_e: number)
+    {
+        return (1 - R_s / r) * (1 + (L_e / r)**2);
+    }
+
+
+    /**
+     * External Schwarzschild Metric for a photon (ESM_PH)
+     * 
+     * Potential for a distant observer (DO) divided by c²
+     * @param R_s schwarzschild radius
+     * @param r radial coordinate
+     * @param L_e integration constant
+     * @param E_e integration constant
+     * @returns potential
+     */
+    public ESM_PH_potential_DO(R_s: number, r: number, E_e: number, L_e: number)
+    {
+        let V_a = (1 - R_s / r) * (1 + (L_e / r)**2);
+        return E_e**2 - (c**2 - V_a / E_e**2) * (1 - R_s / r)**2 / c**2;
     }
 
 
@@ -226,6 +296,23 @@ export class Schwarzchild extends Simulation_trajectory {
     /**
      * Internal Schwarzschild Metric for a massive particle (ISM_MP)
      * 
+     * Potential for an astronaut (A) divided by c²
+     * @param R_s schwarzschild radius
+     * @param r radial coordinate
+     * @param alpha_r_0 ISM variable alpha(r)
+     * @param L_e integration constant
+     * @param E_i integration constant
+     * @returns potential
+     */
+    public ISM_MP_potential_A(r: number, alpha_r: number, beta_r: number, E_i: number, L_i: number)
+    {
+        return E_i**2 - alpha_r * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2) - 1);
+    }
+
+
+    /**
+     * Internal Schwarzschild Metric for a massive particle (ISM_MP)
+     * 
      * Second derivative d²r/dtau² for an astronaut (A)
      * 
      * This method is to be used with Runge-Kutta.
@@ -261,6 +348,23 @@ export class Schwarzchild extends Simulation_trajectory {
         let L_i = U_phi_0 * r_0 / c;
         let E_i = beta_r_0 / c * Math.sqrt(U_r_0**2 / alpha_r_0 + U_phi_0**2);
         return [L_i, E_i];
+    }
+
+
+    /**
+     * Internal Schwarzschild Metric for a photon (ISM_PH)
+     * 
+     * Potential for an astronaut (A) divided by c²
+     * @param R_s schwarzschild radius
+     * @param r radial coordinate
+     * @param alpha_r_0 ISM variable alpha(r)
+     * @param L_e integration constant
+     * @param E_i integration constant
+     * @returns potential
+     */
+     public ISM_PH_potential_A(r: number, alpha_r: number, beta_r: number, E_i: number, L_i: number)
+    {
+        return E_i**2 - alpha_r * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2));
     }
 
 
