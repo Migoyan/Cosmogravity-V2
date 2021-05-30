@@ -12,9 +12,13 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * Methods:
  * @method KM_delta_r
  * @method KM_MP_integration_constants
+ * @method KM_MP_potential_A
+ * @method KM_MP_potential_DO
  * @method KM_MP_trajectory_A
  * @method KM_MP_trajectory_DO
  * @method KM_PH_integration_constants
+ * @method KM_PH_potential_A
+ * @method KM_PH_potential_DO
  * @method KM_PH_trajectory_A
  * @method KM_PH_trajectory_DO
  */
@@ -89,6 +93,44 @@ export class Kerr extends Simulation_trajectory {
 	/**
 	 * Kerr metric for a massive particle (KM_MP)
 	 * 
+	 * Potential for an astronaut (A) divided by c²
+	 * @param R_s schwarzschild radius
+	 * @param a calculated central mass parameter
+	 * @param r radial coordinate
+	 * @param L integration constant
+	 * @param E integration constant
+	 * @result potential
+	 */
+	public KM_MP_potential_A(R_s: number, a: number, r: number, L: number, E: number)
+	{
+		return 1 - R_s / r - (a**2 * (E**2 - 1) - L**2) / r**2 - R_s * Math.pow(L - a * E, 2) / r**3;
+	}
+
+
+	/**
+	 * Kerr metric for a massive particle (KM_MP)
+	 * 
+	 * Potential for a distant observer (DO) divided by c²
+	 * @param R_s schwarzschild radius
+	 * @param r radial coordinate
+	 * @param a calculated central mass parameter
+	 * @param delta_r kerr metric variable delta(r)
+	 * @param L integration constant
+	 * @param E integration constant
+	 * @result potential
+	 */
+	public KM_MP_potential_DO(R_s: number, a: number, r: number, delta_r: number, L: number, E: number)
+	{
+		let V_a = 1 - R_s / r - (a**2 * (E**2 - 1) - L**2) / r**2 - R_s * Math.pow(L - a * E, 2) / r**3;
+		let X = (c**2 * E**2 - V_a) * delta_r**2;
+		let Y = (r**2 + a**2 + R_s * a**2 / r) * E - R_s * a * L / r;
+		return E**2 - X / (Y**2 * c**2);
+	}
+
+
+	/**
+	 * Kerr metric for a massive particle (KM_MP)
+	 * 
 	 * Second derivative d²r/dtau² for an astronaut (A).
 	 * 
 	 * This method is to be used with Runge-Kutta.
@@ -147,13 +189,51 @@ export class Kerr extends Simulation_trajectory {
 	 * @returns list where list[0]=L and list[1]=E
 	 */
 	public KM_PH_integration_constants(R_s: number, a: number, delta_0: number, r_0: number, U_r_0: number, U_phi_0: number)
-		{
-			let E = Math.sqrt(U_r_0**2 * (r_0 - R_s) * r_0**3 + delta_0**2 * U_phi_0**2) / (c**2 * r_0**2 * delta_0);
-        	let L = 1 / (c * (r_0 - R_s)) * (delta_0 * U_phi_0 - R_s * a * c * E);
-        	return [L, E];
-    	}
+	{
+		let E = Math.sqrt(U_r_0**2 * (r_0 - R_s) * r_0**3 + delta_0**2 * U_phi_0**2) / (c**2 * r_0**2 * delta_0);
+        let L = 1 / (c * (r_0 - R_s)) * (delta_0 * U_phi_0 - R_s * a * c * E);
+        return [L, E];
+    }
 
 
+	/**
+	 * Kerr metric for a massive particle (KM_PH)
+	 * 
+	 * Potential for an astronaut (A) divided by c²
+	 * @param R_s schwarzschild radius
+	 * @param a calculated central mass parameter
+	 * @param r radial coordinate
+	 * @param L integration constant
+	 * @param E integration constant
+	 * @result potential
+	 */
+	public KM_PH_potential_A(R_s: number, a: number, r: number, L: number, E: number)
+	{
+		return -(a**2 * E**2 - L**2) / r**2 - R_s * Math.pow(L - a * E, 2) / r**3;
+	}
+
+
+	/**
+	 * Kerr metric for a massive particle (KM_MP)
+	 * 
+	 * Potential for a distant observer (DO) divided by c²
+	 * @param R_s schwarzschild radius
+	 * @param r radial coordinate
+	 * @param a calculated central mass parameter
+	 * @param delta_r kerr metric variable delta(r)
+	 * @param L integration constant
+	 * @param E integration constant
+	 * @result potential
+	 */
+	public KM_PH_potential_DO(R_s: number, a: number, r: number, delta_r: number, L: number, E: number)
+	{
+		let V_a = -(a**2 * E**2 - L**2) / r**2 - R_s * Math.pow(L - a * E, 2) / r**3;
+		let X = (c**2 * E**2 - V_a) * delta_r**2;
+		let Y = (r**2 + a**2 + R_s * a**2 / r) * E - R_s * a * L / r;
+		return E**2 - X / (Y**2 * c**2);
+	}
+
+	
 	/**
 	 * Kerr metric for a photon (KM_PH)
 	 * 

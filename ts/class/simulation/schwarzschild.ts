@@ -24,9 +24,9 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * @method ISM_beta_r
  * @method ISM_MP_integration_constants
  * @method ISM_MP_potential_A
- * @method ISM_PH_potential_A
  * @method ISM_MP_trajectory_A
  * @method ISM_PH_integration_constants
+ * @method ISM_PH_potential_A
  * @method ISM_PH_trajectory_A
  */
 
@@ -105,7 +105,7 @@ export class Schwarzchild extends Simulation_trajectory {
      * @param L_e integration constant
      * @returns potential
      */
-    public ESM_MP_potential_DO(R_s: number, r: number, E_e: number, L_e: number)
+    public ESM_MP_potential_DO(R_s: number, r: number, L_e: number, E_e: number)
     {
         let V_a = (1 - R_s / r) * (1 + (L_e / r)**2);
         return E_e**2 - (c**2 - V_a / E_e**2) * (1 - R_s / r)**2 / c**2;
@@ -192,7 +192,7 @@ export class Schwarzchild extends Simulation_trajectory {
      * @param E_e integration constant
      * @returns potential
      */
-    public ESM_PH_potential_DO(R_s: number, r: number, E_e: number, L_e: number)
+    public ESM_PH_potential_DO(R_s: number, r: number, L_e: number, E_e: number)
     {
         let V_a = (1 - R_s / r) * (1 + (L_e / r)**2);
         return E_e**2 - (c**2 - V_a / E_e**2) * (1 - R_s / r)**2 / c**2;
@@ -390,22 +390,3 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
 }
-
-
-/*
-var central_mass = new Map<'mass' | 'radius' | 'angular_m', number>();
-
-central_mass.set('mass', 1000);
-central_mass.set('radius', 100);
-central_mass.set('angular_m', 10);
-
-var mobile_1 = new Map<'mass' | 'r' | 'phi', number>();
-var mobile_list = [mobile_1];
-
-mobile_1.set('mass', 0);
-mobile_1.set('r', 0);
-mobile_1.set('phi', 0);
-
-
-var simu = new Schwarzchild('1', central_mass, mobile_list);
-*/
