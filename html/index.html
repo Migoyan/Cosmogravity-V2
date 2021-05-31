@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<html class="nav-no-js">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta name="description" content="Application de calculs et simulations cosmologiques en relativité générale. 
+		Le but étant de simuler l'évolution d'univers ainsi que des trajectoires de particules autour de corps célestes massifs.">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script type="application/ld+json">
+		{
+			"@context": "http://schema.org",
+			"@type": "WebSite",
+			"url": "http://www.lupm.univ-montp2.fr/cosmogravity/",
+			"name": "Cosmogravity - Simulateurs en relativité générale",
+			"author": {
+				"@type": "Person",
+				"name": "Matthieu CARRERE, Massimo CHANSON, Léo SENIQUE"
+			},
+			"description": "Application de calculs et simulations cosmologiques en relativité générale. 
+			Le but étant de simuler l'évolution d'univers ainsi que des trajectoires de particules autour de corps célestes massifs."
+		}
+		</script>
+
+		<script src="./js/Langues/gestion_langues.js"></script>
+		<script src="./js/index.js"></script>
+		<script src="./Lib/jquery-1.12.3.min.js"></script>
+		<!-- Css de la page -->
+		<link rel="stylesheet" href="Css/index.css" />
+
+		<!--
+										MENUS
+		Source: http://www.cssscript.com/multi-level-toggle-responsive-navigation-menu-using-pure-css/
+		-->
+		<link rel="stylesheet" href="Css/Resp-Menu/normalize.min.css">
+		<link rel="stylesheet" href="Css/Resp-Menu/defaults.min.css">
+		<link rel="stylesheet" href="Css/Resp-Menu/nav-core.min.css">
+		<link rel="stylesheet" href="Css/Resp-Menu/nav-layout.min.css">
+		<script src="js/Graphisme/Menu/rem.min.js"></script>
+
+		<!-- chargement de l'icone en fonction du support -->
+		<link rel="apple-touch-icon" sizes="180x180" href="./Images/Icones/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="./Images/Icones/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="./Images/Icones/favicon-16x16.png">
+		<link rel="manifest" href="./Images/Icones/site.webmanifest">
+		<link rel="mask-icon" href="./Images/Icones/safari-pinned-tab.svg" color="#5bbad5">
+		<meta name="apple-mobile-web-app-title" content="Cosmogravity">
+		<meta name="application-name" content="Cosmogravity">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="msapplication-TileImage" content="./Images/Icones/mstile-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+		<title>Cosmogravity - Calculs et simulations cosmologiques</title>
+	</head>
+
+	<body>
+
+		<!-- Script pour Google Analytics -->
+		<script>
+			(function(i, s, o, g, r, a, m) {
+				i['GoogleAnalyticsObject'] = r;
+				i[r] = i[r] || function() {
+					(i[r].q = i[r].q || []).push(arguments)
+				}, i[r].l = 1 * new Date();
+				a = s.createElement(o),
+					m = s.getElementsByTagName(o)[0];
+				a.async = 1;
+				a.src = g;
+				m.parentNode.insertBefore(a, m)
+			})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+			ga('create', 'UA-98631213-3', 'auto');
+			ga('send', 'pageview');
+		</script>
+
+		<div id="nav-ici"></div>
+
+		<!-- Image Titre -->
+		<h1 id="Cosmog">
+			<img src="./Images/Cosmogravity.png"/>  </h1>
+		<div  id="txt_version">  </div>
+
+
+		<div id="Bloc_Texte">
+			<b><p id="txt_composition"></p></b>
+			<div id="univers">
+				<span id="txt_univers"></span>
+			</div>
+			<div id="trajectoire">
+				<span id="txt_trajectoire"></span></b>
+			</div>
+		</div>
+
+		<!-- Slides -->
+		<p id="image_defile">
+			<img id="image0"></img>
+			<img id="image1"></img>
+			<img id="image2"></img>
+			<img id="image3"></img>
+			<img id="image4"></img>
+		</p>
+		<script type="text/javascript">
+			//pour faire defiler les images
+			I = 0;
+			Imax = document.getElementById("image_defile").getElementsByTagName('img').length - 1;
+			suivante();
+		</script>
+
+		<!-- Logos -->
+		<div id="log"><img id="logos" src="./Images/logo.png" /></div>
+
+
+		<!-- Scripts divers -->
+
+		<script src="js/Graphisme/Menu/nav.jquery.min.js"></script>
+		<!-- Initialisation du menu (en fin de page pour que cela ne bloque pas le chargement de la page ainsi l'utilisateur a l'impression que la page charge vite)-->
+		<script>
+			$(function() {
+				$("#nav-ici").load("Menu.html");
+			});
+			texteIndex();
+		</script>
+	</body>
+</html>

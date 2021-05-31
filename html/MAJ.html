@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<html class="nav-no-js">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+		<link rel="stylesheet" href="./Css/Resp-Menu/normalize.min.css">
+		<link rel="stylesheet" href="./Css/Resp-Menu/defaults.min.css">
+		<link rel="stylesheet" href="./Css/Resp-Menu/nav-core.min.css">
+		<link rel="stylesheet" href="./Css/Resp-Menu/nav-layout.min.css">
+		<script src="./js/Graphisme/Menu/rem.min.js"></script>
+		<link rel="stylesheet" href="Css/maj.css" />
+		<script src="./Lib/jquery-1.12.3.min.js"></script>
+
+		<!-- chargement de l'icone en fonction du support -->
+		<link rel="apple-touch-icon" sizes="180x180" href="./Images/Icones/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="./Images/Icones/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="./Images/Icones/favicon-16x16.png">
+		<link rel="manifest" href="./Images/Icones/site.webmanifest">
+		<link rel="mask-icon" href="./Images/Icones/safari-pinned-tab.svg" color="#5bbad5">
+		<meta name="apple-mobile-web-app-title" content="Cosmogravity">
+		<meta name="application-name" content="Cosmogravity">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="msapplication-TileImage" content="./Images/Icones/mstile-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+		<title>MAJ</title>
+	</head>
+
+	<body>
+		<!-- Script Google analytics -->
+		<script>
+			(function(i, s, o, g, r, a, m) {
+				i['GoogleAnalyticsObject'] = r;
+				i[r] = i[r] || function() {
+					(i[r].q = i[r].q || []).push(arguments)
+				}, i[r].l = 1 * new Date();
+				a = s.createElement(o),
+					m = s.getElementsByTagName(o)[0];
+				a.async = 1;
+				a.src = g;
+				m.parentNode.insertBefore(a, m)
+			})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+			ga('create', 'UA-98631213-3', 'auto');
+			ga('send', 'pageview');
+		</script>
+
+		<!-- Menu -->
+
+		<header>
+			<h1>Cosmogravity</h1>
+		</header>
+
+		<div id="nav-ici"></div>
+		<p id="titre">Mises à jour effectuées</p>
+		<div id="corps">
+			<p>
+				<strong>17/05/2019 </strong><br/> 
+				- MàJ de la page Théorie de Trajectoire
+			</p>
+			<p>
+				<strong>10/02/2019 </strong><br/>
+				- suppression du blocage à partir de l'ergosphère pour Kerr
+			</p>
+			<p>
+				<strong>23/01/2019 </strong><br/>
+				- ajout de textes au survol des boutons moins/plus vite et pause/lecture dans trajectoires<br/>
+				- ajout d'une ligne supplémentaire dans le message d'avertissement de trajectoires dans index
+			</p>
+			<p>
+				<strong>11/01/2019 </strong><br/>
+				- l'utilisateur peut désormais faire apparaitre le projectile dans l'ergosphère pour Kerr</p>
+			<p>
+				<strong>19/12/2018 </strong><br/>
+				- suppression du frein auto dans Kerr<br />
+				- débridage du frein manuel
+			</p>
+				<p><strong>13/12/2018 </strong><br/> 
+				- correction pour éviter d'avoir un dtau trop proche de zero</p>
+			<p>
+				<strong>11/12/2018 </strong><br/>
+				- correction d'un bug sur le frein dans l'ergosphère de photon Kerr<br/>
+				- changement de couleurs dans Kerr pour plus de visibilité
+			</p>
+			<p>
+				<strong>10/12/2018 </strong><br/>
+				- ajustement du rebond dans Schwarshild <br/>
+				- modification des couleurs dans la partie trajectoire (Schwarshild et Kerr)<br/>
+				- ajout de l'ergosphere pour kerr<br/>
+				- ajout d'un frein lorsque la vitesse de la particule devient importante dans l'ergosphère
+			</p>
+			<p>
+				<strong>09/12/2018 </strong><br/>
+				- ajout de la condition d'impact en fonction du J dans Kerr (si J différent de 0, rh comme limite et si J=0, r=0 comme limite)<br/>
+				- actualisation en temps réel des calculs E, L, rs,... dans Kerr et Schwarshild<br/>
+				- correction du bouton rebond et récupération (ainsi que des trajectoires) dans valeurs précédentes<br/>
+				- correction du test pour savoir entre autre si le rayon physique est inférieur ou non à celui de l'horizon dans Schwarshild<br/>
+				- suppression du test cos2+sin2=1 dans kerr photon<br/>
+				- ajout d'une condition dans Schwarshild pour empecher le photon de traverser le rayon physique<br/>
+				- simplification et réorganisation de la création des différents blocs (rayons,...) avec changement de couleurs<br/>
+				- suppression de la possibilité d'enregistrer le graphe du potentiel<br/>
+				- changement du message lorsque la particule se pose après les rebonds dans schwarshild / projectile massif<br/>
+				- modification de la méthode pour le calcul du rebond
+			</p>
+			<p>
+				<strong>07/12/2018 </strong><br/>
+				- correctif partiel dans Kerr (particule avec/sans masse) pour le cas r_part=rh=rs <br/>
+				- correctif dans Kerr / photon d'un soucis dans le calcul du rayon <br/>
+				- ajout d'une nouvelle méthode pour le test du r0 et J lors de la saisie
+			</p>
+			<p>
+				<strong>28/11/2018 </strong><br/>
+				- alignement de H0 avec les autres champs dans les parties univers <br/>
+				- correctif d'alignement pour le H0 du graphe dans la partie énergie sombre
+			</p>
+			<p>
+				<strong>25/11/2018 </strong><br/>
+				- correctifs esthétiques dans simulation univers<br/>
+				- correctif esthétique dans la partie théorie univers de la présentation de omega k, le paramètre de courbure<br/>
+				- correctif pour l'exportation des graphes dans univers<br/>
+				- correctif d'un bug dans trajectoires qui faisait disparaitre le titre et les paramètres lorsque l'on switchait entre trajectoire complète/simple<br/>
+				- déblocage de la fonction enregistrer pour les mobiles dans la partie simulation univers
+			</p>
+			<p>
+				<strong>21/09/2018 </strong><br />
+				- réduction du diamètre du projectile dans Trajectoires<br/>
+				- ajout d'un titre et des valeurs des entrées dans le canvas des Trajectoires (visible à l'enregistrement)<br/>
+				- réduction de la taille du panneau mobile<br/>
+				- modification d'une formule dans théorie Univers
+			</p>
+			<p>
+				<strong>15/09/2018 </strong><br/>
+				- canvas dans Univers Lambda ajouté pour la version mobile <br/>
+				- réduction et mise à jour css des champs de saisie pour les pages univers
+			</p>
+			<p>
+				<strong>11/09/2018 </strong><br/>
+				- correction d'un bug cachant une partie du graphe du potentiel sous Chrome et Edge<br/>
+				- correction d'un bug concernant une diode verte dans trajectoires
+			</p>
+			<p>
+				<strong>06/09/2018 </strong><br/>
+				- correction d'un bug de calculs et de messages sur une boucle infinie dans Kerr Trajectoire <br/>
+				- correction d'un bug où la boule du potentiel dépassait de la zone du tracé<br/>
+				- correction d'un bug qui entrainait une plongée de la boule sous le graphe du potentiel<br/>
+				- ajout d'un message pour éviter de faire apparaitre le projectile entre le rayon de Schwarshild et la singularité (entrainait des bugs sur l'affichage)<br/>
+				- modification du texte pour le cas où la particule atteint le rayon physique
+			</p>
+			<p>
+				<strong>04/09/2018 </strong><br/>
+				- correction du calcul de rmax pour certaines conditions<br/>
+				- modification du panneau mobile avec ajout d'images lecture/pause/vitesse ++ /vitesse --<br/>
+				- valeurs grisées lorsque calcul en cours pour éviter des re-calculs en cours incertains<br/>
+				- gestion des touches lors du lancer du calcul a,z,e / q,s,d,f / w,x,c :<br/>
+				- a (trajectoire complète), z (trajectoire simple), e (rebord)<br/>
+				- q (start/stop), s (reset), d (enregistrer), f(valeurs précédentes)<br/>
+				- w (vitesse ralentie), x (pause/lecture), c (vitesse accélérée)<br/>
+				- ajout d'un bouton information détaillant les commandes (invisible pour la version mobile et avant le lancer du calcul)
+			</p>
+			<p>
+				<strong>31/08/2018 </strong><br/>
+				- re-travail sur la méthode de calcul pour la différence entre t2-t1<br/>
+				- ajout d'un message d'avertissement et blocage du calcul si différence entre les puissances de 10 de z supérieure à 13
+			</p>
+			<p>
+				<strong>30/08/2018 </strong><br/>
+				- mise en place d'une nouvelle méthode de calcul dans calculs annexes pour la différence de temps
+			</p>
+			<p>
+				<strong>29/08/2018 </strong><br/>
+				- retour au panneau mobile (gain de place)<br/>
+				- recalibrage des effets de zoom/dézoom lors des changements de taille de fenêtre qui devrait régler le problème des cercles se transformant en ellipses
+			</p>
+			<p>
+				<strong>28/08/2018 </strong><br/>
+				- modifications esthétiques pour les parties théories avec ajout d'une flèche sur le côté droit inférieur de l'écran (retour vers le haut) <br/>
+				- ajout de la différence de distances métriques pour théorie univers <br/>
+				- modification du bouton warning dans index (optimisation)<br/>
+				- modification de la procédure media querries pour trajectoires en ce qui concerne la liste de valeurs à saisir 
+				(liste en colonne pour smartphones vs liste sur ligne pour grand écran)
+			</p>
+			<p>
+				<strong>27/08/2018 </strong><br/>
+				- corrections pour le calcul du temps dans calculs annexes dans lambda cdm et énergie noire</br>
+				- modification de l'esthétique (code css) des parties trajectoires + index + théories + MAJ
+			</p>
+			<p>
+				<strong>25/08/2018 </strong><br/>
+				- corrections apportées pour le calcul des distances métriques dans les modèles lambda cdm (hors monofluides) et énergie noire</br>
+				- corrections pour le calcul du temps dans calculs annexes dans lambda cdm
+			</p>
+			<p>
+				<strong>24/08/2018 </strong><br/>
+				- bouton enregistrer (exporte en .png) fonctionnel et présent sur toutes les pages trajectoires avec message si aucun tracé</br>
+				- correction d'une anomalie dans le calcul annexe pour le temps<br/>
+				- écriture du readme</br>
+				- ajustement dans index au niveau de l'alignement du texte
+			</p>
+			<p>
+				<strong>23/08/2018 </strong><br/>
+				- traduction et mise à jour des images du diaporama dans index </br>
+				- modification de l'emplacement des messages d'avertissement vers index et revisite de leur visionnage</br>
+				- réduction des zones de vide dans trajectoire par la suppression du bouton avertissement et par la suppression de sauts de ligne</br>
+				- changement de couleur de la bille pour le graphe du potentiel</br>
+				- décallage des maj de la plus récente à la moins récente</br>
+				- prototype de bouton "enregistrer" déployé sur la page trajectoire particule massive sur Schwarschild (fonctionnel pour le potentiel, sans fond pour la trajectoire)
+			</p>
+			<p>
+				<strong>22/08/2018 </strong><br /> - correction d'un bug de traduction pour la partie graphe Univers </br>
+				- amélioration des pages pour la compatibilité mobile (calculs annexes, constantes, à propos, MAJ, théories)</br>
+				- correction d'une fuite de mémoire et d'une correction de pas pour le tracé dans la partie monofluides
+			</p>
+			<p>
+				<strong>03/08/2018 </strong><br /> - optimisation pour le référencement </br>
+				- ajout d'une icone pour l'application (disponible sur les onglets de navigateurs, sur smartphones et tablettes iOS et Android en raccourcis,...)</br>
+				- correction d'un bug au niveau de la détection du choix de la langue
+			</p>
+			<p>
+				<strong>01/08/2018 </strong><br /> - ajout dans menu d'un lien vers LUPM </br>
+				- modification dans "A Propos" de la session encadrants</br>
+				- changement de noms de titres (meilleur référencement)</br>
+				- utilisation sur la page index de json-ld pour le référencement
+			</p>
+			<p>
+				<strong>21/07/2018 </strong><br/>
+				- ajout de compatibilité avec Internet Explorer 11 et Mozilla Firefox v.47, 
+				ce dernier aura quelques ratés sur la traduction en anglais du menu
+			</p>
+			<p>
+				<strong>20/07/2018 </strong><br/>
+				- réindentation presque complète du code <br/>
+				- limite ajoutée pour le calcul du dm (si z>1e13 alors on met le calcul z=1e13), plus de chargement infini
+			</p>
+			<p>
+				<strong>18/07/2018 </strong><br/>
+				- corrections de traduction RFC en CMB<br/>
+				- correction de media querries absent dans les calculs annexes (version mobile)
+			</p>
+			<p>
+				<strong>17/07/2018 </strong><br/>
+				- corrections de potentiels et de runge kutta<br/>
+				- ajustement de l'affichage pour "trajectoires"
+			</p>
+			<p>
+				<strong>12/07/2018 </strong><br/>
+				- modification de texte sur la page index<br/>
+				- ajout de la théorie monofluides (français et anglais)<br/>
+				- ajout de la théorie Kerr (français et anglais)
+			</p>
+			<p>
+				<strong>10/07/2018 </strong><br/>
+				- réorganisation des dossiers js <br/>
+				- suppression de fichiers inutiles <br/>
+				- réunion des 4 runge kutta de trajectoires en un seul <br/>
+				- ajout de traduction pour le cas des graphes monofluides omega
+			</p>
+			<p>
+				<strong>08/07/2018 </strong><br/>
+				- modification du bouton avertissement (s'illumine au passage de la souris) et texte ajouté</br>
+				- correction d'un bug dans monofluides tronquant les résultats des températures
+			</p>
+			<p>
+				<strong>07/07/2018 </strong><br/>
+				- modification des noms pour la liste déroulante des modèles monofluides</br>
+				- changement du nom "Standard" en "Constante cosmologique" dans le menu</br>
+				- ajout d'un bouton "attention" dans les pages simulations avertissant l'utilisateur des erreurs potentielles dûes à la version beta</br>
+				- suppression dans photon Schwarshild de l'affichage du temps</br>
+				- correction pour la version mobile de photon Schwarshild d'un problème d'affichage</br>
+				- correction d'un bug dans la méthode de Simpson empêchant l'utilisateur de saisir des valeurs au delà de z>100</br>
+				- ajout des nouvelles traductions et améliorations apportées dans Schwarshild sur Kerr
+			</p>
+			<p>
+				<strong>05/07/2018 </strong><br/>
+				- traductions ajoutées dans trajectoires</br>
+				- suppression des bugs de points dans Trajectoires pour Schwarshild</br>
+				- le bouton start devient stop pendant le calcul et ne permet plus de lancer automatiquement un nouveau calcul (entrainant des erreurs de points)</br>
+				- ajout d'un bouton "valeurs précédentes" qui permet de récupérer des valeurs déjà écrites par l'utilisateur</br>
+				- ajustement d'un bug de boutons pour les boutons trajectoires</br>
+				- mise en place du même procédé que pour les particules massives pour les photons dans Schwarshild (bientôt pour Kerr)
+			</p>
+			<p>
+				<strong>03/07/2018 </strong><br/>
+				- correction d'un bug dans photon pour Schwarshild</br>
+				- ajout d'une animation pour les boutons à activer (trajectoires, rebond) dans schwarshild (particule massive)
+			</p>
+			<p>
+				<strong>02/07/2018 </strong><br/>
+				- changements globaux tests sur la page trajectoire d'une particule massive pour Schwarshild :</br>
+				-> déplacement du graphe du potentiel sous le trace de la trajectoire</br>
+				-> encadré mobile pour les boutons moins, plus et pause/continuer </br>
+				-> remplacement des cases à cocher par des boutons, garantissant la traduction pour la version anglaise</br>
+				-> mise en page modifiée
+			</p>
+			<p>
+				<strong>01/07/2018 </strong><br/>
+				- changement des "lambda" par "énergie sombre" dans les listes déroulantes</br>
+				- correction du bug d'affichage de la diode dans trajectoire</br>
+				- ajout de nouvelles traductions en anglais dans la partie trajectoire</br>
+				- modification des noms des modèles
+			</p>
+			<p>
+				<strong>30/06/2018 </strong><br/>
+				- correction de la méthode de Simpson de degré 2</br>
+				- ajout de la méthode de Simpson adaptive à 6 intervalles pour dm
+			</p>
+			<p>
+				<strong>26/06/2018 </strong><br/>
+				- correction de bugs mineurs pour l'affichage en anglais dans univers
+			</p>
+			<p>
+				<strong>24/06/2018 </strong><br/>
+				- optimisation du code pour la partie langue<br/>
+				- le changement de langue est désormais possible n'importe où<br/>
+				- plus facile à l'avenir de mettre à jour le contenu pour des langues différentes
+			</p>
+			<p>
+				<strong>12/06/2018 </strong><br/>
+				- correction apportée sur un bug dans calculs annexes<br/>
+				- calculs supplémentaires ajoutés dans monofluides
+			</p>
+			<p>
+				<strong>07/06/2018 </strong><br/>
+				- refonte de la méthode rungue kutta dans trajectoires<br/>
+				- ajout de la valeur Jmax dans l'alerte quand J est trop grand
+			</p>
+			<p>
+				<strong>06/06/2018 </strong><br/>
+				- suppression de l'affichage de l'intervalle pour le z dans calculs et ajout d'un message alternatif et pédagogique<br/>
+				- correction d'un bug laissant pas mal de boutons dans la versions anglaise non fonctionnels<br/>
+				- actualisation des valeurs de omega lors de l'utilisation du graphe intéractif pour l'envoi des valeurs vers calculs annexes dans Univers
+			</p>
+			<p>
+				<strong>05/06/2018 </strong><br/>
+				- ajout de la théorie de Kerr<br/>
+				- page Kerr pour les photons ajoutée<br/>
+				- correction d'un bug sur Kerr
+			</p>
+			<p>
+				<strong>04/06/2018 </strong><br/>
+				- correction de la limite minimum pour les z<br/>
+				- correction pour Kerr du calcul du moment cinétique<br/>
+				- ajustement de valeurs pour Trajectoires
+			</p>
+			<p>
+				<strong>03/06/2018 </strong><br/>
+				- correction d'un bug pour De Sitter et d'une modification de calcul pour Courbure dans Monofluides
+			</p>
+			<p>
+				<strong>02/06/2018 </strong><br/>
+				- ajout de messages d'avertissement pour les cas d'erreurs pour monofluides<br/>
+				- correction d'une erreur de conversion pour les H0 dans calculs annexes de monofluides<br/>
+				- ajout des pages html et calculs pour monofluides énergie sombre pour les versions fr et ang<br/>
+				- le calcul monofluides énergie sombre est pour l'instant basé sur l'univers lambda CDM, les w ne sont pas utilisés mais ils sont prêts à l'emploi
+			</p>
+			<p>
+				<strong>01/06/2018 </strong><br/>
+				- Monofluide avec ses calculs annexes dans l'univers lambda CDM est terminé<br/>
+				- ajout des fonctions analytiques pour le calcul annexe et suppression des calculs utilisant Simpson<br/>
+				- ajustement du temps dans De Sitter pour que la courbe soit visible dans le temps négatif
+			</p>
+			<p>
+				<strong>31/05/2018 </strong><br/>
+				- omega k0 corrigé pour la case univers plat lors d'un double clique<br/>
+				- omega k0 dans plusieurs calculs annexes était constamment à 0<br/>
+				- corrections de petits bugs d'affichage sur les pages html FR et EN
+			</p>
+			<p>
+				<strong>30/05/2018 </strong><br/>
+				- amélioration graphique pour l'affichage des omega (complet pour monofluides),...<br/>
+				- remplacement des petits omega pour l'énergie noire par des w<br/>
+				- modifications sur les calculs annexes des pages simulations univers avec et sans énergie noire<br/>
+				- ajout d'unités notamment pour le H0<br/>
+				- ajout de pages html pour les monofluides pour l'énergie noire (non fonctionnelles)<br/>
+				- correction du calcul pour T0 dans monofluides<br/>
+				- actualisation automatique de la présence ou non de big bang / big crunch + temps dans monofluides<br/>
+				- refonte de la partie simpson en analytique pour le tracé + diverses corrections dans monofluides
+			</p>
+			<p>
+				<strong>29/05/2018 </strong><br/>
+				- valeur de E dans kerr corrigée<br/>
+				- correction apportée dans le Simpson adaptif<br/>
+				- corrections pour les alertes dans la partie trajectoires<br/>
+				- changement de titres, correction de syntaxe pour runge-kutta univers<br/>
+				- corrections pour les différents modèles monofluides
+			</p>
+			<p>
+				<strong>28/05/2018 </strong><br/>
+				- corrections dans la partie calcul pour le tracé dans monofluides<br/>
+				- suppression de pages html devenues inutiles<br/>
+				- correction d'un bug qui laissé certains textes en français sur les pages anglaises
+			</p>
+			<p>
+				<strong>27/05/2018 </strong><br/>
+				- simulation pour les monofluides + calculs annexes opérationnels (voir si les tracés et résultats semblent corrects avant mise en page)<br/>
+				- correction pour la version français du titre "home" en "accueil"
+			</p>
+			<p>
+				<strong>26/05/2018 </strong><br/>
+				- bouton tracer de nouveau fonctionnel dans monofluides, fonction de calcul adaptée à monofluides (runge kutta pour le moment)<br/>
+				- calculs annexes monofluides adapté et revue (affichage des différents paramètres)<br/>
+				- correction de nombreux bugs dont un qui empêchait dans certaines conditions l'affichage d'une date
+			</p>
+			<p>
+				<strong>25/05/2018 </strong><br/>
+				- correction d'erreurs dans le calcul de trajectoires pour Kerr et le photon en général<br/>
+				- correction d'un bug concernant le cercle de chargement<br/>
+				- ajout du cercle de chargement dans les pages calcul noir<br/>
+				- ajout du renvoi des omega w0,w1 dans la page calcul noir<br/>
+				- correction d'un bug des w0,w1 qui faisait planter le programme
+			</p>
+			<p>
+				<strong>24/05/2018 </strong><br/>
+				- notations scientifiques pour les valeurs restantes à afficher dans simulation<br/>
+				- correction du bug "enregistrer" qui ne marchait pas pour les pages constantes<br/>
+				- corrections diverses pour monofluides	dont la fonction pour calculer la température<br/>
+				- début de travail pour ordonner les fichiers javascript pour les parties calculs<br/>
+				- suppression de chiffres après la virgule pour l'affichage au dessus du graphe pour les pages simulations<br/>
+				- accessibilité des pages constantes et calculs annexes pour les monofluides (tracé et calculs hors température encore impossible)<br/>
+				- ajout du calcul de la température en fonction de H0 pour Weinberg des monofluides<br/>
+				- ajout d'un bouton	retour pour les monofluides<br/>
+				- la page constante a été corrigé pour fonctionner dans tous les cas
+			</p>
+			<p>
+				<strong>23/05/2018 </strong><br/>
+				- suppression de fonctions inutiles dans la fonction de calcul général<br/>
+				- correction de bugs<br/>
+				- correction du potentiel dans l'univers de Kerr<br/>
+				- messages d'erreur ajoutés dans Schwarzshild<br/>
+				- suppression du temps écoulé, remplacement de theta par phi et potentiel divisé par c² pour le photon<br/>
+				- ajout du calcul de la température pour la page des monofluides avec affichage<br/>
+				- réduction de la précision pour que t0 grand soit calculé avec la méthode de Simpson adaptative
+			</p>
+			<p>
+				<strong>22/05/2018 </strong><br/>
+				- suppression de la page valeur type et création d'une nouvelle page Modèles d'Univers de FL à un seul fluide accessible sur la page simulation<br/>
+				- choix du H0 et liste déroulante<br/>
+				- modification de la banque de données<br/>
+				- ajout des fonctions pour la résolution analytique des différents modèles (non fonctionnelles pour le moment)<br/>
+				- ajout du calcul analytique pour Simpson<br/>
+				- corrections de bugs divers<br/>
+				- actualisation	correcte des omégas lorsque l'on coche univers plat
+			</p>
+			<p>
+				<strong>21/05/2018 </strong><br/>
+				- vitesse radiale remplacée par un angle en degré pour la trajectoire du photon<br/>
+				- actualisation omégas et transfert de univers plat dans la partie simulation vers calculs annexes corrigé
+			</p>
+			<p>
+				<strong>20/05/2018 </strong><br/>
+				- vitesse radiale remplacée par un angle en degré pour la trajectoire du photon<br/>
+				- actualisation omégas et transfert de univers plat dans la partie simulation vers calculs annexes corrigé
+			</p>
+			<p>
+				<strong>16/05/2018 </strong><br/>
+				- continuation du travail de rationnalisation du code<br/>
+				- changement du potentiel pour le graphe de Kerr et factorisation de celui de Schwarzchild<br/>
+				- correction du bug H0 qui ne renvoyait pas la valeur de simulation vers calculs annexes
+			</p>
+			<p>
+				<strong>15/05/2018 </strong><br/>
+				- adaptation de Simpson à l'énergie noire<br/>
+				- suppression des boutons arrondir<br/>
+				- corrections diverses dans le programme<br/>
+				- ajustements pour la partie énergie noire<br/>
+				- modification du bouton enregistrer pour la page valeurs types qui en plus trace dorénavant<br/>
+				- remplacement de la liste de valeurs par défaut par les modèles mono-fluides (liste de omégas)
+			</p>
+			<p>
+				<strong>14/05/2018 </strong><br/>
+				- alerte lorsque le gradient d'accélération est nul<br/>
+				- valeurs de la page valeurs_type accessibles et utilisables depuis simulation univers<br/>
+				- correction partielle de l'actualisation des omegas<br/>
+				- ajout de pages pour la version anglaise du site<br/>
+				- début de rationnalisation du code (suppression de fonctions doublons,...)
+			</p>
+			<p>
+				<strong>13/05/2018 </strong><br/>
+				- chiffres significatifs ajoutés<br/>
+				- suppression des boutons arrondir<br/>
+				- corrections diverses dans le programme
+			</p>
+			<p>
+				<strong>12/05/2018 </strong><br/>
+				- chiffres significatifs ajoutés<br/>
+				- suppression des boutons arrondir<br/>
+				- mise en place de la banque de données json + ajouts de la page valeurs types pour univers avec et sans énergie noire
+			</p>
+			<p>
+				<strong>09/05/2018 </strong><br/>
+				- finitions de Simpson<br/>
+				- ajout de l'univers Kerr
+			</p>
+			<p>
+				<strong>01/05/2018 </strong><br/>
+				- ajout d'une liste de valeurs par défaut pour la simulation de l'univers (fonctionne sous Edge, Firefox, Opera)<br/>
+				- calcul par la méthode de Simpson en cours de refondation
+			</p>
+			<p>
+				<strong>15/03/2018 </strong><br/>
+				- incertitudes affichées mais non modifiables
+			</p>
+			<p>
+				<strong>09/03/2018 </strong><br/>
+				- ajout des alertes pour les rayons négatifs
+			</p>
+			<p>
+				<strong>06/03/2018 </strong><br/>
+				- correction d'un oubli de titre sur une page annexe de calculs<br/>
+				- suppression du choix de l'incertitude pour les pages de calculs annexes<br/>
+				- élaboration d'un planning de travail<br/>
+				- insertion alerte et ligne pointillée pour la trajectoire
+			</p>
+			<p>
+				<strong>02/03/2018 </strong><br/>
+				- indentation du code javascript en \js\Menu pour html5shiv.min, nav.jquery.min et rem.min (gain de place + meilleur lisibilité)<br/>
+				- analyse du compteur de visite non opérationnel dans index.html et vu comme une pub<br/>
+				- correction du problème de 'e' en 'é' pour les menus<br /> - indentation du nav-full.min.css dans Css/Resp-Menu<br/>
+				- ajout des prénoms et noms de la version 2018
+			</p>
+
+		</div>
+
+		<script src="js/Graphisme/Menu/nav.jquery.min.js"></script>
+		<script>
+			$(function() {
+				$("#nav-ici").load("Menu.html");
+			});
+		</script>
+	</body>
+</html>

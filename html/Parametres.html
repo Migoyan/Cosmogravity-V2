@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr" class="nav-no-js">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+  <meta charset="utf-8">
+  <!-- Css de la page -->
+  <link rel="stylesheet" href="Css/Simu-univers.css" />
+  <link rel="stylesheet" href="Css/Params.css" />
+
+  <!-- Script contenant les fonction d'enregistrement, reset de retour -->
+  <script src="./js/Simulation_Univers/Get_para.js"></script>
+  <script src="./js/Langues/gestion_langues.js"></script>
+
+
+  <title>Constantes à déterminer</title>
+</head>
+
+<body>
+  <!-- Script google Analytics -->
+  <script>
+    (function(i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+      a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-98631213-3', 'auto');
+    ga('send', 'pageview');
+  </script>
+
+  <!-- chargement de l'icone en fonction du support -->
+  <link rel="apple-touch-icon" sizes="180x180" href="./Images/Icones/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./Images/Icones/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./Images/Icones/favicon-16x16.png">
+  <link rel="manifest" href="./Images/Icones/site.webmanifest">
+  <link rel="mask-icon" href="./Images/Icones/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="apple-mobile-web-app-title" content="Cosmogravity">
+  <meta name="application-name" content="Cosmogravity">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="./Images/Icones/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Menu -->
+  <header>
+    <h2 id="txt_titre"></h2>
+  </header>
+
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+
+  <!-- Paramètres -->
+  <form id="formu_params" action="">
+    <label for="c">
+		c =
+	</label>
+    <input type="text" id="c" name="c" value="299792458"></input>
+    m.s
+    <sup>-1</sup>
+    <br/>
+    <label for="k">
+		k =
+	</label><input type="text" id="k" name="k" value="1.38064852e-23"></input> m<sup>2</sup>.kg.s<sup>-2</sup>.K<sup>-1</sup>
+    <br/>
+    <label for="h">
+		h =
+	</label><input type="text" id="h" value="6.62607004e-34"></input> m<sup>2</sup>.kg.s<sup>-1</sup>
+    <br/>
+    <label for="G">
+		G =
+	</label><input type="text" id="G" value="6.67385e-11"></input> m<sup>3</sup>.kg<sup>-1</sup>.s<sup>-2</sup>
+    <br/>
+    <br/>
+    <span id="annee"></span>
+    <label id="type" for="type_annee"></label>
+    <select id="type_annee">
+		<option id="txt_Grego" value="Grégorienne"></option>
+		<option id="txt_Sider" value="Sidérale"></option>
+		<option id="txt_Julien" value="Julienne"></option>
+		<option id="txt_Trop" value="Tropique (2000)"></option>
+	</select>
+    <br/>
+    <br/>
+    <span style="display:none">
+        <label id="nbre" for="nbre_chiffres">Precision: </label>
+        <select id="nbre_chiffres">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4" selected>4</option>
+	</select>
+	</span>
+    <br/>
+    <br/>
+    <!-- Boutons -->
+    <div id="boutons_params" style="display:block;width:300px;">
+      <input id="bout_enregistrer" type="button" value="Enregistrer" onclick="enregis();ga('send', 'event', 'button', 'click', 'Paramètres Enregistrer');"></input>
+      <input type="button" value="Reset" onclick="Reset_para()"></input>
+      <input id="bout_retour" type="button" value="Retour" onclick="retour()"></input>
+    </div>
+  </form>
+  <script>
+    texteConstantes();
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="fr" class="nav-no-js">
+
+<head>
+		
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="Css/tuto.css" />
+
+  <!-- Scripts pour le chargement -->
+  <script src="./Lib/jquery-1.12.3.min.js"></script>
+  <script src="./js/Graphisme/Spin.js"></script>
+  <script src="./Lib/Spin/spin-min.js"></script>
+  <script src="./Lib/Spin/spin.js"></script>
+  <script src="./Lib/d3_min.js"></script>
+
+    <script src="js/Langues/gestion_langues.js"></script>
+    <script src="js/tuto/tuto.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+
+
+    <!-- Latex pour HTML -->
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} });
+    </script>
+
+    <!-- MENUS
+Source: http://www.cssscript.com/multi-level-toggle-responsive-navigation-menu-using-pure-css/
+																								-->
+    <link rel="stylesheet" href="Css/Resp-Menu/normalize.min.css">
+    <link rel="stylesheet" href="Css/Resp-Menu/defaults.min.css">
+    <link rel="stylesheet" href="Css/Resp-Menu/nav-core.min.css">
+    <link rel="stylesheet" href="Css/Resp-Menu/nav-layout.min.css">
+    <script src="js/Graphisme/Menu/rem.min.js"></script>
+
+    <!-- Menu si internet explorer 9 -->
+    <!--[if lt IE 9]>
+    <link rel="stylesheet" href="css/ie8-core.min.css">
+    <link rel="stylesheet" href="css/ie8-layout.min.css">
+    <script src="js/Graphisme/Menu/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- chargement de l'icone en fonction du support -->
+  	<link rel="apple-touch-icon" sizes="180x180" href="./Images/Icones/apple-touch-icon.png">
+  	<link rel="icon" type="image/png" sizes="32x32" href="./Images/Icones/favicon-32x32.png">
+  	<link rel="icon" type="image/png" sizes="16x16" href="./Images/Icones/favicon-16x16.png">
+  	<link rel="manifest" href="./Images/Icones/site.webmanifest">
+  	<link rel="mask-icon" href="./Images/Icones/safari-pinned-tab.svg" color="#5bbad5">
+  	<meta name="apple-mobile-web-app-title" content="Cosmogravity">
+  	<meta name="application-name" content="Cosmogravity">
+  	<meta name="msapplication-TileColor" content="#da532c">
+  	<meta name="msapplication-TileImage" content="./Images/Icones/mstile-144x144.png">
+  	<meta name="theme-color" content="#ffffff">
+
+    <title>Théorie pour la simulation de trajectoires</title>
+</head>
+
+<body>
+    <!-- Script Google Analytic -->
+    <script>
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-98631213-3', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+<div id="aPdfer">
+    <!-- Menu -->
+    <header>
+        <h1>Cosmogravity</h1>
+    </header>
+
+<div id="nav-ici"></div>
+
+    <br/>
+    <!-- Boutons/drapeaux -->
+    <div id="haut_de_page">
+
+            <p class="titre">Tutoriel d'utilisation du site.</p>
+ 
+          </div>
+    <div id="corps">
+
+            <!-- Theorie -->
+
+        <div data-html2canvas-ignore="true"><button  id="html2pdf"  type="button" onclick="lance_telechargementpdf()">Télécharger en pdf.</button>
+             <div id="gif" style="position:relative;display: inline-block;margin-left: 13px;"></div>
+		</div> 
+
+
+
+            <div id="schwarzschild" >
+            <p class="titre1">Trajectoire d'un projectile en métrique de Schwarzchild.</p>
+            <hr class="separation_titre">
+            <div id="Sexterne" >
+            <p class="titre2">$\textbf{Théorie}$</p>
+          </div>
+
+
+            <p > On souhaite étudier le mouvement d'une particule (massive ou photon) dans le champ de gravitation extérieur d'une masse centro-symètrique, sans rotation,
+			placée à l'origine de coordonnées spatiales $r, θ,\varphi$ et temporelle $t$.
+			<br/>Le modèle est un espace-temps statique à symétrie sphérique de métrique : $$ds^2=−e^{\lambda(r)}dr^2−r^2(dθ^2+sin^2θdφ^2)+e^{ν(r)} c^2dt^2$$
+			En <strong>relativité générale</strong>, pour une masse $M$ sans rotation, à symétrie sphérique, placée à l'origine des coordonnées, dans un espace-temps vide, la solution des équations d'Einstein est:
+			$$λ+ν=0 ~~~~~~~~e^ν=1−\frac{r_s}{r}~~~~~~~~ où ~~~~ r_s=2\,\frac{GM}{c^2}$$ d'où l'expression de la <strong>métrique de Schwarzschild</strong>:
+			$$ ds^2= -\displaystyle\frac{dr^2}{ 1-\displaystyle\frac{r_s}{r}} - r^2(d\theta^2 + sin^2 \theta d\varphi^2) +\left( 1-\frac{r_s}{r} \right) c^2dt^2 $$
+            </p>
+
+            <p >
+                <strong>$c$</strong> la vitesse de la lumière ($299\,792\,458\,m.s^{-1}$ )$~~~~~~~~$<strong>G</strong> la constante gravitationnelle ($6,6741\,10^{-11}\,m^3 kg^{-1} s^{-2}$).<br/>
+                <strong>$r_s$</strong> est appelé "rayon de Schwarzschild" ou "horizon du trou noir". Il représente la limite de la région d'où lumière et matière ne peuvent s'échapper.
+            </p>
+			<p > Cette solution de Schwarzschild a une importance remarquable puisqu’elle constitue également l’unique solution aux équations d’Einstein à l’extérieur de tout corps à symétrie sphérique de masse M, sans rotation.
+			Cette métrique n’est donc pas limitée à décrire les seuls trous noirs, elle est aussi valable à l’extérieur d’une étoile, d’une planète, ou de tout autre corps à symétrie sphérique sans rotation. <br>
+			Ce résultat est connu sous le nom de théorème de Birkhoff (théorème de Gauss en gravitation newtonienne).
+			</p>
+
+            <p >
+                Les trajectoires d'une particule libre sont les géodésiques de la métrique. Par raison de symétrie <strong>la trajectoire est plane</strong> (on prendra $θ=\displaystyle\frac{\pi}{2}$).
+            </p>
+
+			<p>Gif ci dessous</p>
+			<figure>
+			  <img id="giftraj2" src="giftrajectoire.gif" alt="Gif trajectoire de Schwarzchild" />
+			  <figcaption><a href="Simulation_trajectoire.html">Gif trajectoire de Schwarzchild</a></figcaption>
+			</figure>
+
+
+          <div id="Smassive_externe" >
+            <p class="titre2">I.1.1 $\textit{Particule massive}$</p>
+          </div>
+		  		   <p >
+        Les intégrales premières  trouvées à l'aide du Lagrangien $\mathcal L=\displaystyle{ds\over d\tau}$ s'écrivent:
+      </p>
+      <p  >
+        $$(S^e_{pm}1)~~~~~\displaystyle{dt\over d\tau}(r)={ E_e\over \displaystyle {1- {r_s \over r}}}~~~~~~~~~~~~ et ~~~~~~~~~~~~(S^e_{pm}2)~~~~~{d\varphi\over d\tau}(r) = {c\,L_e\over r^2}$$
+      </p>
+
+
+      <p >
+        Avec deux constantes d'intégration : $E_e$ sans dimension et $L_e$ une longueur. Ces fonctions reportées dans l'expression $ds=c\,d\tau$ entrainent:
+
+      		$$(S^e_{pm}3)~~~~\displaystyle(\frac{dr}{dτ})^2+ V^e_{Spm}=c^2E_e^2 ~~~~ où ~~~~V^e_{Spm}(r)= c^2(1−\frac{r_s}{r}) (1+\frac{L_e^2}{r^2}) $$
+
+        Ces relations vérifient les équations des géodésiques.</p>
+
+		<p >En dérivant par rapport à $\tau$ l'équation $(S^e_{pm}3)$ et pour des trajectoires non circulaires, on déduit l'équation différentielle suivante utilisée pour faire la simulation :
+			$$(S^e_{pm}4)~~~~ \frac{d^2r}{dτ^2}(r)=−\frac{1}{2} \frac{dV^e_{Spm}}{dr}(r)=\frac{c^2}{2r^4}(-r_sr^2+2rL_e^2-3r_sL_e^2)=f^e_{Spm}(r) $$ </p >
+
+		<p >avec les conditions initiales (vérifiant l'équation de la métrique) $\ r=r_0\ ,\ \displaystyle U_r(r_0)=\frac{dr}{d\tau}(r_0)\ $ et
+		$\ \displaystyle U_\varphi(r_0)=r_0\,\frac{d\varphi}{d\tau}(r_0)\ $  ce qui implque :
+
+		$$\displaystyle L_e=\frac {U_\varphi(r_0)r_0}{c}~~~~~et~~~~c^2E_e^2=U_r(r_0)^2+(1−\frac{r_s}{r_0})(1+\frac{U_\varphi (r_0)^2}{c^2})$$
+		<p > <strong>Remarque :</strong> les valeurs de $U_r(r_0)$ et $U_\varphi(r_0)$ ne sont pas limitées par $c$ (elles vérifient l'équation de la métrique)
+		voir <a href="documents/trajectoire/Extrait-Gourgoulhon-relatM2.pdf#page=2"target=_blank>Éric Gourgoulhon - Relativité générale </a>. </br>
+
+
+		L'étude de la fonction $V^e_{Spm}$ permet de déduire qu'il peut exister deux trajectoires circulaires de rayons
+		$$\displaystyle\frac{L_e}{r_s}\left(L_e+\sqrt{L_e^2-3r_s^2}\right)~~(stable)~~~ et~~~ \displaystyle\frac{L_e}{r_s}\left(L_e-\sqrt{L_e^2-3r_s^2}\right)~~ (instable).$$
+
+		L'équation $S^e_{pm}4$ est résolue numériquement par la méthode de Runge-Kutta.
+		</p>
+
+            <p >
+
+			 L'observateur resté loin du trou noir voit son collègue évoluer de plus en plus lentement et à la limite se figer lorsque celui-ci atteint l'horizon $r_s$.
+			 Un voyageur qui tombe dans le trou noir arrive au centre (r=0) en un temps fini tandis que son collègue a l'impression qu'il reste figé sur l'horizon
+			 (et, dans la pratique, disparait à cause du décalage spectral). 
+            </p>
+
+        <div id="Sphoton_externe" >
+            <p class="titre2">I.1.2 $\textit{Photon}$</p>
+          </div>
+         
+        <p >On garde les relations en $t$ et $\varphi$ : 
+
+		$$(S^e_{ph}1)~~~~~\displaystyle{dt\over d\lambda}(r)={ E_e\over \displaystyle {1- {r_s \over r}}}~~~~~~~~~~~~ et ~~~~~~~~~~~~(S^e_{ph}2)~~~~~{d\varphi\over d\lambda}(r) = {c\,L_e\over r^2}$$
+		Ces fonctions reportées dans l'expression $ds=0$ entrainent:
+
+      		$$(S^e_{ph}3)~~~~\displaystyle(\frac{dr}{d\lambda})^2+ V^e_{Sph}=c^2E_e^2 ~~~~ où ~~~~V^e_{Sph}(r)= c^2(1−\frac{r_s}{r})\frac{L_e^2}{r^2} $$
+
+			Ces relations vérifient les équations des géodésiques.
+
+		En dérivant par rapport à $\lambda$ l'équation $(S^e_{ph}3)$ et pour des trajectoires non circulaires, on déduit l'équation différentielle suivante utilisée pour faire la simulation :
+			$$(S^e_{ph}4)~~~~ \frac{d^2r}{d\lambda^2}(r)=−\frac{1}{2} \frac{dV^e_{Sph}}{dr}(r)=\frac{c^2}{2r^4}(2rL_e^2-3r_sL_e^2)=f^e_{Sph}(r) $$ </p >
+
+		<p >avec les conditions initiales (vérifiant $ds=0$) $\ r=r_0\ ,\ \displaystyle U_r(r_0)=\frac{dr}{d\lambda}(r_0)\ $ et
+		$\ \displaystyle U_\varphi(r_0)=r_0\,\frac{d\varphi}{d\lambda}(r_0)\ $  ce qui implque :
+
+		
+		$$\displaystyle L_e=\frac {U_\varphi(r_0)r_0}{c}~~~~~et~~~~c^2E_e^2=U_r(r_0)^2+ (1−\frac{r_s}{r_0})\frac{U_\varphi(r_0)^2}{c^2}$$
+        <p > <strong>Remarque :</strong> les valeurs de $U_r(r_0)$ et $U_\varphi(r_0)$ ne sont pas limitées par $c$ (elles vérifient l'équation de la métrique). </br>
+		L'étude de la fonction $V^e_{Sph}$ permet de déduire qu'il existe une trajectoire circulaire instable de rayon $\displaystyle\frac{3}{2}r_s$. </p>
+		
+		<p >L'équation $S^e_{ph}4$ est résolue numériquement par la méthode de Runge-Kutta. </p>
+       	 
+			<div id="Sinterne" >
+            <p class="titre2">I.2 $\textbf{Métrique intérieure}$</p>
+          </div>	
+		  
+		<p >On souhaite étudier le mouvement d'une particule (soumise uniquement à la gravitation) à l'intérieur d'un astre de masse volumique constante, centro-symètrique, sans rotation. 
+			 La masse est placée à l'origine de coordonnées spatiales $r, θ,\varphi$ et temporelle $t$.</p>
+		<p >	 Le modèle est un espace-temps statique à symétrie sphérique. 
+			 La solution des équations d'Einstein donne la métrique : </p>
+			  $$ds^2= -\alpha(r) dr^2\ -\ r^2(d{\theta}^2+\sin^2\theta\, d{\varphi}^2)\ +\ \beta(r)^2\,c^2dt^2 $$
+			 Où $~~~~~$ $\alpha (r)= 1-\displaystyle\frac{r^2 r_s}{R^3}$ et $\beta (r)=\frac{3}{2}\ \sqrt{\displaystyle 1-\frac{r_s}{ R}}\ -
+             \ \frac{1}{2}\ \sqrt{\displaystyle 1-\frac{r^2 r_s}{R^3}}$ $~~~~~~~~$  $ R$ rayon de l'astre et $r_s=2\,\displaystyle\frac{GM}{c^2}$
+			 <p >
+                <br/>Les trajectoires d'une particule libre sont les géodésiques de la métrique. Par raison de symétrie <strong>la trajectoire est plane</strong> (on prendra $θ=\displaystyle\frac{\pi}{2}$).
+            </p> 
+			<p >Pour l'établissement de cette métrique voir  <a href="documents/trajectoire/Andrillat.pdf"target=_blank>Henri Andrillat - Introduction à l'étude des cosmologies </a> 
+			</p>
+	  	       
+	  <div id="Smassive_interne" >
+            <p class="titre2">I.2.1 $\textit{Particule massive}$</p>
+          </div>
+	  	  
+	 	<p >	 
+		    Les intégrales premières  trouvées à l'aide du Lagrangien $\mathcal L=\displaystyle{ds\over d\tau}$ s'écrivent:
+       
+      
+        $$(S^i_{pm}1) ~~~~~ \beta(r)^2\displaystyle{dt\over d\tau}(r)=E_i ~~~~~~~~~~~~ et ~~~~~~~~~~~~(S^i_{pm}2)~~~~~{d\varphi\over d\tau}(r) = {c\,L_i\over r^2}$$   </p>
+      
+      <p >
+        Avec deux constantes d'intégration : $E_i$ sans dimension et $L_i$ une longueur. Ces fonctions reportées dans l'expression $ds=c\,d\tau$ entrainent:
+
+      	$$ ({dr\over d\tau})^2\,+\,V^i_{Spm}(r) = c^2 E_i^2 ~~~~~ où  ~~~~~~ V^i_{Spm}(r)=c^2 E_i^2 - \ c^2\alpha (r)\,\left [\frac{E_i^2}{\beta (r)^2}-\frac{L_i^2}{r^2}-1\right ]$$
+	
+			
+		 </p>	
+			
+		<p >	 Ces relations vérifient les équations des géodésiques.</p>
+
+		<p >En dérivant par rapport à $\tau$ l'équation $(S^i_{pm}3)$ et pour des trajectoires non circulaires, on déduit l'équation différentielle suivante utilisée pour faire la simulation :
+			$$(S^i_{pm}4)~~~~ \frac{d^2r}{d\tau^2}=-\frac{1}{2}\,\frac{dV^i_{Spm}}{dr} = -\frac{c^2\,r\,r_s}{R^3}\left [\frac{E_i^2}{\beta (r)^2}-\frac{L_i^2}{r^2}-1\right ]+
+            \frac{c^2\,\alpha(r)}{2}\left [\frac{-E_i^2\,r\,r_s}{\beta(r)^3\sqrt{\alpha(r)}R^3}+2\frac{L_i^2}{r^3}\right ]=f^i_{Spm}(r) $$ </p >
+
+		<p >avec les conditions initiales (vérifiant l'équation de la métrique) $\ r=r_0\ ,\ \displaystyle U_r(r_0)=\frac{dr}{d\tau}(r_0)\ $ et
+		$\ \displaystyle U_\varphi(r_0)=r_0\,\frac{d\varphi}{d\tau}(r_0)\ $  ce qui implque :
+
+		$$L_i={r_0\over c}\,U_\varphi(r_0) ~~~~~~~~~~~~~ c^2\,E_i^2= \beta^2(r_0)\left [\frac{U_r^2 (r_0)}{\alpha(r_0)} + U_\varphi^2(r_0) + c^2 \right ]$$
+		<p > <strong>Remarque :</strong> les valeurs de $U_r(r_0)$ et $U_\varphi(r_0)$ ne sont pas limitées par $c$ (elles vérifient l'équation de la métrique). </br>
+		L'équation $S^i_{ph}4$ est résolue numériquement par la méthode de Runge-Kutta. </p>
+	   
+	  
+	    <figure>	
+	  <img src="./Images/masse non baryonique.jpg" border="15" align="center"  />  
+	   	  </figure>
+	  
+	  
+	  
+	  	  
+	  <div id="Sphoton_interne" >
+            <p class="titre2">I.2.2 $\textit{Photon}$</p>
+          </div>
+		  
+	  <p > On garde les relations en $t$ et $\varphi$ : </p>
+
+		$$(S^i_{ph}1)~~~~~\beta(r)^2\displaystyle{dt\over d\lambda}(r)=E_i~~~~~~~~~~~~ et ~~~~~~~~~~~~(S^i_{ph}2)~~~~~{d\varphi\over d\lambda}(r) = {c\,L_i\over r^2}$$
+		<p >Ces fonctions reportées dans l'expression $ds=0$ entrainent:	</p> 
+	 $$ ({dr\over d\lambda})^2\,+\,V^i_{Sph}(r) = c^2 E_i^2 ~~~~ et ~~~~ V^i_{Sph}(r)=c^2 E_i^2 - \ c^2\alpha (r)\,\left [\frac{E_i^2}{\beta (r)^2}-\frac{L_i^2}{r^2}\right ]$$
+	 
+	 <p >En dérivant par rapport à $\lambda$ l'équation $(S^i_{ph}3)$ et pour des trajectoires non circulaires, on déduit l'équation différentielle suivante utilisée pour faire la simulation :
+			$$(S^i_{ph}4)~~~~ \frac{d^2r}{d\lambda^2}=-\frac{1}{2}\,\frac{dV^i_{Sph}}{dr} = -\frac{c^2\,r\,r_s}{R^3}\left [\frac{E_i^2}{\beta (r)^2}-\frac{L_i^2}{r^2}\right ]+
+			\frac{c^2\,\alpha(r)}{2}\left [\frac{-E_i^2\,r\,r_s}{\beta(r)^3\sqrt{\alpha(r)}R^3}+2\frac{L_i^2}{r^3}\right ]=f^i_{Sph}(r) $$ 
+	</p >
+	<p >avec les conditions initiales (vérifiant $ds=0$) $\ r=r_0\ ,\ \displaystyle U_r(r_0)=\frac{dr}{d\lambda}(r_0)\ $ et
+		$\ \displaystyle U_\varphi(r_0)=r_0\,\frac{d\varphi}{d\lambda}(r_0)\ $  ce qui implque :
+		
+	 $$L_i={r_0\over c}\,U_\varphi(r_0) ~~~~~~~~~~~~~ c^2\,E_i^2= \beta^2(r_0)\left [\frac{U_r^2 (r_0)}{\alpha(r_0)} + U_\varphi^2(r_0)  \right ]$$
+	 <p > <strong>Remarque :</strong> les valeurs de $U_r(r_0)$ et $U_\varphi(r_0)$ ne sont pas limitées par $c$ (elles vérifient l'équation de la métrique). </br>
+	 <p >L'équation $S^i_{ph}4$ est résolue numériquement par la méthode de Runge-Kutta. </p>
+	 </div>
+	  <br/>	 
+	  
+	  
+
+	 
+	 
+      <div id="kerr">
+      <p class="titre1">II - Métrique de Kerr</p>
+      <hr class="separation_titre">
+      <div id="Ktheorie" >
+      <p class="titre2">II.1 $\textbf{Théorie générale}$</p>
+      </div>
+      
+     <p > On souhaite étudier le mouvement d'une particule (massive ou photon) dans le champ de gravitation d'une masse centro-symètrique, en rotation,
+        placée à l'origine des coordonnées . <br/>
+		En <strong>relativité générale</strong>, pour une masse $M$ en rotation, à symétrie sphérique, placée à l'origine des coordonnées de Boyer-Lindquist $r, θ,\varphi ,t$, dans un espace-temps vide,
+		la solution des équations d'Einstein est la <strong>métrique de Kerr</strong>:
+       </p>
+      <p  >
+        $$ds^2={-\rho^2\over\Delta}dr^2-\rho^2 d\theta^2-(r^2+a^2+{r_s\,r\,a^2\over\rho^2}\,\sin^2\theta)\sin^2\theta\,d{\varphi}^2
+        +{2\,r_s\,r\,a\over\rho^2}\,\sin^2\theta\,c\,dt\,d\varphi+(1-\displaystyle {r_s\,r\over \rho^2})\,c^2dt^2 $$
+      </p>
+       $$ où~~~~~~\rho^2(r)=r^2+a^2\cos^2\theta \ \ , \ \ \ \ \Delta(r)=r^2-r_s\,r+a^2 \ \ ,~\ \ \ a=\displaystyle{J\over c\,M} ~~~~~  (J\ moment\  angulaire)$$
+              
+
+        <p >
+          Au contraire de la métrique de Schwarzschild, il n’existe pas d’équivalent du théorème de Birkhoff en métrique de Kerr. Cette géométrie ne décrit donc que les trous noirs en rotation, et non pas l’espace temps
+		  extérieur à d’autres objets telles que des étoiles ou des planètes en rotation.
+
+         <br/>Les trajectoires d'une particule libre sont les géodésiques de la métrique. <strong>On étudiera uniquement les trajectoires planes</strong> (on prendra $θ=\displaystyle\frac{\pi}{2}$).
+
+			<br> L'<strong>horizon des évènements</strong> correspond  au changement de signe de $g_{rr}$ , c'est à dire aux solutions de l'équation $\Delta=0$ .
+			<br> Si $\displaystyle a<{r_s\over 2}$ on obtient deux valeurs :
+			$R_{H+}=\displaystyle\frac{r_s+\sqrt{r_s^2-4a^2}}{2}$ et $R_{H-}=\displaystyle\frac{r_s-\sqrt{r_s^2-4a^2}}{2}$ avec $\Delta(r)=(r-R_{H+})(r-R_{H-})$ .
+			 
+			<br> Le domaine compris entre $r_s$ et $R_{H+}$ est appelée <strong>ergorégion</strong> (dans la métrique de Schwarzschild il n'y a pas d'ergorégion $a=0$ et   $R_{H+}=r_s$) voir
+			 <a href="documents/trajectoire/Gourgoulhon-relatM2.pdf#page=133"target=_blank>Éric Gourgoulhon - Relativité générale </a>.
+            </p>
+		
+
+      <div id="Kmassive" >
+      <p class="titre2">II.2 $\textit{Particule massive}$</p>
+      </div>
+      <p >
+        Les intégrales premières  trouvées à l'aide du Lagrangien $\mathcal L=\displaystyle{ds\over d\tau}$ s'écrivent:
+      </p>
+      <p  >
+        $$(K_{pm}1)~~~~~\displaystyle{dt\over d\tau}(r)={1\over\Delta(r)}\,\left[\,(r^2+a^2+{r_s\over r}\,a^2)\,E-{r_s\,a\over r}\,L\,\right]~~~~~~~~~~ et~~~~~~~~~~
+        (K_{pm}2)~~~~~\displaystyle{d\varphi\over d\tau}(r) = {c\over\Delta(r)}\,\left[\,{r_s\,a\over r}\,E+(1-{r_s\over r})\,L\,\right]$$
+      </p>
+      <p >
+        Avec deux constantes d'intégration : $E$ sans dimension et $L$ une longueur.
+      </p>
+      <p >
+        Ces fonctions reportées dans l'expression $ds=c\,d\tau$ entrainent:
+      </p>
+      <p  >
+        $$(K_{pm}3)~~~~\displaystyle({dr\over d\tau})^2+V_{Kpm}=c^2E^2 \ \ \ \ \ où \ \ \ \ \ V_{Kpm}(r)=c^2-{r_s\over r}\,c^2-{c^2\over r^2}\,(\,a^2\,(E^2-1)-L^2\,)-{r_s\,c^2\over r^3}\,(L-a\,E)^2 $$
+      </p>
+      <p >
+        Ces relations vérifient les équations des géodésiques.<br/>
+
+		<p >En dérivant par rapport à $\tau$ l'équation $(K_{pm}3)$ et pour des trajectoires non circulaires, on déduit l'équation différentielle suivante utilisée pour faire la simulation :
+		$$(K_{pm}4)~~~~~\frac{d^2r}{d\tau^2}(r)=-\frac{1}{2}\frac{dV_{Kpm}}{dr}(r)\  =\ -\frac{c^2}{2\,r^4}\,\left[r_s\,r^2+2\,r\,(a^2(E^2-1)-L^2)+3\,r_s\,(L-aE)^2\right]\ =f_{Kpm}(r)$$ </p>
+
+		<p >avec les conditions initiales (vérifiant l'équation de la métrique) $\ r=r_0\ ,\ \Delta_0=\Delta(r_0),\ \displaystyle U_r(r_0)=\frac{dr}{d\tau}(r_0)\ $ et
+		$\ \displaystyle U_\varphi(r_0)=r_0\,\frac{d\varphi}{d\tau}(r_0)\ $  ce qui implique :
+
+		$$c^2\,E^2=\displaystyle{1\over {r_0^2\,\Delta_0}}[\,U_r^2(r_0)\,(r_0-r_s)r_0^3+c^2\,r_0(r_0-r_s)\Delta_0+\Delta_0^2\,U_\varphi ^2(r_0)\,]$$
+		$$L=\displaystyle{1\over{c\,(r_0-r_s)}}\left[\,\Delta_0\,U_\varphi(r_0)-r_s\,a\,c\,E\,\right]$$
+		<p > <strong>Remarque :</strong> les valeurs de $U_r(r_0)$ et $U_\varphi(r_0)$ ne sont pas limitées par $c$ (elles vérifient l'équation de la métrique). </br>
+		L'équation $K_{pm}4$ est résolue numériquement par la méthode de Runge-Kutta.
+		</p>
+
+    <figure>	
+	  <img src="./Images/masse Kerr.jpg"  align="center"  />  
+	   	  </figure>
+
+
+      </div>
+  </div>
+</div>
+
+
+    
+    <script src="js/Graphisme/Menu/nav.jquery.min.js"></script>
+    <script>
+$(function(){
+			$("#nav-ici").load("Menu.html");
+		});
+    testSiBonneLangueTrajectoireTheo();
+    </script>
+
+</body>
+
+</html>

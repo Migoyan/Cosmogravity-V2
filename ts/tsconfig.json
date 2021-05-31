@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es2016",
+		"jsx": "preserve",
+		"strictFunctionTypes": true,
+		"sourceMap": true,
+		"noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true,
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "../js"
+	}
+}
