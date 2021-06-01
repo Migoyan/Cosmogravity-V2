@@ -3,7 +3,7 @@ Same application, new architecture
 See V1 code [here](https://github.com/Migoyan/Cosmogravity_2021)
 
 
-Instruction :
+Instructions :
 	- Compile ts directory into js directory
 	- Retrieve "require" that call module from node_module/@types in your js files. Libraries will be simply loaded by the html page. Browserify will not work if you keep those.
 	- Use browserify on your main.js only to adapt the code to web page and put it in src.
