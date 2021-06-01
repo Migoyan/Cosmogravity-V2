@@ -66,4 +66,3 @@ class Central_body {
     }
 }
 exports.Central_body = Central_body;
-//# sourceMappingURL=central_body.js.map

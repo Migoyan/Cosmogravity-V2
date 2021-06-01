@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const Plotly = require("plotly.js");
 const simulation_universe_1 = require("./class/simulation/simulation_universe");
 // Physics constants
 const c = 2.99792458e8; // Light constant
@@ -32,4 +33,3 @@ try {
 */
 let graphe = document.getElementById("tester");
 Plotly.newPlot(graphe, [trace_1], { margin: { t: 0 } });
-//# sourceMappingURL=main_test.js.map

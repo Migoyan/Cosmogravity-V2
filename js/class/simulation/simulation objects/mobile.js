@@ -31,4 +31,3 @@ class Mobile {
     set_phi(phi) { this.phi = phi; }
 }
 exports.Mobile = Mobile;
-//# sourceMappingURL=mobile.js.map

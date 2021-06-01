@@ -44,4 +44,3 @@ class Simulation_trajectory extends simulation_1.Simulation {
     add_mobile(mobile) { this.mobile_list.push(mobile); }
 }
 exports.Simulation_trajectory = Simulation_trajectory;
-//# sourceMappingURL=simulation_trajectory.js.map

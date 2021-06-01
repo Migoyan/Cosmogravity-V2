@@ -11,4 +11,3 @@ class Animation extends graphic_1.Graphic {
     }
     draw() { }
 }
-//# sourceMappingURL=animation.js.map

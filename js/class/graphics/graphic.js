@@ -25,4 +25,3 @@ class Graphic {
     }
 }
 exports.Graphic = Graphic;
-//# sourceMappingURL=graphic.js.map

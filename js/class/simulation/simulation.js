@@ -89,4 +89,3 @@ class Simulation {
     }
 }
 exports.Simulation = Simulation;
-//# sourceMappingURL=simulation.js.map

@@ -9,4 +9,3 @@ const parsec = 3.0857e16; // Parsec in meters
 const k_parsec = 3.0857e19; // Kiloparsec in meters
 const M_parsec = 3.0857e22; // Megaparsec in meters
 const ly = 9.4607e15; // Light-year in meters
-//# sourceMappingURL=constants.js.map

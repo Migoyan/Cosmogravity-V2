@@ -165,4 +165,3 @@ class Kerr extends simulation_trajectory_1.Simulation_trajectory {
     }
 }
 exports.Kerr = Kerr;
-//# sourceMappingURL=kerr.js.map

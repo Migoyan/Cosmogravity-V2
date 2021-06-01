@@ -248,4 +248,3 @@ mobile_1.set('phi', 0);
 
 var simu = new Schwarzchild('1', central_mass, mobile_list);
 */ 
-//# sourceMappingURL=schwarzschild.js.map

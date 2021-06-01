@@ -13,4 +13,3 @@ class Image {
         this.adress = adress;
     }
 }
-//# sourceMappingURL=image.js.map

@@ -1,0 +1,42 @@
+#Bloc_Textee img{
+  vertical-align:middle;
+}
+
+
+#Bloc_Textee{
+  display: flex;
+  flex-direction: column; /* direction d'affichage verticale */
+  margin: auto;
+  max-width:700px;
+  margin-bottom:20px;
+}
+
+#trajectoire{
+  margin-top: 10px;
+}
+
+#trajectoire,#univers, #txt_composition{
+  text-align: center;
+  font-size:16px;
+}
+
+
+
+.bouton_avertissement{
+  width:60px;
+  height:40px;
+  -moz-transition: opacity 0.9s;
+  -webkit-transition: opacity 0.9s;
+  -o-transition: opacity 0.9s;
+}
+
+.bouton_avertissement:hover{
+  width:60px;
+  height:40px;
+  opacity:0.5;
+  cursor:pointer;
+  -moz-transition: opacity 0.7s;
+  -webkit-transition: opacity 0.7s;
+  -o-transition: opacity 0.7s;
+}
+

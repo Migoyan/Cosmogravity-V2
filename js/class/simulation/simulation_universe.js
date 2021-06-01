@@ -548,4 +548,3 @@ class Simulation_universe extends simulation_1.Simulation {
     }
 }
 exports.Simulation_universe = Simulation_universe;
-//# sourceMappingURL=simulation_universe.js.map
