@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "es2016",
+		"target": "es2018",
 		"jsx": "preserve",
 		"strictFunctionTypes": true,
 		"sourceMap": true,
@@ -9,9 +9,9 @@
         "noImplicitThis": true,
         "strictNullChecks": true,
 		"forceConsistentCasingInFileNames": true,
-		"typeRoots": [
-			"node_modules/@types"
-		],
+		"resolveJsonModule": true,
+		"moduleResolution": "node",
+		"typeRoots": [ "/node_modules/@types/" ],
 		"outDir": "./js"
 	}
 }

@@ -1,3 +1,97 @@
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Simulation = void 0;
+/**
+ * @class Simulation : abstract class.
+ * No inheritance
+ */
+class Simulation {
+    //-------------------- Constructors --------------------
+    constructor(id) {
+        this.id = id;
+    }
+    //--------------------- Accessors ----------------------
+    get_id() {
+        return this.id;
+    }
+    //---------------------- Methods -----------------------
+    /**
+     * Fourth order Runge-Kutta method for first order derivatives.
+     *
+     * @param step The step of computation
+     * @param x_0,
+     * @param y_0 initial value of y
+     * @param funct function or method that define the equation to resolve
+     *
+     * @returns [x_1, y_1], value of the next point of computation
+     */
+    runge_kutta_equation_order1(Simu, step, x_0, y_0, funct) {
+        let k_1 = funct(Simu, x_0, y_0);
+        let k_2 = funct(Simu, x_0 + step / 2, y_0 + step / 2 * k_1);
+        let k_3 = funct(Simu, x_0 + step / 2, y_0 + step / 2 * k_2);
+        let k_4 = funct(Simu, x_0 + step, y_0 + step * k_3);
+        let x_1 = x_0 + step;
+        let y_1 = y_0 + step * ((1 / 6) * k_1 + (1 / 3) * k_2 + (1 / 3) * k_3 + (1 / 6) * k_4);
+        return [x_1, y_1];
+    }
+    /**
+     * Fourth order Runge-Kutta method for second order derivatives.
+     *
+     * @param step The step of computation
+     * @param x_0,
+     * @param y_0 initial value of y
+     * @param dy_0 initial value of the derivative of y
+     * @param funct function or method that define the equation to resolve
+     *
+     * @returns [x_1, y_1, yp_1], value of the next point of computation
+     */
+    runge_kutta_equation_order2(Simu, step, x_0, y_0, dy_0, funct) {
+        let k_1 = funct(Simu, x_0, y_0, dy_0);
+        let k_2 = funct(Simu, x_0 + step / 2, y_0 + step / 2 * dy_0, dy_0 + step / 2 * k_1);
+        let k_3 = funct(Simu, x_0 + step / 2, y_0 + step / 2 * dy_0 + step ** 2 / 4 * k_1, dy_0 + step / 2 * k_2);
+        let k_4 = funct(Simu, x_0 + step, y_0 + step * dy_0 + step ** 2 / 2 * k_2, dy_0 + step * k_3);
+        let x_1 = x_0 + step;
+        let y_1 = y_0 + step * dy_0 + step ** 2 / 6 * (k_1 + k_2 + k_3);
+        let dy_1 = dy_0 + step / 6 * (k_1 + 2 * k_2 + 2 * k_3 + k_4);
+        return [x_1, y_1, dy_1];
+    }
+    /**
+     * Simple Simpson's rule implementation.
+     *
+     * @param funct function to integrate
+     * @param infimum
+     * @param supremum
+     * @param n is the number of computation points.
+     *
+     * @returns value of the integral.
+     */
+    simpson(Simu, funct, infimum, supremum, n) {
+        let step = (supremum - infimum) / n;
+        let x = [];
+        let y = [];
+        for (let i = 0; i < n; i++) {
+            x[i] = infimum + i * step;
+            y[i] = funct(Simu, x[i]);
+        }
+        let res = 0;
+        for (let i = 0; i < n; i++) {
+            if (i == 0 || i == n) {
+                res += y[i];
+            }
+            else if (i % 2 != 0) {
+                res += 4 * y[i];
+            }
+            else {
+                res += 2 * y[i];
+            }
+        }
+        return res * step / 3;
+    }
+}
+exports.Simulation = Simulation;
+
+},{}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Simulation_universe = void 0;
@@ -548,4 +642,41 @@ class Simulation_universe extends simulation_1.Simulation {
     }
 }
 exports.Simulation_universe = Simulation_universe;
-//# sourceMappingURL=simulation_universe.js.map
+
+},{"./simulation":1}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const simulation_universe_1 = require("./class/simulation/simulation_universe");
+// Physics constants
+const c = 2.99792458e8; // Light constant
+const k = 1.38064852e-23; // Boltzmann constant
+const h = 6.62607004e-34; // Planck constant
+const G = 6.67430e-11; // Newton constant : Système international 2018
+// Distances
+const AU = 1.495978707e11; // Astronomical unit in meters
+const parsec = 3.0857e16; // Parsec in meters
+const k_parsec = 3.0857e19; // Kiloparsec in meters
+const M_parsec = 3.0857e22; // Megaparsec in meters
+const ly = 9.4607e15; // Light-year in meters
+let universe = new simulation_universe_1.Simulation_universe("universe", 2.7255, 67.74, 3.0890e-1, true, true, false);
+let age_universe = universe.universe_age() / (3600 * 24 * 365.2425);
+let result_a_tau = universe.compute_a_tau(0.001);
+let trace_1 = {
+    x: result_a_tau.x,
+    y: result_a_tau.y,
+    mode: 'lines'
+};
+/*
+let durations: number;
+try {
+    durations = universe.duration(0, 1000)/(3600*24*365.2425);
+    console.log(durations);
+    console.log(age_universe - durations);
+} catch (error) {
+    console.log(error);
+}
+*/
+let graphe = document.getElementById("tester");
+Plotly.newPlot(graphe, [trace_1], { margin: { t: 0 } });
+
+},{"./class/simulation/simulation_universe":2}]},{},[3]);

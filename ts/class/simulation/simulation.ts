@@ -2,10 +2,6 @@
  * @class Simulation : abstract class.
  * No inheritance
  */
-
-import { Simulation_trajectory } from "./simulation_trajectory";
-import { Simulation_universe } from "./simulation_universe";
-
 export abstract class Simulation {
 	
     // attributes
@@ -100,7 +96,7 @@ export abstract class Simulation {
 
         for (let i=0; i<n; i++)
         {  
-            x[i] = infimum + i * h;
+            x[i] = infimum + i * step;
             y[i] = funct(Simu, x[i]);
         }
         let res = 0;

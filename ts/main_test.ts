@@ -1,3 +1,4 @@
+import * as Plotly from "plotly.js";
 import { Simulation_universe } from "./class/simulation/simulation_universe";
 // Physics constants
 const c: number = 2.99792458e8;        // Light constant
@@ -13,12 +14,23 @@ const k_parsec: number = 3.0857e19;     // Kiloparsec in meters
 const M_parsec: number = 3.0857e22;     // Megaparsec in meters
 const ly: number = 9.4607e15;           // Light-year in meters
 
-let our_universe = new Simulation_universe("our_universe", 2.7255, 67.74, 3.0890e-1, true, true, false);
-let result_a_tau = our_universe.compute_a_tau(0.001);
+let universe = new Simulation_universe("universe", 2.7255, 67.74, 3.0890e-1, true, true, false);
+let age_universe = universe.universe_age()/(3600*24*365.2425);
+let result_a_tau = universe.compute_a_tau(0.001);
 let trace_1 = {
 	x: result_a_tau.x,
 	y: result_a_tau.y,
 	mode: 'lines'
 };
-
-console.log(trace_1.y);
+/*
+let durations: number;
+try {
+	durations = universe.duration(0, 1000)/(3600*24*365.2425);
+	console.log(durations);
+	console.log(age_universe - durations);
+} catch (error) {
+	console.log(error);
+}
+*/
+let graphe: any = document.getElementById("tester");
+Plotly.newPlot(graphe, [trace_1], {margin: { t: 0 } });

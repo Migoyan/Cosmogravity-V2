@@ -1,3 +1,97 @@
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Simulation = void 0;
+/**
+ * @class Simulation : abstract class.
+ * No inheritance
+ */
+class Simulation {
+    //-------------------- Constructors --------------------
+    constructor(id) {
+        this.id = id;
+    }
+    //--------------------- Accessors ----------------------
+    get_id() {
+        return this.id;
+    }
+    //---------------------- Methods -----------------------
+    /**
+     * Fourth order Runge-Kutta method for first order derivatives.
+     *
+     * @param step The step of computation
+     * @param x_0,
+     * @param y_0 initial value of y
+     * @param funct function or method that define the equation to resolve
+     *
+     * @returns [x_1, y_1], value of the next point of computation
+     */
+    runge_kutta_equation_order1(Simu, step, x_0, y_0, funct) {
+        let k_1 = funct(Simu, x_0, y_0);
+        let k_2 = funct(Simu, x_0 + step / 2, y_0 + step / 2 * k_1);
+        let k_3 = funct(Simu, x_0 + step / 2, y_0 + step / 2 * k_2);
+        let k_4 = funct(Simu, x_0 + step, y_0 + step * k_3);
+        let x_1 = x_0 + step;
+        let y_1 = y_0 + step * ((1 / 6) * k_1 + (1 / 3) * k_2 + (1 / 3) * k_3 + (1 / 6) * k_4);
+        return [x_1, y_1];
+    }
+    /**
+     * Fourth order Runge-Kutta method for second order derivatives.
+     *
+     * @param step The step of computation
+     * @param x_0,
+     * @param y_0 initial value of y
+     * @param dy_0 initial value of the derivative of y
+     * @param funct function or method that define the equation to resolve
+     *
+     * @returns [x_1, y_1, yp_1], value of the next point of computation
+     */
+    runge_kutta_equation_order2(Simu, step, x_0, y_0, dy_0, funct) {
+        let k_1 = funct(Simu, x_0, y_0, dy_0);
+        let k_2 = funct(Simu, x_0 + step / 2, y_0 + step / 2 * dy_0, dy_0 + step / 2 * k_1);
+        let k_3 = funct(Simu, x_0 + step / 2, y_0 + step / 2 * dy_0 + step ** 2 / 4 * k_1, dy_0 + step / 2 * k_2);
+        let k_4 = funct(Simu, x_0 + step, y_0 + step * dy_0 + step ** 2 / 2 * k_2, dy_0 + step * k_3);
+        let x_1 = x_0 + step;
+        let y_1 = y_0 + step * dy_0 + step ** 2 / 6 * (k_1 + k_2 + k_3);
+        let dy_1 = dy_0 + step / 6 * (k_1 + 2 * k_2 + 2 * k_3 + k_4);
+        return [x_1, y_1, dy_1];
+    }
+    /**
+     * Simple Simpson's rule implementation.
+     *
+     * @param funct function to integrate
+     * @param infimum
+     * @param supremum
+     * @param n is the number of computation points.
+     *
+     * @returns value of the integral.
+     */
+    simpson(Simu, funct, infimum, supremum, n) {
+        let step = (supremum - infimum) / n;
+        let x = [];
+        let y = [];
+        for (let i = 0; i < n; i++) {
+            x[i] = infimum + i * step;
+            y[i] = funct(Simu, x[i]);
+        }
+        let res = 0;
+        for (let i = 0; i < n; i++) {
+            if (i == 0 || i == n) {
+                res += y[i];
+            }
+            else if (i % 2 != 0) {
+                res += 4 * y[i];
+            }
+            else {
+                res += 2 * y[i];
+            }
+        }
+        return res * step / 3;
+    }
+}
+exports.Simulation = Simulation;
+
+},{}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Simulation_universe = void 0;
@@ -37,6 +131,7 @@ const ly = 9.4607e15; // Light-year in meters
  * @method Y
  * @method dY
  * @method F
+ * @method get_interval_a
  * @method compute_a_tau
  * @method time
  * @method universe_age
@@ -69,7 +164,7 @@ class Simulation_universe extends simulation_1.Simulation {
             G: G,
         };
         this._temperature = temperature;
-        this._hubble_cst = (hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
+        this._hubble_cst = hubble_cst;
         this._matter_parameter = matter_parameter;
         this._has_cmb = has_cmb;
         this._has_neutrino = has_neutrino;
@@ -88,7 +183,7 @@ class Simulation_universe extends simulation_1.Simulation {
         return this._hubble_cst;
     }
     set hubble_cst(hubble_cst) {
-        this._hubble_cst = (hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
+        this._hubble_cst = hubble_cst;
     }
     // matter_parameter
     get matter_parameter() {
@@ -121,7 +216,7 @@ class Simulation_universe extends simulation_1.Simulation {
     }
     // is_flat
     get is_flat() {
-        return this._is_flat;
+        return this.is_flat;
     }
     set is_flat(is_flat) {
         this._is_flat = is_flat;
@@ -221,7 +316,7 @@ class Simulation_universe extends simulation_1.Simulation {
      *
      * @returns [step: number, x: number[], y:number[], yp: number[]].
      */
-    runge_kutta_universe_2(step, x_0 = 0, y_0 = 1, yp_0 = 1, funct, interval) {
+    runge_kutta_universe_2(step, x_0 = 0, y_0 = 1, yp_0 = 1, funct, interval = [0, 5]) {
         // Init parameter
         let x = [x_0];
         let y = [y_0];
@@ -234,7 +329,7 @@ class Simulation_universe extends simulation_1.Simulation {
             result_runge_kutta = this.runge_kutta_equation_order2(this, step, x[i], y[i], yp[i], funct);
             x.push(result_runge_kutta[0]);
             y.push(result_runge_kutta[1]);
-            yp.push(result_runge_kutta[2]);
+            yp.push(result_runge_kutta[1]);
             i++;
         }
         /*
@@ -246,7 +341,7 @@ class Simulation_universe extends simulation_1.Simulation {
             result_runge_kutta = this.runge_kutta_equation_order2(this, -step, x[0], y[0], yp[0], funct);
             x.unshift(result_runge_kutta[0]);
             y.unshift(result_runge_kutta[1]);
-            yp.unshift(result_runge_kutta[2]);
+            yp.unshift(result_runge_kutta[1]);
             i++;
         }
         return { x: x, y: y, dy: yp };
@@ -262,7 +357,8 @@ class Simulation_universe extends simulation_1.Simulation {
         let rho_r = (4 * sigma * Math.pow(this.temperature, 4)) /
             Math.pow(this.constants.c, 3);
         // Hubble-Lemaître constant in international system units (Système International)
-        let omega_r = (8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(this.hubble_cst, 2));
+        let H0_si = (this.hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
+        let omega_r = (8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(H0_si, 2));
         if (this.has_neutrino) {
             omega_r *= 1.68;
         }
@@ -275,29 +371,10 @@ class Simulation_universe extends simulation_1.Simulation {
      * @returns the curvature density parameter
      */
     calcul_omega_k() {
-        if (this.is_flat) {
-            return 0;
-        }
-        else {
-            return (1 -
-                this.calcul_omega_r() -
-                this.matter_parameter -
-                this.dark_energy.parameter_value);
-        }
-    }
-    check_sum_omegas(modify_matter = true) {
-        let is_param_modified = false;
-        let omega_r = this.calcul_omega_r();
-        let sum = this.matter_parameter + omega_r + this.dark_energy.parameter_value + this.calcul_omega_k();
-        if (this.is_flat && sum !== 1) {
-            if (modify_matter) {
-                this.matter_parameter = 1 - this.dark_energy.parameter_value - omega_r;
-            }
-            else {
-                this.modify_dark_energy(1 - this.matter_parameter - omega_r);
-            }
-        }
-        return is_param_modified;
+        return (1 -
+            this.calcul_omega_r() -
+            this.matter_parameter -
+            this.dark_energy.parameter_value);
     }
     /**
      * Y function \
@@ -335,23 +412,18 @@ class Simulation_universe extends simulation_1.Simulation {
             this.Y(1 / (1 + x)) * this.dark_energy.parameter_value);
     }
     /**
+     *
+     * @returns array [amin, amax]
+     */
+    get_interval_a() {
+        return [];
+    }
+    /**
      * compute_a_tau in point
      * @param step Computation step
      */
-    compute_a_tau(step, interval_a = [0, 5], universe_age) {
-        let age;
-        if (universe_age === undefined) {
-            age = this.universe_age();
-        }
-        else {
-            age = universe_age;
-        }
-        let result = this.runge_kutta_universe_2(step, 0, 1, 1, this.equa_diff_a, interval_a);
-        for (let index = 0; index < result.x.length; index++) {
-            result.x[index] = (result.x[index] / this.hubble_cst + age) / (3600 * 24 * 365.2425);
-        }
-        console.log(this.universe_age() / (3600 * 24 * 365.2425));
-        return result;
+    compute_a_tau(step) {
+        return this.runge_kutta_universe_2(step, 0, 1, 1, this.equa_diff_a);
     }
     /**
      * Compute the time as a function of the cosmologic shift
@@ -381,9 +453,10 @@ class Simulation_universe extends simulation_1.Simulation {
         x = y / (1 - y) which implies dx = dy / (1 - y)². This result with an integral from y = 0 to y = 1 that can be digitally resolved.
         */
         let age;
+        let H0_si = (this.hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
         age =
             this.simpson(this, this.integral_duration_substituated, 0, 1, 100) /
-                this.hubble_cst;
+                H0_si;
         return age;
     }
     /**
@@ -397,7 +470,8 @@ class Simulation_universe extends simulation_1.Simulation {
             throw new Error("Cosmologic shift z cannot be lower than -1 included");
         }
         let duration;
-        duration = this.simpson(this, this.integral_duration, z_2, z_1, 1000) / this.hubble_cst;
+        let H0_si = (this.hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
+        duration = this.simpson(this, this.integral_duration, z_2, z_1, 1000) / H0_si;
         return duration;
     }
     /**
@@ -408,6 +482,7 @@ class Simulation_universe extends simulation_1.Simulation {
     metric_distance(z) {
         let distance;
         let courbure = this.calcul_omega_k();
+        let H0_si = (this.hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
         distance = this.simpson(this, this.integral_distance, 0, z, 100);
         if (courbure < 0) {
             distance =
@@ -419,7 +494,7 @@ class Simulation_universe extends simulation_1.Simulation {
                 Math.sin(Math.sqrt(Math.abs(courbure)) * distance) /
                     Math.sqrt(Math.abs(courbure));
         }
-        distance *= this.constants.c / this.hubble_cst;
+        distance *= this.constants.c / H0_si;
         return distance;
     }
     /**
@@ -544,8 +619,46 @@ class Simulation_universe extends simulation_1.Simulation {
      * Note: t is not used but has to be defined for this method to be accepted in the runge_kutta_equation_order1 method of simulation class
      */
     equa_diff_time(Simu, z, t = 0) {
-        return 1 / (this.hubble_cst * (1 + z) * Math.sqrt(Simu.F(z)));
+        let H0_si = (Simu.hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
+        return 1 / (H0_si * (1 + z) * Math.sqrt(Simu.F(z)));
     }
 }
 exports.Simulation_universe = Simulation_universe;
-//# sourceMappingURL=simulation_universe.js.map
+
+},{"./simulation":1}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const simulation_universe_1 = require("./class/simulation/simulation_universe");
+// Physics constants
+const c = 2.99792458e8; // Light constant
+const k = 1.38064852e-23; // Boltzmann constant
+const h = 6.62607004e-34; // Planck constant
+const G = 6.67430e-11; // Newton constant : Système international 2018
+// Distances
+const AU = 1.495978707e11; // Astronomical unit in meters
+const parsec = 3.0857e16; // Parsec in meters
+const k_parsec = 3.0857e19; // Kiloparsec in meters
+const M_parsec = 3.0857e22; // Megaparsec in meters
+const ly = 9.4607e15; // Light-year in meters
+let our_universe = new simulation_universe_1.Simulation_universe("our_universe", 2.7255, 67.74, 3.0890e-1, true, true, false);
+let result_a_tau = our_universe.compute_a_tau(0.001);
+let trace_1 = {
+    x: result_a_tau.x,
+    y: result_a_tau.y,
+    mode: 'lines'
+};
+let age_universe = our_universe.universe_age() / (3600 * 24 * 365.2425);
+console.log(trace_1.y);
+console.log(age_universe);
+let durations;
+try {
+    durations = our_universe.duration(0, 1000) / (3600 * 24 * 365.2425);
+    console.log(durations);
+    console.log(age_universe - durations);
+}
+catch (error) {
+    console.log(error);
+}
+let graphe = document.getElementById("tester");
+Plotly.newPlot(graphe, [trace_1], { margin: { t: 0 } });
+},{"./class/simulation/simulation_universe":2}]},{},[3]);
