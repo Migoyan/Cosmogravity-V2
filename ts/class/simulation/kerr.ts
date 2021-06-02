@@ -66,7 +66,7 @@ export class Kerr extends Simulation_trajectory {
 	 * 
 	 * @returns delta(r)
 	 */
-	public KM_delta_r(R_hp: number, R_hm: number, r: number): number
+	protected KM_delta_r(R_hp: number, R_hm: number, r: number): number
 	{
 		return (r - R_hp) * (r - R_hm);
 	}
@@ -88,7 +88,7 @@ export class Kerr extends Simulation_trajectory {
 	 * 
 	 * @returns list where list[0]=L and list[1]=E
 	 */
-	public KM_MP_integration_constants(
+	protected KM_MP_integration_constants(
 		R_s: number,
 		a: number,
 		delta_0: number,
@@ -117,7 +117,7 @@ export class Kerr extends Simulation_trajectory {
 	 * 
 	 * @result potential
 	 */
-	public KM_MP_potential_A(
+	protected KM_MP_potential_A(
 		R_s: number,
 		a: number,
 		r: number,
@@ -143,7 +143,7 @@ export class Kerr extends Simulation_trajectory {
 	 * 
 	 * @result potential
 	 */
-	public KM_MP_potential_DO(
+	protected KM_MP_potential_DO(
 		R_s: number,
 		a: number,
 		r: number,
@@ -172,7 +172,7 @@ export class Kerr extends Simulation_trajectory {
 	 * @param L integration constant
 	 * @param E integration constant
 	 */
-	public KM_MP_trajectory_A(
+	protected KM_MP_trajectory_A(
 		R_s: number,
 		r: number,
 		a: number,
@@ -198,7 +198,7 @@ export class Kerr extends Simulation_trajectory {
 	 * @param L integration constant
 	 * @param E integration constant
 	 */
-	public KM_MP_trajectory_DO(
+	protected KM_MP_trajectory_DO(
 		R_s: number,
 		r: number,
 		a: number,
@@ -235,7 +235,7 @@ export class Kerr extends Simulation_trajectory {
 	 * 
 	 * @returns list where list[0]=L and list[1]=E
 	 */
-	public KM_PH_integration_constants(
+	protected KM_PH_integration_constants(
 		R_s: number,
 		a: number,
 		delta_0: number,
@@ -263,7 +263,7 @@ export class Kerr extends Simulation_trajectory {
 	 * 
 	 * @result potential
 	 */
-	public KM_PH_potential_A(
+	protected KM_PH_potential_A(
 		R_s: number,
 		a: number,
 		r: number,
@@ -288,7 +288,7 @@ export class Kerr extends Simulation_trajectory {
 	 * 
 	 * @result potential
 	 */
-	public KM_PH_potential_DO(
+	protected KM_PH_potential_DO(
 		R_s: number,
 		a: number,
 		r: number,
@@ -316,7 +316,7 @@ export class Kerr extends Simulation_trajectory {
 	 * @param L integration constant
 	 * @param E integration constant
 	 */
-	public KM_PH_trajectory_A(
+	protected KM_PH_trajectory_A(
 		R_s: number,
 		r: number,
 		a: number,
@@ -342,7 +342,7 @@ export class Kerr extends Simulation_trajectory {
 	 * @param L integration constant
 	 * @param E integration constant
 	 */
-	public KM_PH_trajectory_DO(
+	protected KM_PH_trajectory_DO(
 		R_s: number,
 		r: number,
 		a: number,

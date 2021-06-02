@@ -13,7 +13,8 @@ import { Mobile } from "./simulation objects/mobile";
  * @param G
  * 
  * Methods:
- * @method add_mobile 
+ * @method add_mobile
+ * @method runge_kutta_trajectory_2
  */
 
 export abstract class Simulation_trajectory extends Simulation {
@@ -74,52 +75,17 @@ export abstract class Simulation_trajectory extends Simulation {
 	public add_mobile(mobile: Mobile): void { this.mobile_list.push(mobile); }
 
 
-	/**
-     * Fourth order Runge-Kutta method for second order derivatives
-	 * for trajectory computation.
-     *
-     * @param step step of computation
-     * @param x_0 x_point where the calcul start
-     * @param y_0 initial value of y at x_0
-     * @param dy_0 initial value of the derivative of y at x_0
-     * @param interval array containing [ymin, ymax]
-     * @param funct function or method that define the equation to resolve,
-	 * your function has to accept 3 numbers and return a number
-     *
-     * @returns [step: number, x: number[], y:number[], yp: number[]].
-     */
-	private runge_kutta_trajectory_2(
-    	step: number,
-    	x_0: number = 0,
-    	y_0: number = 1,
-    	dy_0: number = 1,
-    	funct: (Simu: Simulation_trajectory, x: number, y: number, dy: number) => number,
-    	interval: number[]
-	)
-	{
-		// Init parameter
-    	let x: number[] = [x_0];
-    	let y: number[] = [y_0];
-    	let dy: number[] = [dy_0];
-
-		// Computation loops
-		// Computing with a positive step, i increments the array
-    	let i = 0;
-    	let result_runge_kutta: number[];
-		while (interval[0] <= y[i] && y[i] < interval[1])
-		{
-			result_runge_kutta = this.runge_kutta_equation_order2(
-            	this,
-            	step,
-            	x[i],
-            	y[i],
-            	dy[i],
-            	funct
-			);
-			x.push(result_runge_kutta[0]);
-			y.push(result_runge_kutta[1]);
-			dy.push(result_runge_kutta[2]);
-		}
+	public main_trajectoire(
+		type: "ESM" | "ISM" | "KM",
+		mobile_type: "MP" | "PH",
+		reference_frame: "A" | "DO",
+		step: number,
+		x: number,
+		y: number,
+		dy: number
+	) {
+		
 	}
 
+	
 }

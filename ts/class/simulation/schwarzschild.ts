@@ -16,7 +16,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * @method ESM_MP_trajectory_A
  * @method ESM_MP_trajectory_DO
  * @method ESM_PH_integration_constants
- * @method ESM_PH_p
+ * @method ESM_PH_potential_A
  * @method ESM_PH_potential_DO
  * @method ESM_PH_trajectory_A
  * @method ESM_PH_trajectory_DO
