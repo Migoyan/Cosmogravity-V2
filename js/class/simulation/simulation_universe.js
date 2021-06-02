@@ -1,18 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Simulation_universe = void 0;
-const simulation_1 = require("./simulation");
-// Physics constants
-const c = 2.99792458e8; // Light constant
-const k = 1.38064852e-23; // Boltzmann constant
-const h = 6.62607004e-34; // Planck constant
-const G = 6.67430e-11; // Newton constant : Système international 2018
-// Distances
-const AU = 1.495978707e11; // Astronomical unit in meters
-const parsec = 3.0857e16; // Parsec in meters
-const k_parsec = 3.0857e19; // Kiloparsec in meters
-const M_parsec = 3.0857e22; // Megaparsec in meters
-const ly = 9.4607e15; // Light-year in meters
 /**
  * @class Simulation_universe.
  * inheritance from Simulation class
@@ -53,7 +38,7 @@ const ly = 9.4607e15; // Light-year in meters
  * @method equa_diff_a
  * @method equa_diff_time
  */
-class Simulation_universe extends simulation_1.Simulation {
+class Simulation_universe extends Simulation {
     //-------------------------constructor-----------------------
     constructor(id, temperature = 2.7255, hubble_cst = 67.74, matter_parameter = 3.089e-1, has_cmb = true, has_neutrino = true, is_flat = false) {
         super(id);
@@ -547,4 +532,3 @@ class Simulation_universe extends simulation_1.Simulation {
         return 1 / (this.hubble_cst * (1 + z) * Math.sqrt(Simu.F(z)));
     }
 }
-exports.Simulation_universe = Simulation_universe;

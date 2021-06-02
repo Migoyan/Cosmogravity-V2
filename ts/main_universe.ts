@@ -1,6 +1,6 @@
 // Init page
 
-import Plotly = require("plotly.js");
+import * as Plotly from "./lib/plotly-latest.min.js";
 import { Simulation_universe } from "./class/simulation/simulation_universe";
 
 let universe = new Simulation_universe("universe");

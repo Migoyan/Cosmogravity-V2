@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Schwarzchild = void 0;
-const simulation_trajectory_1 = require("./simulation_trajectory");
+import { Simulation_trajectory } from "./simulation_trajectory";
 /**
  * @class Schwarzschild
  *
@@ -25,7 +22,7 @@ const simulation_trajectory_1 = require("./simulation_trajectory");
  * @method ISM_PH_integration_constants
  * @method ISM_PH_trajectory_A
  */
-class Schwarzchild extends simulation_trajectory_1.Simulation_trajectory {
+export class Schwarzchild extends Simulation_trajectory {
     //-------------------- Constructor- --------------------
     constructor(id, collidable, mass, radius, angular_m) {
         super(id, collidable, mass, radius, angular_m);
@@ -230,7 +227,6 @@ class Schwarzchild extends simulation_trajectory_1.Simulation_trajectory {
             + c ** 2 * alpha_r * .5 * (-(E_i ** 2 * r * R_s) / ((beta_r * radius) ** 3 * alpha_r ** .5) + 2 * L_i ** 2 / r ** 3);
     }
 }
-exports.Schwarzchild = Schwarzchild;
 /*
 var central_mass = new Map<'mass' | 'radius' | 'angular_m', number>();
 

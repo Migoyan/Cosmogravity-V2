@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Plotly = require("plotly.js");
-const simulation_universe_1 = require("./class/simulation/simulation_universe");
+import * as Plotly from "plotly.js";
+import { Simulation_universe } from "./class/simulation/simulation_universe";
 // Physics constants
 const c = 2.99792458e8; // Light constant
 const k = 1.38064852e-23; // Boltzmann constant
@@ -13,7 +11,7 @@ const parsec = 3.0857e16; // Parsec in meters
 const k_parsec = 3.0857e19; // Kiloparsec in meters
 const M_parsec = 3.0857e22; // Megaparsec in meters
 const ly = 9.4607e15; // Light-year in meters
-let universe = new simulation_universe_1.Simulation_universe("universe", 2.7255, 67.74, 3.0890e-1, true, true, false);
+let universe = new Simulation_universe("universe", 2.7255, 67.74, 3.0890e-1, true, true, false);
 let age_universe = universe.universe_age() / (3600 * 24 * 365.2425);
 let result_a_tau = universe.compute_a_tau(0.001);
 let trace_1 = {

@@ -1,9 +1,5 @@
-"use strict";
 // Init page
-Object.defineProperty(exports, "__esModule", { value: true });
-const Plotly = require("plotly.js");
-const simulation_universe_1 = require("./class/simulation/simulation_universe");
-let universe = new simulation_universe_1.Simulation_universe("universe");
+let universe = new Simulation_universe("universe");
 function trace_scale_factor() {
     let result_a_tau = universe.compute_a_tau(0.001);
     let trace_1 = {
