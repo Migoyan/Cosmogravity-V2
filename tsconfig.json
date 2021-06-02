@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es2018",
+		"jsx": "preserve",
+		"strictFunctionTypes": true,
+		"sourceMap": false,
+		"noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": false,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"moduleResolution": "node",
+		"typeRoots": [ "/node_modules/@types/" ],
+		"outDir": "./js"
+	}
+}

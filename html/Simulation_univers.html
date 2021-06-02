@@ -1,62 +1,93 @@
 <!DOCTYPE html>
 <html lang="fr" class="nav-no-js">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width" />
 
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+		<!-- Css de la page -->
+		<link rel="stylesheet" href="../css/Simu-univers.css" />
+		<link rel="stylesheet" href="../css/Simu_avertissement.css">
 
-	<!-- Css de la page -->
-	<link rel="stylesheet" href="Css/Simu-univers.css" />
-	<link rel="stylesheet" href="./Css/Simu_avertissement.css">
+		<!--<script src="./js/avertissement.js"></script>-->
+		<!-- Roue chargement
+		<script src="./js/Graphisme/Spin.js"></script>
+		<script src="./Lib/Spin/spin-min.js"></script>
+		<script src="./Lib/Spin/spin.js"></script>
+		-->
 
-	<script src="./js/avertissement.js"></script>
+		<!-- Graphique avec la bibliothèque Plotly -->
+		<script src="../js/lib/plotly-latest.min.js"></script>
+		
 
-	<!-- Roue de chargement -->
-	<script src="./js/Graphisme/Spin.js"></script>
-	<script src="./Lib/Spin/spin-min.js"></script>
-	<script src="./Lib/Spin/spin.js"></script>
+		<!-- Script de calcul 
+		<script src="../src/constants.js"></script>
+		<script src="../src/main_universe.js"></script>
+		-->
+		<script src="../js/constants.js"></script>
+		<script src="../js/class/simulation/simulation.js"></script>
+		<script src="../js/class/simulation/simulation_universe.js"></script>
+		<script src="../js/main_universe.js"></script>
+		<!-- Script pour Latex en html 
+		<link rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"
+			integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq"
+			crossorigin="anonymous"
+		>
+		
+		-->
+		<!-- The loading of KaTeX is deferred to speed up page rendering 
+		<script defer
+			src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"
+			integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz"
+			crossorigin="anonymous">
+		</script>
+		-->
+		<!-- To automatically render math in text elements, include the auto-render extension: 
+		<script defer
+			src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"
+			integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI"
+			crossorigin="anonymous"
+			onload="renderMathInElement(document.body);">
+		</script>
+		
+		
 
-	<!-- Graphique avec la bibliothèque Plotly -->
-		<script src="Lib/plotly.min.js"></script>
+		<link rel="stylesheet" type="text/css" 
+		href="./katex/katex.min.css">
+
+		<script type="text/javascript" 
+		src="./katex/katex.min.js"></script>
+
+		<script type="text/javascript" 
+		src="./katex/contrib/auto-render.min.js"></script>
+
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+				renderMathInElement(document.body, {
+					// ...options...
+					delimiters:[
+					{left:"$",right:'$',display: false},
+					]
+				});
+			});
+		</script>
 
 
-	<!-- Scripts pour les calculs -->
-	<script src="./js/Simulation_Univers/Get_para.js"></script>
-	<script src="./js/Simulation_Univers/main_calcul.js"></script>
-	<script src="./js/Simulation_Univers/canvas_min.js"></script>
-	<script src="./js/Simulation_Univers/integrale.js"></script>
-	<script src="./js/Simulation_Univers/rungekutta.js"></script>
-	<script src="./js/Simulation_Univers/Update_Constants.js"></script>
-	<script src="./js/Simulation_Univers/Update_courbe_H0neg.js"></script>
-	<script src="./js/Langues/gestion_langues.js"></script>
+		<script src="./Lib/jquery-1.12.3.min.js"></script>
+		<script src="./Lib/d3_min.js"></script>
+		-->
+		<!-- MENUS
+		Source: http://www.cssscript.com/multi-level-toggle-responsive-navigation-menu-using-pure-css/
+		-->
+		<link rel="stylesheet" href="../css/Resp_Menu/normalize.min.css">
+		<link rel="stylesheet" href="../css/Resp_Menu/defaults.min.css">
+		<link rel="stylesheet" href="../css/Resp_Menu/nav-core.min.css">
+		<link rel="stylesheet" href="../css/Resp_Menu/nav-layout.min.css">
+		<!--
+		<script src="js/Graphisme/Menu/rem.min.js"></script>
+		-->
 
-	<!-- Script pour Latex en html -->
-	<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
-	</script>
-	<script type="text/x-mathjax-config">
-		MathJax.Hub.Config({ tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} });
-	</script>
-	<!-- Librairies Jquery(interaction) et D3(graphique) -->
-	<script src="./Lib/jquery-1.12.3.min.js"></script>
-	<script src="./Lib/d3_min.js"></script>
-
-	<!-- MENUS
-	Source: http://www.cssscript.com/multi-level-toggle-responsive-navigation-menu-using-pure-css/ 																						-->
-	<link rel="stylesheet" href="Css/Resp-Menu/normalize.min.css">
-	<link rel="stylesheet" href="Css/Resp-Menu/defaults.min.css">
-	<link rel="stylesheet" href="Css/Resp-Menu/nav-core.min.css">
-	<link rel="stylesheet" href="Css/Resp-Menu/nav-layout.min.css">
-
-	<script src="js/Graphisme/Menu/rem.min.js"></script>
-
-	<!-- Menu si internet explorer 9 -->
-	<!--[if lt IE 9]>
-		<link rel="stylesheet" href="css/ie8-core.min.css">
-		<link rel="stylesheet" href="css/ie8-layout.min.css">
-		<script src="js/Graphisme/Menu/html5shiv.min.js"></script>
-		<![endif]-->
-
-		<!-- chargement de l'icone en fonction du support -->
+		<!-- chargement de l'icone en fonction du support -
 		<link rel="apple-touch-icon" sizes="180x180" href="./Images/Icones/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="./Images/Icones/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="./Images/Icones/favicon-16x16.png">
@@ -68,210 +99,219 @@
 		<meta name="msapplication-TileImage" content="./Images/Icones/mstile-144x144.png">
 		<meta name="theme-color" content="#ffffff">
 
-	<title>Simulateur d'évolution d'univers avec constante cosmologique</title>
-</head>
+		<title>Simulateur d'évolution d'univers avec énergie noire</title>
+		-->
+	</head>
 
-<body>
-	<!-- Script pour Google Analytics -->
-	<script>
-		(function(i, s, o, g, r, a, m) {
-			i['GoogleAnalyticsObject'] = r;
-			i[r] = i[r] || function() {
-				(i[r].q = i[r].q || []).push(arguments)
-			}, i[r].l = 1 * new Date();
-			a = s.createElement(o),
-			m = s.getElementsByTagName(o)[0];
-			a.async = 1;
-			a.src = g;
-			m.parentNode.insertBefore(a, m)
-		})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-		ga('create', 'UA-98631213-3', 'auto');
-		ga('send', 'pageview');
-	</script>
-	<div id="nav-ici"></div>
-	<!-- ------------- -->
-	<!-- Boutons Calculs annexes et params -->
-	<div id="Boutons_top_right">
-		<input class="myButton" id="para" type="button" OnClick="param()" value="Constantes"></input>
-		<!-- paramètre tracer -->
-		<input type="hidden" id="T0calc" name="T0_calc" value="2.7255" />
-		<input type="hidden" id="H0calc" name="H0_calc" value="67.74" />
-		<input type="hidden" id="Omcalc" name="Om_calc" value="0.3089" />
-		<input type="hidden" id="Olcalc" name="Ol_calc" value="0.6911" />
-		<input type="hidden" id="Orcalc" name="Or_calc" value="0" />
-		<input type="hidden" id="Okcalc" name="Ok_calc" value="0" />
-		<!-- Paramètres pour le tracer -->
-		<input type="hidden" id="k_p" name="k_p" value="1.38064852e-23"></input>
-		<input type="hidden" id="h_p" name="h_p" value="6.62607004e-34"></input>
-		<input type="hidden" id="G_p" name="G_p" value="6.67385e-11"></input>
-		<input type="hidden" id="c_p" name="c_p" value="299792458"></input>
-		<input type="hidden" id="lambda_cosmo_const" value="1.1056e-52"></input>
-		<input type="hidden" id="typeannee" name="typeannee" value="Grégorienne" />
-		<!-- Envoi -->
-		<input class="myButton" id="calc" type="button" onclick="updateValeursCanvas();update_omegar0_simu();ouvre_calc();" value="Calculs Annexes"></input>
-	</div><br/>
-	<p id="txt_titre" style="font-size:20px;font-weight:bold;text-align: center"></p>
-	<div id="Bloc_Textee">	  
-		<div id="univers">
-		<img onclick="avertissement_univers();" src="Images/warning.png" class="bouton_avertissement">
-		<span id="txt_avertissementuniv"></span>
+	<body id="MASQUE">
+		<div id="nav-ici"></div>
+
+		<!-- Boutons Calculs annexes et params -->
+		<div id="Boutons_top_right">
+			<input id="para" class="myButton" type="button" OnClick="param()" value="Constantes"></input>
+
+			<!-- Envoi
+			<input class="myButton" id="create_simulation" type="button" onclick="ouvre_calc_Noire()" value="Calculs Annexes"></input>
+			-->
+
+		</div>
 		<br/>
-		<span id="txt_avertissement_univers"></span>
+		<p id="txt_titre" style="font-size:20px;font-weight:bold;text-align: center"></p>
+		<!--
+		<div id="Bloc_Textee">	  
+			<div id="univers">
+				<img onclick="avertissement_univers();" src="Images/warning.png" class="bouton_avertissement">
+				<span id="txt_avertissementuniv"></span>
+				<br/>
+				<span id="txt_avertissement_univers"></span>
+			</div>
 		</div>
-	</div>
-	<!-- Paramètres  -->
-	<div id="params">
-		<p id="txt_entrees" style="font-size:16px;font-weight:bold;text-align: center"></p>
-			<div>
+		-->
+		<!-- Paramètres -->
+		<div id="params">
+			<div class="text-center">
+				<p id="txt_entrees" style="font-size:16px;font-weight:bold;text-align: center"></p>
 				<div class="inp">
-				<label>T<sub>0</sub> = </label>
-				<!-- Onchange pour actuliser les paramètre envoyés par le formulaire a chaque changement -->
-				<input id="T0" type="text" value="2.7255" onChange="document.getElementById('T0calc').value = this.value;update_omegar0_simu();verifnbr()"></input>
-				K
+					<label>T<sub>0</sub> = </label>
+					<!-- Onchange pour actuliser les paramètre envoyés par le formulaire a chaque changement -->
+					<input id="T0" type="text" value="2.7255" onChange="update_universe_value();"></input>
+					K
+				</div>
+
+				<div id="balise_H0" class="inp">
+					<label>&nbsp;&nbsp; H<sub>0</sub> = </label>
+					<input id="H0" type="text" value="67.74" size="10" onChange="update_universe_value();"></input>
+					<label>km.s<sup>-1</sup>.Mpc<sup>-1</sup></label>
+				</div>
+
+				<div class="inp">
+					<label>Ω<sub>m0</sub> = </label>
+					<input id="omegam0" type="text" value="0.3089" onChange="update_universe_value();"></input>
+				</div>
+
+				<div class="inp">
+					<label>Ω<sub>DE0</sub> = </label>
+					<input id="omegaDE0" type="text" value="0.6911" onChange="update_universe_value();"></input>
+				</div>
+				<div class="inp">
+					<label>w<sub>0</sub> = </label>
+					<input id="omega0" type="text" value="-1"></input>
+					<div id="w-1">
+						<label>w<sub>1</sub> = </label>
+						<input id="omega1" type="text" value="0"></input>
+					</div>
+				</div>
 			</div>
-			<div id="balise_H0" class="inp">
-				<label>&nbsp; &nbsp; H<sub>0</sub> = </label>
-				<input id="H0" type="text" value="67.74" size "10" onChange="document.getElementById('H0calc').value = this.value;update_omegar0_simu();verifnbr()"></input>
-				<label> km.s<sup>-1</sup>.Mpc<sup>-1</sup></label>
+
+
+			<div id="coche_sim">
+				<span id="txt_univplat"></span><input id="univ_plat" type="checkbox" name="univ_plat" onChange="updateUnivPlat_noir();"></input>
 			</div>
-			<div class="inp">
-				<label>Ω<sub>m0</sub> = </label>
-				<input id="omegam0" type="text" value="0.3089" onChange="document.getElementById('Omcalc').value = this.value;update_omegar0_simu();verifnbr()"></input>
+			<div id="type_sim">
+				<select id="liste" onchange="update_omegar0_simu_noir();">
+					<option id="txt_MLRFCN" value="Matière, Lambda, RFC et Neutrinos"></option>
+					<option id="txt_MLRFC" value="Matière, Lambda et RFC"></option>
+					<option id="txt_ML" value="Matière et Lambda"></option>
+				</select>
 			</div>
-			<div class="inp">
-				<label>Ω<sub>Λ0</sub> = </label>
-				<input id="omegalambda0" type="text" value="0.6911" onChange="document.getElementById('Olcalc').value = this.value;update_omegar0_simu();verifnbr()"></input>
+			<div id="trace_box">
+				<input class="myButton" id="monofluide" type="hidden" OnClick="trace_scale_factor()" value="Modèles Monofluides"></input>
+				<input id="trace" class="myButton" type="button" onClick="update_universe_value();" value="Tracer"></button>
+				<div id="gif" style="position:relative;display: inline-block;margin-left: 13px;"></div>
 			</div>
 		</div>
-		<div id="coche_sim">
-			<span id="txt_univplat"></span><input id="univ_plat" type="checkbox" name="univ_plat" onChange="updateUnivPlat();"></input>
+
+
+
+		<canvas id="canvas_1" style="display : none;" width="750px"></canvas>
+
+
+		<!-- INFORMATIONS -->
+		<div id="tg-contains" style="margin-top:20px;">
+			<p id="txt_sorties" style="font-size:16px;font-weight:bold;text-align:center"></p>
+			<center>
+				&Omega;<sub>r0</sub> = <span id="resultat_omegar0">0</span> <br/>
+				&Omega;<sub>k0</sub> = <span id="resultat_omegak0" onChange="document.getElementById('Ok_calc').value = this.value"></span>
+				<br/>
+				<span id="txt_tempsBB" style="font-weight:bold;text-decoration: underline;"></span>
+				</br>
+				<span id="resultat_ageunivers_ga"></span>(Ga)&nbsp;= <span id="resultat_ageunivers_s">1.09884e+3</span>(s)
+				<br/>
+				<i>
+					<span id="resultat_bigcrunch">Pas</span>
+				</i>
+				<br/>
+				<span id="txt_dureeeUniv" style="font-weight:bold;text-decoration: underline;"></span>
+				</br>
+				<span id="resultat_dureeuniv">res</span>
+
+
+				<table class="tg" style="display:none;">
+					<tr>
+						<th class="tg-cgnp" style="border-right: 1px solid black;">&Omega;<sub>m0</sub></th>
+						<th class="tg-cgnp">&Omega;<sub>r0</sub></th>
+					</tr>
+					<tr>
+						<td class="tg-m3ec" style="border-right: 1px solid black;" id="resultat_omegam0">Resultat</td>
+						<td class="tg-m3ec" id="resultat_omegar0">Resultat</td>
+					</tr>
+					<tr>
+						<td class="tg-cgnp" style="border-right: 1px solid black;">&Omega;<sub>DE0</sub></td>
+						<td class="tg-cgnp">&Omega;<sub>k0</sub></td>
+					</tr>
+					<tr>
+						<td class="tg-m3ec"
+						style="border-right: 1px solid black;"
+						id="resultat_omegarlambda0"
+						onChange="document.getElementById('Or_calc').value = this.value">
+								Resultat
+						</td>
+						<td class="tg-rkjz" id="resultat_omegak0" onChange="document.getElementById('Ok_calc').value = this.value">t</td>
+					</tr>
+					<tr>
+						<td class="tg-cgnp" colspan="2">Temps depuis le Big Bang</td>
+					</tr>
+					<tr>
+						<td class="tg-zfe1">(Ga)</td>
+						<td class="tg-i8gg">(s)</td>
+					</tr>
+					<tr style="border-bottom:1px solid black;">
+						<td class="tg-rkjz" style="border-right: 1px solid black;" id="resultat_ageunivers_ga">res1</td>
+						<td class="tg-gzvi" id="resultat_ageunivers_s">res2</td>
+					</tr>
+					<tr>
+						<td class="tg-zkmu" colspan="2" id="resultat_bigcrunch">Big bang</td>
+					</tr>
+					<tr>
+						<td class="tg-btvk" colspan="2" id="titre_dureeuniv">Durée de l'univers</td>
+					</tr>
+					<tr>
+						<td class="tg-rkjz" colspan="2" id="resultat_dureeuniv">Res</td>
+					</tr>
+				</table>
+			</center>
 		</div>
-		<div id="type_sim">
-			<select id="liste" onchange="update_omegar0_simu();">
-				<option id="txt_MLRFCN" value="Matière, Lambda, RFC et Neutrinos"></option>
-				<option id="txt_MLRFC" value="Matière, Lambda et RFC"></option>
-				<option id="txt_ML" value="Matière et Lambda"></option>
-			</select>
-		</div>
-		<!-- Bouton Tracer -->
-		<div id="trace_box">
-			<!-- Valeurs par defaut -->
-			<!-- <input class="myButton" id="valeurs_types" type="button" OnClick="valeurs_types()" value="Modèles Monofluide"></input> -->
-			<input class="myButton" id="monofluide" type="button" OnClick="monofluide()" value="Modèles Monofluides"></input>
-			<input id="trace" class="myButton" type="button" onClick="update_omegar0_simu();update_omegak0_simu();lance_calc();ga('send', 'event', 'button', 'click', 'Tracer graphique univers');" value="Tracer"></input>
-			<div id="gif" style="position:relative;display: inline-block;margin-left: 13px;"></div>
-		</div>
-	</div>
-	<canvas id="canvas_1" width="750px" style="display:none;"></canvas>
-	<!-- INFORMATIONS -->
-	<div id="tg_contains">
-		<p id="txt_sorties" style="font-size:16px;font-weight:bold;text-align:center"></p>
-		<center>
-			&Omega;<sub>r0</sub> = <span id="resultat_omegar0"></span>
-			<br/>
-			&Omega;<sub>k0</sub> = <span id="resultat_omegak0"  onChange="document.getElementById('Okcalc').value = this.value"></span>
-			<br/>   
-			<span id="txt_tempsBB" style="font-weight:bold;text-decoration: underline;"></span>
-			</br>
-			<span id="resultat_ageunivers_ga"></span>
-			(Ga)&nbsp;= <span id="resultat_ageunivers_s">1.09884e+3</span>(s)
-			<br/>
-			<i><span id="resultat_bigcrunch">Pas</span></i>
-			<br/>
-			<span id="txt_dureeeUniv" style="font-weight:bold;text-decoration: underline;"></span>
-			</br>
-			<span id="resultat_dureeuniv">res</span>
-		</center>
-		<table class="tg" style="display:none;">
-			<tr>
-				<td class="tg-m3ec" style="border-right: 1px solid black;" id="resultat_omegam0">Resultat</td>
-				<td class="tg-m3ec" id="resultat_omegar0">Resultat</td>
-			</tr>
-			<tr>
-				<td class="tg-cgnp" style="border-right: 1px solid black;">&Omega;<sub>&Lambda;0</sub></td>
-				<td class="tg-cgnp">&Omega;<sub>k0</sub></td>
-			</tr>
-			<tr>
-				<td class="tg-m3ec" style="border-right: 1px solid black;" id="resultat_omegarlambda0" onChange="document.getElementById('Orcalc').value = this.value">Resultat</td>
-				<td class="tg-rkjz" id="resultat_omegak0" onChange="document.getElementById('Okcalc').value = this.value">t</td>
-			</tr>
-			<tr>
-				<td class="tg-cgnp" colspan="2">Temps depuis le Big Bang</td>
-			</tr>
-		</table>
-	</div>
-	<div id="test">
+
 		<!-- GRAPHIQUE-->
-		<div id="graphique"></div>
+		<div style="margin-top: 100px;">
+			<div id="graphic_scale_factor"></div>
+		</div>
 		<div style="display:none;" id="graphique_enr"></div>
-		<!-- Canvas -->
-		<div id="modele">
-			<canvas id="canvas" width="298" height="400"></canvas>
-		</div>
-	</div>
-	<div id="enregistrer">
-		<div>
-			<!-- <label>  Zoom si a &#8712; [0,1[  </label> &nbsp;&nbsp;&nbsp;      -->
-	
-			<label> a<sub>min</sub> =  </label>
-			<input id="ami" type="text" value="0" ></input>&nbsp;&nbsp;
-			<label> a<sub>max</sub> = </label>
-			<input id="ama" type="text" value="5" ></input>&nbsp;&nbsp;
-			<!-- <label>Pas de Zoom si H0<0 </label>	-->											
-			<!--  <input id="trace2" class="myButton" type="button" onClick="update_omegar0_simu();update_omegak0_simu();lance_calc2();ga('send', 'event', 'button', 'click', 'Tracer graphique univers');" value="Tracer"></input> -->
-		</div>
-		<span id="txt_enregistrerEn" style="font-weight:bold;"></span>
-	
-		<select id="format_enr">
-			<option selected>png</option>
-			<option>jpg</option>
-			<option>svg</option>
+
+		<!-- Sauvegarde graphique -->
+		<div id="enregistrer_sbr">
+			<span id="txt_enregistrerEn" style="font-weight:bold;"></span>
+			<select id="format_enr">
+		<option selected>png</option>
+		<option>jpg</option>
+		<option>svg</option>
 		</select>&nbsp;
 		<input class="myButton" id="button_enregistrer" type="button" OnClick="enre()" value="Enregistrer"></input>
-	</div>
-	<a id="png" download="Graphique.png" style="display:none"></a>
-	<a id="jpg" download="Graphique.jpg" style="display:none"></a>
-	<a id="svg-1" download="Graphique.svg" style="display:none"></a>
-	<a id="ret" href="#nav" style="display:none;"></a>
-	<script>
-		update_omegar0_simu();
-	</script>
-	<!--
-	Script pour tracer le graphique et le canvas(courbes) au chargement + Retracer du graphique si resize de la fenêtre + update du canvas (courbe) si clic dessus et tracer du graphique correspondant.
-	-->
-	<script type="text/javascript">
-		ANG = 0;
-		canvas = document.getElementById('canvas');
-		context = canvas.getContext('2d');
-		graphique = document.getElementById('graphique');
-		window.onresize = function() {
-		Plotly.Plots.resize(Plotly.d3.select("#graphique").node());
-		};
-		//genere le premier graphique des generatrices et lance le 1er calcul
-		update_modele();
-		lance_calc();
-		//lance la fonction qui actualise le graph des generatrices et les valeurs des omega r et lambda lorque l'on click dessus
-		var myImg = document.getElementById("canvas");
-		myImg.onmousedown = GetCoordinates;
-	</script>
-	<br/>
-	<!-- Scripts pour le menu et tracer graphique si appuyer sur entrer -->
-	<script src="js/Graphisme/Menu/nav.jquery.min.js"></script>
-	<script>
-		document.onkeydown = checkkey;
-		function checkkey(e) {
-		e = e || window.event;
-		if (e.keyCode == '13') {
-			update_omegar0_simu();
-			lance_calc();
-		}
-		}
-		$(function() {
-		$("#nav-ici").load("Menu.html");
-		});
-		texteUnivers();
-		textesimuuniv();
-	</script>
-</body>
+		<a id="png" download="Graphique.png" style="display:none"></a>
+		<a id="jpg" download="Graphique.jpg" style="display:none"></a>
+		<a id="svg-1" download="Graphique.svg" style="display:none"></a>
 
+		<canvas id="Canv_enr" width="760px" height="500px" style="display:none;"></canvas>
+		<!-- Canvas -->
+		<div id="modele" style="display:none;">
+			<canvas id="canvas" width="298" height="400"></canvas>
+		</div>
+
+		<a id="ret" href="#nav" style="display:none;"></a>
+
+		<!-- Script resize et tracer graphique au chargement -->
+		<script type="text/javascript">
+			canvas = document.getElementById('canvas');
+			context = canvas.getContext('2d');
+
+			window.onresize = function() {
+				Plotly.Plots.resize(Plotly.d3.select("#graphic_scale_factor").node());
+			};
+
+
+			//genere le premier graphique des generatrices et lance le 1er calcul
+			trace_scale_factor();
+		</script>
+		<br/>
+
+		<!-- Script chargement du menu
+		<script src="js/Graphisme/Menu/nav.jquery.min.js"></script>
+		<script>
+			//Lance le tracer en appuyant sur entrer
+			document.onkeydown = checkkey;
+
+			function checkkey(e) {
+				e = e || window.event;
+				if (e.keyCode == '13') {
+					lance_calc();
+				}
+			}
+			$(function() {
+				$("#nav-ici").load("Menu.html");
+			});
+			texteUniversNoire();
+			textesimuuniv();
+		</script>
+		-->
+	</body>
 </html>
