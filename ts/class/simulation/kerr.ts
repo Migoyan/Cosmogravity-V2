@@ -29,8 +29,13 @@ export class Kerr extends Simulation_trajectory {
     //-------------------- Constructors --------------------
 
 
-    constructor(id: string, collidable: boolean, mass: number, radius: number, angular_m: number)
-	{
+    constructor(
+		id: string,
+		collidable: boolean,
+		mass: number,
+		radius: number,
+		angular_m: number
+	) {
     	super(id, collidable, mass, radius, angular_m);
 	}
 
@@ -58,9 +63,10 @@ export class Kerr extends Simulation_trajectory {
 	 * @param R_hp parameter of the central body R_h+
 	 * @param R_hm parameter of the central body R_h-
 	 * @param r radial coordinate
+	 * 
 	 * @returns delta(r)
 	 */
-	public KM_delta_r(R_hp: number, R_hm: number, r: number)
+	public KM_delta_r(R_hp: number, R_hm: number, r: number): number
 	{
 		return (r - R_hp) * (r - R_hm);
 	}
@@ -79,11 +85,20 @@ export class Kerr extends Simulation_trajectory {
 	 * @param r_0 r(0), radial coordinate at t=0
 	 * @param U_r_0 U_r(r_0), velocity's radial coordinate
 	 * @param U_phi_0 U_phi(r_0), velocity's angular coordinate at t=0
+	 * 
 	 * @returns list where list[0]=L and list[1]=E
 	 */
-	public KM_MP_integration_constants(R_s: number, a: number, delta_0: number, r_0: number, U_r_0: number, U_phi_0: number)
+	public KM_MP_integration_constants(
+		R_s: number,
+		a: number,
+		delta_0: number,
+		r_0: number,
+		U_r_0: number,
+		U_phi_0: number
+	): number[]
 	{
-		let E = Math.sqrt(U_r_0**2 * (r_0 - R_s) * r_0**3 + c**2 * r_0 * (r_0 - R_s) * delta_0 + delta_0**2 * U_phi_0**2)
+		let E = Math.sqrt(U_r_0**2 * (r_0 - R_s)
+		* r_0**3 + c**2 * r_0 * (r_0 - R_s) * delta_0 + delta_0**2 * U_phi_0**2)
 		/ (c**2 * r_0**2 * delta_0);
         let L = 1 / (c * (r_0 - R_s)) * (delta_0 * U_phi_0 - R_s * a * c * E);
         return [L, E];
@@ -99,11 +114,19 @@ export class Kerr extends Simulation_trajectory {
 	 * @param r radial coordinate
 	 * @param L integration constant
 	 * @param E integration constant
+	 * 
 	 * @result potential
 	 */
-	public KM_MP_potential_A(R_s: number, a: number, r: number, L: number, E: number)
+	public KM_MP_potential_A(
+		R_s: number,
+		a: number,
+		r: number,
+		L: number,
+		E: number
+	): number
 	{
-		return 1 - R_s / r - (a**2 * (E**2 - 1) - L**2) / r**2 - R_s * Math.pow(L - a * E, 2) / r**3;
+		return 1 - R_s / r - (a**2 * (E**2 - 1) - L**2) / r**2
+		- R_s * Math.pow(L - a * E, 2) / r**3;
 	}
 
 
@@ -117,11 +140,20 @@ export class Kerr extends Simulation_trajectory {
 	 * @param delta_r kerr metric variable delta(r)
 	 * @param L integration constant
 	 * @param E integration constant
+	 * 
 	 * @result potential
 	 */
-	public KM_MP_potential_DO(R_s: number, a: number, r: number, delta_r: number, L: number, E: number)
+	public KM_MP_potential_DO(
+		R_s: number,
+		a: number,
+		r: number,
+		delta_r: number,
+		L: number,
+		E: number
+	): number
 	{
-		let V_a = 1 - R_s / r - (a**2 * (E**2 - 1) - L**2) / r**2 - R_s * Math.pow(L - a * E, 2) / r**3;
+		let V_a = 1 - R_s / r - (a**2 * (E**2 - 1) - L**2) / r**2
+		- R_s * Math.pow(L - a * E, 2) / r**3;
 		let X = (c**2 * E**2 - V_a) * delta_r**2;
 		let Y = (r**2 + a**2 + R_s * a**2 / r) * E - R_s * a * L / r;
 		return E**2 - X / (Y**2 * c**2);
@@ -140,9 +172,16 @@ export class Kerr extends Simulation_trajectory {
 	 * @param L integration constant
 	 * @param E integration constant
 	 */
-	public KM_MP_trajectory_A(R_s: number, r: number, a: number, L: number, E: number)
+	public KM_MP_trajectory_A(
+		R_s: number,
+		r: number,
+		a: number,
+		L: number,
+		E: number
+	): number
 	{
-		return c**2 / (2 * r**4) * (R_s * r**2 + 2*r * (a**2 * (E**2 - 1) - L**2) + 3*R_s * (L - a * E)**2);
+		return c**2 / (2 * r**4)
+		* (R_s * r**2 + 2*r * (a**2 * (E**2 - 1) - L**2) + 3*R_s * (L - a * E)**2);
 	}
 
 
@@ -159,7 +198,14 @@ export class Kerr extends Simulation_trajectory {
 	 * @param L integration constant
 	 * @param E integration constant
 	 */
-	public KM_MP_trajectory_DO(R_s: number, r: number, a: number, delta_r: number, L: number, E: number)
+	public KM_MP_trajectory_DO(
+		R_s: number,
+		r: number,
+		a: number,
+		delta_r: number,
+		L: number,
+		E: number
+	): number
 	{
 		let W = (r**2 + a**2 + R_s * a**2 / r) * E - R_s * a * L / r;
 		let X = E**2 * a**2 - L**2 - a**2;
@@ -186,11 +232,20 @@ export class Kerr extends Simulation_trajectory {
 	 * @param r_0 r(0), radial coordinate at t=0
 	 * @param U_r_0 U_r(r_0), velocity's radial coordinate
 	 * @param U_phi_0 U_phi(r_0), velocity's angular coordinate at t=0
+	 * 
 	 * @returns list where list[0]=L and list[1]=E
 	 */
-	public KM_PH_integration_constants(R_s: number, a: number, delta_0: number, r_0: number, U_r_0: number, U_phi_0: number)
+	public KM_PH_integration_constants(
+		R_s: number,
+		a: number,
+		delta_0: number,
+		r_0: number,
+		U_r_0: number,
+		U_phi_0: number
+	): number[]
 	{
-		let E = Math.sqrt(U_r_0**2 * (r_0 - R_s) * r_0**3 + delta_0**2 * U_phi_0**2) / (c**2 * r_0**2 * delta_0);
+		let E = Math.sqrt(U_r_0**2 * (r_0 - R_s) * r_0**3 + delta_0**2 * U_phi_0**2)
+		/ (c**2 * r_0**2 * delta_0);
         let L = 1 / (c * (r_0 - R_s)) * (delta_0 * U_phi_0 - R_s * a * c * E);
         return [L, E];
     }
@@ -205,9 +260,16 @@ export class Kerr extends Simulation_trajectory {
 	 * @param r radial coordinate
 	 * @param L integration constant
 	 * @param E integration constant
+	 * 
 	 * @result potential
 	 */
-	public KM_PH_potential_A(R_s: number, a: number, r: number, L: number, E: number)
+	public KM_PH_potential_A(
+		R_s: number,
+		a: number,
+		r: number,
+		L: number,
+		E: number
+	): number
 	{
 		return -(a**2 * E**2 - L**2) / r**2 - R_s * Math.pow(L - a * E, 2) / r**3;
 	}
@@ -223,9 +285,17 @@ export class Kerr extends Simulation_trajectory {
 	 * @param delta_r kerr metric variable delta(r)
 	 * @param L integration constant
 	 * @param E integration constant
+	 * 
 	 * @result potential
 	 */
-	public KM_PH_potential_DO(R_s: number, a: number, r: number, delta_r: number, L: number, E: number)
+	public KM_PH_potential_DO(
+		R_s: number,
+		a: number,
+		r: number,
+		delta_r: number,
+		L: number,
+		E: number
+	): number
 	{
 		let V_a = -(a**2 * E**2 - L**2) / r**2 - R_s * Math.pow(L - a * E, 2) / r**3;
 		let X = (c**2 * E**2 - V_a) * delta_r**2;
@@ -246,9 +316,16 @@ export class Kerr extends Simulation_trajectory {
 	 * @param L integration constant
 	 * @param E integration constant
 	 */
-	public KM_PH_trajectory_A(R_s: number, r: number, a: number, L: number, E: number)
+	public KM_PH_trajectory_A(
+		R_s: number,
+		r: number,
+		a: number,
+		L: number,
+		E: number
+	): number
 	{
-		return -(c**2 / (2 * r**4)) * (2*r * (a**2 * E**2 - L**2) + 3*R_s * (L - a * E)**2);
+		return -(c**2 / (2 * r**4))
+		* (2*r * (a**2 * E**2 - L**2) + 3*R_s * (L - a * E)**2);
 	}
 
 
@@ -265,7 +342,14 @@ export class Kerr extends Simulation_trajectory {
 	 * @param L integration constant
 	 * @param E integration constant
 	 */
-	public KM_PH_trajectory_DO(R_s: number, r: number, a: number, delta_r: number, L: number, E: number)
+	public KM_PH_trajectory_DO(
+		R_s: number,
+		r: number,
+		a: number,
+		delta_r: number,
+		L: number,
+		E: number
+	): number
 	{
 		let W = (r**2 + a**2 + R_s * a**2 / r) * E - R_s * a * L / r;
 		let X = E**2 * a**2 - L**2;

@@ -24,8 +24,12 @@ export class Mobile {
     //-------------------- Constructor- --------------------
 
 
-    constructor(is_photon: boolean, collidable: boolean, r: number, phi: number) 
-    {
+    constructor(
+        is_photon: boolean,
+        collidable: boolean,
+        r: number,
+        phi: number
+    ) {
         this._is_photon = is_photon;
         this._collidable = collidable;
         this._r = r;
@@ -36,21 +40,25 @@ export class Mobile {
     //--------------------- Accessors ----------------------
 
 
+    // Is photon?
     public get is_photon() { return this._is_photon; }
 
     public set is_photon(is_photon: boolean) { this._is_photon = is_photon; }
 
 
+    // Collidable
     public get collidable() { return this._collidable; }
 
     public set collidable(collidable: boolean) { this._collidable = collidable; }
 
 
+    // Coordinate r
     public get r() { return this._r; }
 
     public set r(r: number) { this._r = r; }
 
 
+    // Coordinate phi
     public get phi() { return this._phi; }
 
     public set phi(phi: number) { this._phi = phi; }

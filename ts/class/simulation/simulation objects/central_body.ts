@@ -13,22 +13,26 @@
 export class Central_body {
 
 
-    private collidable: boolean;    // Can the object collide
-    private mass: number;           // Mass
-    private radius: number;         // Radius
-    private angular_m: number;      // Angular momentum (J)
+    private _collidable: boolean;    // Can the object collide
+    private _mass: number;           // Mass
+    private _radius: number;         // Radius
+    private _angular_m: number;      // Angular momentum (J)
  
 
     //-------------------- Constructors --------------------
 
 
-    constructor(collidable: boolean, mass: number, radius: number, angular_m?: number) 
-    {
-        this.collidable = collidable;
-        this.mass = mass;
-        this.radius = radius;
-        if ( angular_m === undefined) { this.angular_m = 0; }
-        else { this.angular_m = angular_m; }
+    constructor(
+        collidable: boolean,
+        mass: number,
+        radius: number,
+        angular_m?: number
+    ) {
+        this._collidable = collidable;
+        this._mass = mass;
+        this._radius = radius;
+        if ( angular_m === undefined) { this._angular_m = 0; }
+        else { this._angular_m = angular_m; }
     }
 
 
@@ -36,48 +40,48 @@ export class Central_body {
 
 
     // Collidable
-    public get_collidable() { return this.collidable; }
+    public get collidable() { return this._collidable; }
 
 
     // Mass
-    public get_mass() { return this.mass; }
+    public get mass() { return this._mass; }
 
 
     // Radius
-    public get_radius() { return this.radius; }
+    public get radius() { return this._radius; }
 
 
     // Angular momentum
-    public get_angular_m() { return this.angular_m; }
+    public get angular_m() { return this._angular_m; }
 
 
     //---------------------- Methods -----------------------
 
 
     // Schwarzschild Radius
-    public calculate_R_s() { return 2*G*this.mass / c**2; }
+    public calculate_R_s(): number { return 2*G*this.mass / c**2; }
 
 
     // Calculated parameter a=J/cM
-    public calculate_a()
+    public calculate_a(): number
     {
-        if (this.angular_m == undefined) { return 0; }
-        else { return this.angular_m / (c * this.mass); }
+        if (this._angular_m == undefined) { return 0; }
+        else { return this._angular_m / (c * this._mass); }
     }
 
 
     // R_h+
-    public calculate_R_hp(R_s: number, a: number)
+    public calculate_R_hp(R_s: number, a: number): number
     {
-        if (this.angular_m == undefined) { return R_s; }
+        if (this._angular_m == undefined) { return R_s; }
         else { return (R_s + Math.sqrt(R_s**2 - 4 * a**2)) / 2; }
     }
 
 
     // R_h-
-    public calculate_R_hm(R_s: number, a: number)
+    public calculate_R_hm(R_s: number, a: number): number
     {
-        if (this.angular_m == undefined) { return 0; }
+        if (this._angular_m == undefined) { return 0; }
         else { return (R_s - Math.sqrt(R_s**2 - 4 * a**2)) / 2; }
     }
 

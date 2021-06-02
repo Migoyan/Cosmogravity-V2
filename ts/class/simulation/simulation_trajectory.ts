@@ -29,8 +29,13 @@ export abstract class Simulation_trajectory extends Simulation {
 	//-------------------- Constructors --------------------
 
 
-	constructor(id: string, collidable: boolean, mass: number, radius: number, angular_m: number)
-	{
+	constructor(
+		id: string,
+		collidable: boolean,
+		mass: number,
+		radius: number,
+		angular_m: number
+	) {
 		super(id);
 		this._central_body = new Central_body(collidable, mass, radius, angular_m);
 		this._mobile_list = [];
@@ -66,18 +71,20 @@ export abstract class Simulation_trajectory extends Simulation {
 	 * Add a new mobile object to the simulation
 	 * @param mobile new mobile
 	 */
-	public add_mobile(mobile: Mobile) { this.mobile_list.push(mobile); }
+	public add_mobile(mobile: Mobile): void { this.mobile_list.push(mobile); }
 
 
 	/**
-     * Fourth order Runge-Kutta method for second order derivatives for trajectory computation.
+     * Fourth order Runge-Kutta method for second order derivatives
+	 * for trajectory computation.
      *
      * @param step step of computation
      * @param x_0 x_point where the calcul start
      * @param y_0 initial value of y at x_0
      * @param dy_0 initial value of the derivative of y at x_0
      * @param interval array containing [ymin, ymax]
-     * @param funct function or method that define the equation to resolve, your function has to accept 3 numbers and return a number
+     * @param funct function or method that define the equation to resolve,
+	 * your function has to accept 3 numbers and return a number
      *
      * @returns [step: number, x: number[], y:number[], yp: number[]].
      */
@@ -88,7 +95,8 @@ export abstract class Simulation_trajectory extends Simulation {
     	dy_0: number = 1,
     	funct: (Simu: Simulation_trajectory, x: number, y: number, dy: number) => number,
     	interval: number[]
-	) {
+	)
+	{
 		// Init parameter
     	let x: number[] = [x_0];
     	let y: number[] = [y_0];
