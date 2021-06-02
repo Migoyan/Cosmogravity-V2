@@ -1,6 +1,12 @@
 /**
  * @class Simulation : abstract class.
  * No inheritance
+ * 
+ * @param id string, fixed
+ * 
+ * @method runge_kutta_equation_order1
+ * @method runge_kutta_equation_order2
+ * @method simpson
  */
 
 export abstract class Simulation {
@@ -60,7 +66,7 @@ export abstract class Simulation {
 	 * @param dy_0 initial value of the derivative of y
 	 * @param funct function or method that define the equation to resolve
      * 
-     * @returns [x_1, y_1, yp_1], value of the next point of computation
+     * @returns [x_1, y_1, dy_1], value of the next point of computation
      */
     protected runge_kutta_equation_order2(step: number, x_0: number, y_0: number, dy_0: number, funct: (x: number, y: number, dy: number) => number): number[] {
 		let k_1 = funct(x_0, y_0, dy_0);

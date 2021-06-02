@@ -5,6 +5,8 @@
  * we are calculating the trajectory.
  * 
  * Attributes:
+ * @param is_photon self explanatory
+ * @param collidable can the object collide with others objets
  * @param mass mass
  * @param r radial coordinate
  * @param phi angular coordinate
@@ -13,10 +15,10 @@
 export class Mobile {
 
 
-    private is_photon: boolean;
-    private collidable: boolean;    // Can the object collide
-    private r: number;              // Radial coordinate
-    private phi: number;            // Angular coordinate
+    private _is_photon: boolean;
+    private _collidable: boolean;    // Can the object collide
+    private _r: number;              // Radial coordinate
+    private _phi: number;            // Angular coordinate
 
 
     //-------------------- Constructor- --------------------
@@ -24,34 +26,34 @@ export class Mobile {
 
     constructor(is_photon: boolean, collidable: boolean, r: number, phi: number) 
     {
-        this.is_photon = is_photon;
-        this.collidable = collidable;
-        this.r = r;
-        this.phi = phi;
+        this._is_photon = is_photon;
+        this._collidable = collidable;
+        this._r = r;
+        this._phi = phi;
     }
 
 
     //--------------------- Accessors ----------------------
 
 
-    public get_is_photon() { return this.is_photon; }
+    public get is_photon() { return this._is_photon; }
 
-    public set_is_photon(is_photon: boolean) { this.is_photon = is_photon; }
-
-
-    public get_collidable() { return this.collidable; }
-
-    public set_collidable(collidable: boolean) { this.collidable = collidable; }
+    public set is_photon(is_photon: boolean) { this._is_photon = is_photon; }
 
 
-    public get_r() { return this.r; }
+    public get collidable() { return this._collidable; }
 
-    public set_r(r: number) { this.r = r; }
+    public set collidable(collidable: boolean) { this._collidable = collidable; }
 
 
-    public get_phi() { return this.phi; }
+    public get r() { return this._r; }
 
-    public set_phi(phi: number) { this.phi = phi; }
+    public set r(r: number) { this._r = r; }
+
+
+    public get phi() { return this._phi; }
+
+    public set phi(phi: number) { this._phi = phi; }
 
 
 

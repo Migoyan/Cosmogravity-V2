@@ -7,7 +7,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * This class will implement the different equations for the Schwarzchild metric.
  * https://www.lupm.in2p3.fr/cosmogravity/theorie/theorie_trajectoires_FR.pdf
  * Note: This code uses acronyms to differentiate between the different categories
- * covered by the theory (example: EMS_PH = External Schwarzschild Metric for a Photon).
+ * covered by the theory (example: EMS_PH = External Schwarzschild metric for a Photon).
  * 
  * Methods:
  * @method ESM_MP_integration_constants
@@ -63,13 +63,14 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a Massive Particle (ESM_MP)
+     * External Schwarzschild metric for a Massive Particle (ESM_MP)
      * 
      * Integration constants in a list of two elements.
      * @param R_s schwarzschild radius, attribute of @class Central_body
      * @param r_0 r(0), radial coordinate at t=0
      * @param U_r_0 U_r(0), velocity's radial coordinate at t=0
      * @param U_phi_0 U_phi(0), velocity's angular coordinate at t=0
+     * 
      * @returns list where list[0]=L and list[1]=E
      */
     public ESM_MP_integration_constants(R_s: number, r_0: number, U_r_0: number, U_phi_0: number)
@@ -81,12 +82,13 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a Massive Particle (ESM_MP)
+     * External Schwarzschild metric for a Massive Particle (ESM_MP)
      * 
      * Potential for an astronaut (A) divided by c²
      * @param R_s schwarzschild radius, attribute of @class Central_body
      * @param r radial coordinate
      * @param L_e integration constant
+     * 
      * @returns potential
      */
     public ESM_MP_potential_A(R_s: number, r: number, L_e: number)
@@ -96,13 +98,14 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a Massive Particle (ESM_MP)
+     * External Schwarzschild metric for a Massive Particle (ESM_MP)
      * 
      * Potential for a distant observer (DO) divided by c²
      * @param R_s schwarzschild radius, attribute of @class Central_body
      * @param r radial coordinate
      * @param E_e integration constant
      * @param L_e integration constant
+     * 
      * @returns potential
      */
     public ESM_MP_potential_DO(R_s: number, r: number, L_e: number, E_e: number)
@@ -113,7 +116,7 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a Massive Particle (ESM_MP)
+     * External Schwarzschild metric for a Massive Particle (ESM_MP)
      * 
      * Second derivative d²r/dtau² for an astronaut (A)
      * 
@@ -129,7 +132,7 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a Massive Particle (ESM_MP)
+     * External Schwarzschild metric for a Massive Particle (ESM_MP)
      * 
      * Second derivative d²r/dt² for a distant observer (DO)
      * 
@@ -150,13 +153,14 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a photon (ESM_PH)
+     * External Schwarzschild metric for a photon (ESM_PH)
      * 
      * Integration constants in a list of two elements.
      * @param R_s schwarzschild radius
      * @param r_0 r(0), radial coordinate at t=0
      * @param U_r_0 U_r(0), velocity's radial coordinate at t=0
      * @param U_phi_0 U_phi(0), velocity's angular coordinate at t=0
+     * 
      * @returns list where list[0]=L and list[1]=E
      */
     public ESM_PH_integration_constants(R_s: number, r_0: number, U_r_0: number, U_phi_0: number)
@@ -168,12 +172,13 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a photon (ESM_PH)
+     * External Schwarzschild metric for a photon (ESM_PH)
      * 
      * Potential for an astronaut (A) divided by c²
      * @param R_s schwarzschild radius
      * @param r radial coordinate
      * @param L_e integration constant
+     * 
      * @returns potential
      */
     public ESM_PH_potential_A(R_s: number, r: number, L_e: number)
@@ -183,13 +188,14 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a photon (ESM_PH)
+     * External Schwarzschild metric for a photon (ESM_PH)
      * 
      * Potential for a distant observer (DO) divided by c²
      * @param R_s schwarzschild radius
      * @param r radial coordinate
      * @param L_e integration constant
      * @param E_e integration constant
+     * 
      * @returns potential
      */
     public ESM_PH_potential_DO(R_s: number, r: number, L_e: number, E_e: number)
@@ -200,7 +206,7 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a photon (ESM_PH)
+     * External Schwarzschild metric for a photon (ESM_PH)
      * 
      * Second derivative d²r/dlambda² for an astronaut (A)
      * 
@@ -216,7 +222,7 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * External Schwarzschild Metric for a photon (ESM_PH)
+     * External Schwarzschild metric for a photon (ESM_PH)
      * 
      * Second derivative d²r/dt² for a distant observer (DO)
      * 
@@ -242,12 +248,13 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * Internal Schwarzschild Metric (ISM)
+     * Internal Schwarzschild metric (ISM)
      * 
      * Defines a new variable alpha(r)
      * @param R_s schwarzschild radius
      * @param radius radius of the central body
      * @param r radial coordinate
+     * 
      * @returns alpha(r)
      */
     public ISM_alpha_r(R_s: number, radius: number, r: number)
@@ -257,12 +264,13 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * Internal Schwarzschild Metric (ISM)
+     * Internal Schwarzschild metric (ISM)
      * 
      * Defines a new variable beta(r)
      * @param R_s schwarzschild radius
      * @param radius radius of the central body
      * @param r radial coordinate
+     * 
      * @returns beta(r)
      */
     public ISM_beta_r(R_s: number, radius: number, r: number)
@@ -275,7 +283,7 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * Internal Schwarzschild Metric for a massive particle (ISM_MP)
+     * Internal Schwarzschild metric for a massive particle (ISM_MP)
      * 
      * Integration constants in a list of two elements.
      * @param r_0 r(0), radial coordinate at t=0
@@ -283,6 +291,7 @@ export class Schwarzchild extends Simulation_trajectory {
      * @param U_phi_0 U_phi(0), velocity's angular coordinate at t=0
      * @param alpha_r_0 ISM variable alpha(r)
      * @param beta_r_0 ISM variable beta(r)
+     * 
      * @returns list where list[0]=L and list[1]=E
      */
     public ISM_MP_integration_constants(r_0: number, U_r_0: number, U_phi_0: number, alpha_r_0: number, beta_r_0: number)
@@ -294,7 +303,7 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * Internal Schwarzschild Metric for a massive particle (ISM_MP)
+     * Internal Schwarzschild metric for a massive particle (ISM_MP)
      * 
      * Potential for an astronaut (A) divided by c²
      * @param R_s schwarzschild radius
@@ -302,6 +311,7 @@ export class Schwarzchild extends Simulation_trajectory {
      * @param alpha_r_0 ISM variable alpha(r)
      * @param L_e integration constant
      * @param E_i integration constant
+     * 
      * @returns potential
      */
     public ISM_MP_potential_A(r: number, alpha_r: number, beta_r: number, E_i: number, L_i: number)
@@ -311,7 +321,7 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * Internal Schwarzschild Metric for a massive particle (ISM_MP)
+     * Internal Schwarzschild metric for a massive particle (ISM_MP)
      * 
      * Second derivative d²r/dtau² for an astronaut (A)
      * 
@@ -335,12 +345,13 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * Internal Schwarzschild Metric for a photon (ISM_PH)
+     * Internal Schwarzschild metric for a photon (ISM_PH)
      * @param r_0 r(0), radial coordinate at t=0
      * @param U_r_0 U_r(0), velocity's radial coordinate at t=0
      * @param U_phi_0 U_phi(0), velocity's angular coordinate at t=0
      * @param alpha_r_0 ISM variable alpha(r) at t=0
      * @param beta_r_0 ISM variable beta(r) at t=0
+     * 
      * @returns list where list[0]=L and list[1]=E
      */
     public ISM_PH_integration_constants(r_0: number, U_r_0: number, U_phi_0: number, alpha_r_0: number, beta_r_0: number)
@@ -352,7 +363,7 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * Internal Schwarzschild Metric for a photon (ISM_PH)
+     * Internal Schwarzschild metric for a photon (ISM_PH)
      * 
      * Potential for an astronaut (A) divided by c²
      * @param R_s schwarzschild radius
@@ -360,6 +371,7 @@ export class Schwarzchild extends Simulation_trajectory {
      * @param alpha_r_0 ISM variable alpha(r)
      * @param L_e integration constant
      * @param E_i integration constant
+     * 
      * @returns potential
      */
      public ISM_PH_potential_A(r: number, alpha_r: number, beta_r: number, E_i: number, L_i: number)
@@ -369,7 +381,7 @@ export class Schwarzchild extends Simulation_trajectory {
 
 
     /**
-     * Internal Schwarzschild Metric for a photon (ISM_PH)
+     * Internal Schwarzschild metric for a photon (ISM_PH)
      * 
      * Second derivative d²r/dlambda² for an astronaut (A)
      * 
