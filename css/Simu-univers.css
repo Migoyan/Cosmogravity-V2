@@ -1,0 +1,214 @@
+/* ----------------------------------------------------------------------------*/
+
+/*Simulation Univers */
+
+/* Mise en page de base adapté aux mobiles et balises pour les écrans plus grand ainsi la lecture mobile demande moins de ressources */
+
+.inp {
+  text-align: center;
+  display: inline-block;
+  width: 95%;
+}
+
+#balise_H0{
+  margin-left: 28px;
+}
+
+#type_sim, #coche_sim, #trace_box {
+  text-align: center;
+}
+
+/* Bouton haut droite */
+
+#para, #calc {
+  display: inline-block;
+}
+
+#Boutons_top_right {
+  float: right;
+  display: block;
+  width: 100%;
+}
+
+#trace, #calc {
+  margin-top: 5px;
+}
+
+#para {
+  margin-right: 5px;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+#para {
+  float: right;
+}
+
+#calc {
+  float: right;
+}
+
+/* Canvas */
+
+#modele {
+  text-align: center;
+  max-width: 90%;
+}
+
+#enr {
+  display: none;
+}
+
+#enregistrer_sbr {
+  /*display: none*/
+}
+
+;
+/* table de resultats */
+
+#tg_contains {
+  margin-top: 20px;
+  width: 100%;
+  display: block;
+}
+
+.tg {
+  width: 100%;
+  margin: auto;
+}
+
+/* graphique */
+
+#graphique {
+  text-align: center;
+  max-width: 90%;
+}
+
+#grille, #univ_plat {
+  display: inline-block;
+}
+
+#enregistrer {
+  /*display: none;*/
+  width: 100%;
+  text-align: center;
+}
+
+/* Liste deroulante */
+
+select {
+  -moz-box-shadow: 2px 2px 2px 1px #656565;
+  -webkit-box-shadow: 2px 2px 2px 1px #656565;
+  -o-box-shadow: 2px 2px 2px 1px #656565;
+  box-shadow: 2px 2px 2px 1px #656565;
+  filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=4);
+}
+
+/*  Aspect des input text */
+
+input[type="text"] {
+  -webkit-appearance: none;
+  border-radius: 3px;
+  border: thin;
+  height: 15px;
+  width:100px;
+  -moz-box-shadow: 2px 2px 2px 1px #656565;
+  -webkit-box-shadow: 2px 2px 2px 1px #656565;
+  -o-box-shadow: 2px 2px 2px 1px #656565;
+  box-shadow: 2px 2px 2px 1px #656565;
+  filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=4);
+}
+
+/* Style des boutons (<button>) */
+
+.myButton {
+  -moz-box-shadow: inset 0px 34px 0px -15px #b54b3a;
+  -webkit-box-shadow: inset 0px 34px 0px -15px #b54b3a;
+  box-shadow: inset 0px 34px 0px -15px #b54b3a;
+  background-color: #a73f2d;
+  border: 1px solid #f5f5f5;
+  display: inline-block;
+  border-radius: 7px;
+  cursor: pointer;
+  color: #ffffff;
+  font-family: Arial;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 9px 23px;
+  text-decoration: none;
+  text-shadow: 0px -1px 0px #7a2a1d;
+}
+
+.myButton:hover {
+  background-color: #b34332;
+}
+
+.myButton:active {
+  position: relative;
+  top: 1px;
+}
+
+#w-1 {
+  display: block;
+}
+
+/*------*/
+
+/* Mise en page Desktop */
+
+@media only screen and (min-width: 960px) {
+  /* Bloc paramètres et resultats */
+  #params {
+    margin-top: 20px;
+    margin-left: 4%;
+    width: 40%;
+    height: 400px;
+    float: left;
+  }
+  #tg_contains {
+    margin-top: 20px;
+    float: right;
+    width: 40%;
+    margin-right: 4%;
+  }
+  #tg_contains .tg {
+    width: 80%;
+    margin: auto;
+  }
+  /* bloc graphique et canvas */
+  #graphique {
+    float: left;
+    width: 68%;
+  }
+  #graphique {
+    margin-top: -100px;
+  }
+  #modele {
+    display: block;
+    float: right;
+  }
+  #enregistrer {
+    display: block;
+    float: left;
+    width: 68%;
+  }
+  #enregistrer_sbr {
+    text-align: center;
+    float: left;
+    width: 100%;
+    display: block;
+  }
+  #test {
+    width: 100%;
+  }
+  footer {
+    width: 100%;
+  }
+  #graphique_sombre {
+    m margin: auto;
+    width: 80%;
+  }
+  #w-1 {
+    display: inline-block;
+  }
+}
