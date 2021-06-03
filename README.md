@@ -4,7 +4,7 @@ See V1 code [here](https://github.com/Migoyan/Cosmogravity_2021)
 
 
 ## Instructions :
-* Compile ts directory into js directory. /!\ The code created is for node usage and cannot be used directly in navigators hence the next steps/!\.
+* Compile ts directory into js directory. /!\ The code created is for node usage and cannot be used directly in navigators hence the next steps/!\\.
 * For each file, delete lines containing keywords like import, export, require and Object.property.
 * For each class that inherit from another, you have to fix the name of the generalisation class.
 * For every instanciation of object fixes the name of the classe after the keyword "new".
