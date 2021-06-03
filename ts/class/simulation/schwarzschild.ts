@@ -1,3 +1,4 @@
+import { Mobile } from "./simulation objects/mobile";
 import { Simulation_trajectory } from "./simulation_trajectory";
 
 /** 
@@ -10,6 +11,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * covered by the theory (example: EMS_PH = External Schwarzschild metric for a Photon).
  * 
  * @method integration_constants
+ * @method runge_kutta_trajectory
  * @method ESM_MP_integration_constants
  * @method ESM_MP_potential_A
  * @method ESM_MP_potential_DO
@@ -51,71 +53,72 @@ export class Schwarzchild extends Simulation_trajectory
 
 
     /**
+     * Determines which mathematical expression should be used to calculated the
+     * integration constant for a specific simulation and mobile type.
      * 
-     * @returns Table containing the integration constants for each
-     * mobile object depending on the current simulation.
+     * @returns Table containing the integration constants for each mobile object
      */
     public integration_constants(): number[][]
     {
         let result: number[][];
-        this.mobile_list.forEach(Mobile =>
+        this.mobile_list.forEach(mobile =>
         {
-            if (Mobile.r > this.central_body.radius)
+            if (mobile.r >= this.central_body.radius)
             {
-                if (!Mobile.is_photon)
+                if (!mobile.is_photon)
                 {
                     result.push(
                         this.ESM_MP_integration_constants(
                             this.central_body.calculate_R_s(),
-                            Mobile.r,
-                            Mobile.U_r,
-                            Mobile.U_phi
+                            mobile.r,
+                            mobile.U_r,
+                            mobile.U_phi
                         )
                     );
                 }
-                else if (Mobile.is_photon)
+                else if (mobile.is_photon)
                 {
                     result.push(
                         this.ESM_PH_integration_constants(
                             this.central_body.calculate_R_s(),
-                            Mobile.r,
-                            Mobile.U_r,
-                            Mobile.U_phi
+                            mobile.r,
+                            mobile.U_r,
+                            mobile.U_phi
                         )
                     );
                 }
             }
-            else if (Mobile.r < this.central_body.radius)
+            else if (mobile.r < this.central_body.radius)
             {
                 let alpha_0: number = this.ISM_alpha_r(
                     this.central_body.calculate_R_s(),
                     this.central_body.radius,
-                    Mobile.r
+                    mobile.r
                 );
                 let beta_0: number = this.ISM_beta_r(
                     this.central_body.calculate_R_s(),
                     this.central_body.radius,
-                    Mobile.r
+                    mobile.r
                 );
-                if (!Mobile.is_photon)
+                if (!mobile.is_photon)
                 {
                     result.push(
                         this.ISM_MP_integration_constants(
-                            Mobile.r,
-                            Mobile.U_r,
-                            Mobile.U_phi,
+                            mobile.r,
+                            mobile.U_r,
+                            mobile.U_phi,
                             alpha_0,
                             beta_0
                         )
                     );
                 }
-                else if (Mobile.is_photon)
+                else if (mobile.is_photon)
                 {
                     result.push(
                         this.ISM_PH_integration_constants(
-                            Mobile.r,
-                            Mobile.U_r,
-                            Mobile.U_phi,
+                            mobile.r,
+                            mobile.U_r,
+                            mobile.U_phi,
                             alpha_0,
                             beta_0
                         )
@@ -127,9 +130,58 @@ export class Schwarzchild extends Simulation_trajectory
     }
 
 
+    /**
+     * Applies the Runge-Kutta algorithm to the relevant second derivative expression
+     * for the current simulation.
+     * 
+     * @param mobile Mobile object
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
+     * @param L Integration constant
+     * @param E Integration constant
+     * 
+     * @returns [x_1, y_1, yp_1], value of the next point of computation
+     */
+    public runge_kutta_trajectory(
+        mobile: Mobile,
+        reference_frame: "A" | "DO",
+        L: number, 
+        E: number
+    ): number
+    {
+        let R_s = this.central_body.calculate_R_s();
+        let radius = this.central_body.radius;
 
-
-
+        if (mobile.r >= radius && !mobile.is_photon && reference_frame === "A")
+        {
+            return this.ESM_MP_trajectory_A(R_s, mobile.r, L);
+        }
+        else if (mobile.r >= radius && !mobile.is_photon && reference_frame === "DO")
+        {
+            return this.ESM_MP_trajectory_DO(R_s, mobile.r, L, E);
+        }
+        else if (mobile.r >= radius && mobile.is_photon && reference_frame === "A")
+        {
+            return this.ESM_PH_trajectory_A(R_s, mobile.r, L);
+        }
+        else if (mobile.r >= radius && mobile.is_photon && reference_frame === "DO")
+        {
+            return this.ESM_PH_trajectory_DO(R_s, mobile.r, L, E);
+        }
+        else if (mobile.r < this.central_body.radius)
+        {
+            let alpha_r = this.ISM_alpha_r(R_s, radius, mobile.r);
+            let beta_r = this.ISM_beta_r(R_s, radius, mobile.r);
+            
+            if (!mobile.is_photon)
+            {
+                return this.ISM_MP_trajectory_A(R_s, radius, mobile.r, alpha_r, beta_r, L, E);
+            }
+            else if (mobile.is_photon)
+            {
+                return this.ISM_PH_trajectory_A(R_s, radius, mobile.r, alpha_r, beta_r, L, E);
+            }
+        }  
+    }
 
 
     //  I/ The external Schwarzschild metric (ESM)

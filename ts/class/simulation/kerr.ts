@@ -1,3 +1,4 @@
+import { Mobile } from "./simulation objects/mobile";
 import { Simulation_trajectory } from "./simulation_trajectory";
 
 /**
@@ -10,6 +11,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * covered by the theory (example: KM_PH = Kerr Metric for a Photon).
  * 
  * @method integration_constants
+ * @method runge_kutta_trajectory
  * @method KM_delta_r
  * @method KM_MP_integration_constants
  * @method KM_MP_potential_A
@@ -44,9 +46,10 @@ export class Kerr extends Simulation_trajectory
 
 
 	/**
+     * Determines which mathematical expression should be used to calculated the
+     * integration constant for a specific simulation and mobile type.
      * 
-     * @returns Table containing the integration constants for each
-     * mobile object depending on the current simulation.
+     * @returns Table containing the integration constants for each mobile object
      */
 	public integration_constants(): number[][]
 	{
@@ -56,33 +59,33 @@ export class Kerr extends Simulation_trajectory
 		let R_hm = this.central_body.calculate_R_hm(R_s, a);
 		let result: number[][];
 
-		this.mobile_list.forEach(Mobile =>
+		this.mobile_list.forEach(mobile =>
 		{
-			let delta_0 = this.KM_delta_r(R_hp, R_hm, Mobile.r);
+			let delta_0 = this.KM_delta_r(R_hp, R_hm, mobile.r);
 
-			if (!Mobile.is_photon)
+			if (!mobile.is_photon)
 			{
 				result.push(
 					this.KM_MP_integration_constants(
 						R_s,
 						a,
 						delta_0,
-						Mobile.r,
-						Mobile.U_r,
-						Mobile.U_phi
+						mobile.r,
+						mobile.U_r,
+						mobile.U_phi
 					)
 				);
 			}
-			else if (Mobile.is_photon)
+			else if (mobile.is_photon)
 			{
 				result.push(
 					this.KM_PH_integration_constants(
 						R_s,
 						a,
 						delta_0,
-						Mobile.r,
-						Mobile.U_r,
-						Mobile.U_phi
+						mobile.r,
+						mobile.U_r,
+						mobile.U_phi
 					)
 				);
 			}
@@ -91,10 +94,47 @@ export class Kerr extends Simulation_trajectory
 	}
 
 
+   /**
+     * Applies the Runge-Kutta algorithm to the relevant second derivative expression
+     * for the current simulation.
+     * 
+     * @param mobile Mobile object
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
+     * @param L Integration constant
+     * @param E Integration constant
+     * 
+     * @returns [x_1, y_1, yp_1], value of the next point of computation
+     */
+    public runge_kutta_trajectory(
+        mobile: Mobile,
+        reference_frame: "A" | "DO",
+        L: number, 
+        E: number
+    ): number
+    {
+		let a = this.central_body.calculate_a();
+        let R_s = this.central_body.calculate_R_s();
+        let R_hp = this.central_body.calculate_R_hp(R_s, a);
+		let R_hm = this.central_body.calculate_R_hm(R_s, a);
+		let delta_r = this.KM_delta_r(R_hp, R_hm, mobile.r);
 
-
-
-
+		if (!mobile.is_photon && reference_frame === "A")
+		{
+			return this.KM_MP_trajectory_A(R_s, mobile.r, a, L, E);
+		}
+		else if (!mobile.is_photon && reference_frame === "DO")
+		{
+			return this.KM_MP_trajectory_DO(R_s, mobile.r, a, delta_r, L, E);
+		}
+		else if (mobile.is_photon && reference_frame === "A")
+		{
+			return this.KM_PH_trajectory_A(R_s, mobile.r, a, L, E);
+		}
+		else if (mobile.is_photon && reference_frame === "DO")
+		{
+			return this.KM_PH_trajectory_DO(R_s, mobile.r, a, delta_r, L, E);
+		}
+    }
 
 
 	/*
