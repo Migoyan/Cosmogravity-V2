@@ -6,19 +6,16 @@ import { Mobile } from "./simulation objects/mobile";
  * @class Simulation_trajectory
  * inheritance from Simulation class
  * 
- * Attributes:
  * @param central_body
  * @param mobile_list
  * @param c
  * @param G
  * 
- * Methods:
  * @method add_mobile
- * @method runge_kutta_trajectory_2
  */
 
-export abstract class Simulation_trajectory extends Simulation {
-
+export abstract class Simulation_trajectory extends Simulation
+{
 
 	private _central_body: Central_body;
 	private _mobile_list: Mobile[];
@@ -70,22 +67,11 @@ export abstract class Simulation_trajectory extends Simulation {
 
 	/**
 	 * Add a new mobile object to the simulation
-	 * @param mobile new mobile
+	 * 
+	 * @param mobile New mobile
 	 */
 	public add_mobile(mobile: Mobile): void { this.mobile_list.push(mobile); }
 
-
-	public main_trajectoire(
-		type: "ESM" | "ISM" | "KM",
-		mobile_type: "MP" | "PH",
-		reference_frame: "A" | "DO",
-		step: number,
-		x: number,
-		y: number,
-		dy: number
-	) {
-		
-	}
 
 	
 }

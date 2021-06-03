@@ -9,7 +9,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * Note: This code uses acronyms to differentiate between the different categories
  * covered by the theory (example: KM_PH = Kerr Metric for a Photon).
  * 
- * Methods:
+ * @method integration_constants
  * @method KM_delta_r
  * @method KM_MP_integration_constants
  * @method KM_MP_potential_A
@@ -23,10 +23,10 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * @method KM_PH_trajectory_DO
  */
 
-export class Kerr extends Simulation_trajectory {
+export class Kerr extends Simulation_trajectory
+{
 
-
-    //-------------------- Constructors --------------------
+    //-------------------- Constructor ---------------------
 
 
     constructor(
@@ -43,13 +43,67 @@ export class Kerr extends Simulation_trajectory {
 	//---------------------- Methods -----------------------
 
 
+	/**
+     * 
+     * @returns Table containing the integration constants for each
+     * mobile object depending on the current simulation.
+     */
+	public integration_constants(): number[][]
+	{
+		let a = this.central_body.calculate_a();
+		let R_s = this.central_body.calculate_R_s();
+		let R_hp = this.central_body.calculate_R_hp(R_s, a);
+		let R_hm = this.central_body.calculate_R_hm(R_s, a);
+		let result: number[][];
+
+		this.mobile_list.forEach(Mobile =>
+		{
+			let delta_0 = this.KM_delta_r(R_hp, R_hm, Mobile.r);
+
+			if (!Mobile.is_photon)
+			{
+				result.push(
+					this.KM_MP_integration_constants(
+						R_s,
+						a,
+						delta_0,
+						Mobile.r,
+						Mobile.U_r,
+						Mobile.U_phi
+					)
+				);
+			}
+			else if (Mobile.is_photon)
+			{
+				result.push(
+					this.KM_PH_integration_constants(
+						R_s,
+						a,
+						delta_0,
+						Mobile.r,
+						Mobile.U_r,
+						Mobile.U_phi
+					)
+				);
+			}
+		});
+		return result;
+	}
+
+
+
+
+
+
+
+
 	/*
 	 * The spacial and temporal coordinates are (r, theta, phi, t)
 	 * All simulations take place on the theta=pi/2 plane
 	 * U_r and U_phi are the velocity coordinates
 	 * R_s Schwarzschild radius. The Kerr metric also uses R_h+ and R_h-, see theory.
 	 * A new variable delta is defined for the Kerr metric relative to R_h+ and R_h-.
-	 * L and E are two integration constants determined with the 
+	 * L and E are two Integration constants determined with the 
 	 * initial conditions. L is a length and E is adimentional.
 	 * The "trajectory" functions are to be called by the Runge-Kutta algorithm.
 	 * The suffix A or DO refer to Astronaut or Distant Oberver.
@@ -60,9 +114,9 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric (KM)
 	 * 
 	 * Defines a new variable delta(r)
-	 * @param R_hp parameter of the central body R_h+
-	 * @param R_hm parameter of the central body R_h-
-	 * @param r radial coordinate
+	 * @param R_hp Parameter of the central body R_h+
+	 * @param R_hm Parameter of the central body R_h-
+	 * @param r Radial coordinate
 	 * 
 	 * @returns delta(r)
 	 */
@@ -79,14 +133,14 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric for a massive particle (KM_MP)
 	 * 
 	 * Integration constants in a list of two elements.
-	 * @param R_s schwarzschild radius
-	 * @param a calculated central mass parameter
-	 * @param delta_0 kerr metric variable delta(r) at t=0
+	 * @param R_s Schwarzschild radius
+	 * @param a Calculated central body parameter
+	 * @param delta_0 Kerr metric variable delta(r) at t=0
 	 * @param r_0 r(0), radial coordinate at t=0
 	 * @param U_r_0 U_r(r_0), velocity's radial coordinate
 	 * @param U_phi_0 U_phi(r_0), velocity's angular coordinate at t=0
 	 * 
-	 * @returns list where list[0]=L and list[1]=E
+	 * @returns List where list[0]=L and list[1]=E
 	 */
 	protected KM_MP_integration_constants(
 		R_s: number,
@@ -109,13 +163,13 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric for a massive particle (KM_MP)
 	 * 
 	 * Potential for an astronaut (A) divided by c²
-	 * @param R_s schwarzschild radius
-	 * @param a calculated central mass parameter
-	 * @param r radial coordinate
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param R_s Schwarzschild radius
+	 * @param a Calculated central body parameter
+	 * @param r Radial coordinate
+	 * @param L Integration constant
+	 * @param E Integration constant
 	 * 
-	 * @result potential
+	 * @result Potential
 	 */
 	protected KM_MP_potential_A(
 		R_s: number,
@@ -134,14 +188,14 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric for a massive particle (KM_MP)
 	 * 
 	 * Potential for a distant observer (DO) divided by c²
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param delta_r kerr metric variable delta(r)
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param R_s Schwarzschild radius
+	 * @param r Radial coordinate
+	 * @param a Calculated central body parameter
+	 * @param delta_r Kerr metric variable delta(r)
+	 * @param L Integration constant
+	 * @param E Integration constant
 	 * 
-	 * @result potential
+	 * @result Potential
 	 */
 	protected KM_MP_potential_DO(
 		R_s: number,
@@ -166,11 +220,11 @@ export class Kerr extends Simulation_trajectory {
 	 * Second derivative d²r/dtau² for an astronaut (A).
 	 * 
 	 * This method is to be used with Runge-Kutta.
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param R_s Schwarzschild radius
+	 * @param r Radial coordinate
+	 * @param a Calculated central body parameter
+	 * @param L Integration constant
+	 * @param E Integration constant
 	 */
 	protected KM_MP_trajectory_A(
 		R_s: number,
@@ -191,12 +245,12 @@ export class Kerr extends Simulation_trajectory {
 	 * Second derivative d²r/dt² for a distant observer (DO)
 	 * 
 	 * This method is to be used with Runge-Kutta.
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param delta_r kerr metric variable delta(r)
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param R_s Schwarzschild radius
+	 * @param r Radial coordinate
+	 * @param a Calculated central body parameter
+	 * @param delta_r Kerr metric variable delta(r)
+	 * @param L Integration constant
+	 * @param E Integration constant
 	 */
 	protected KM_MP_trajectory_DO(
 		R_s: number,
@@ -226,11 +280,11 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric for a photon (KM_PH)
 	 * 
 	 * Integration constants in a list of two elements.
-	 * @param R_s schwarzschild radius
-	 * @param a calculated central mass parameter
-	 * @param delta_0 delta(r_0), kerr metric variable at t=0
-	 * @param r_0 r(0), radial coordinate at t=0
-	 * @param U_r_0 U_r(r_0), velocity's radial coordinate
+	 * @param R_s Schwarzschild radius
+	 * @param a Calculated central body parameter
+	 * @param delta_0 delta(r_0), Kerr metric variable at t=0
+	 * @param r_0 r(0), Radial coordinate at t=0
+	 * @param U_r_0 U_r(r_0), velocity's Radial coordinate
 	 * @param U_phi_0 U_phi(r_0), velocity's angular coordinate at t=0
 	 * 
 	 * @returns list where list[0]=L and list[1]=E
@@ -255,11 +309,11 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric for a massive particle (KM_PH)
 	 * 
 	 * Potential for an astronaut (A) divided by c²
-	 * @param R_s schwarzschild radius
-	 * @param a calculated central mass parameter
-	 * @param r radial coordinate
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param R_s Schwarzschild radius
+	 * @param a Calculated central body parameter
+	 * @param r Radial coordinate
+	 * @param L Integration constant
+	 * @param E Integration constant
 	 * 
 	 * @result potential
 	 */
@@ -279,12 +333,12 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric for a massive particle (KM_MP)
 	 * 
 	 * Potential for a distant observer (DO) divided by c²
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param delta_r kerr metric variable delta(r)
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param R_s Schwarzschild radius
+	 * @param r Radial coordinate
+	 * @param a Calculated central body parameter
+	 * @param delta_r Kerr metric variable delta(r)
+	 * @param L Integration constant
+	 * @param E Integration constant
 	 * 
 	 * @result potential
 	 */
@@ -310,11 +364,11 @@ export class Kerr extends Simulation_trajectory {
 	 * Second derivative d²r/dlambda² for an astronaut (A)
 	 * 
 	 * This method is to be used with Runge-Kutta.
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param R_s Schwarzschild radius
+	 * @param r Radial coordinate
+	 * @param a Calculated central body parameter
+	 * @param L Integration constant
+	 * @param E Integration constant
 	 */
 	protected KM_PH_trajectory_A(
 		R_s: number,
@@ -335,12 +389,12 @@ export class Kerr extends Simulation_trajectory {
 	 * Second derivative d²r/dt² for a distant observer (DO)
 	 * 
 	 * This method is to be used with Runge-Kutta.
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param delta_r kerr metric variable delta(r)
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param R_s Schwarzschild radius
+	 * @param r Radial coordinate
+	 * @param a Calculated central body parameter
+	 * @param delta_r Kerr metric variable delta(r)
+	 * @param L Integration constant
+	 * @param E Integration constant
 	 */
 	protected KM_PH_trajectory_DO(
 		R_s: number,
