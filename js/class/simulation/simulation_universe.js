@@ -1,3 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Simulation_universe = void 0;
+const simulation_1 = require("./simulation");
+// Physics constants
+const c = 2.99792458e8; // Light constant
+const k = 1.38064852e-23; // Boltzmann constant
+const h = 6.62607004e-34; // Planck constant
+const G = 6.67430e-11; // Newton constant : Système international 2018
+// Distances
+const AU = 1.495978707e11; // Astronomical unit in meters
+const parsec = 3.0857e16; // Parsec in meters
+const k_parsec = 3.0857e19; // Kiloparsec in meters
+const M_parsec = 3.0857e22; // Megaparsec in meters
+const ly = 9.4607e15; // Light-year in meters
 /**
  * @class Simulation_universe.
  * inheritance from Simulation class
@@ -19,6 +34,7 @@
  * @method runge_kutta_universe_2
  * @method calcul_omega_r
  * @method calcul_omega_k
+ * @method check_sum_omegas
  * @method Y
  * @method dY
  * @method F
@@ -29,16 +45,16 @@
  * @method metric_distance
  * @method luminosity
  * @method luminosity_distance
+ * @method light_distance
  * @method angular_diameter_distance
  * @method brightness
  * @method apparent_diameter
- * @method integral_duration
  * @method integral_duration_substituated
  * @method integral_distance
  * @method equa_diff_a
  * @method equa_diff_time
  */
-class Simulation_universe extends Simulation {
+class Simulation_universe extends simulation_1.Simulation {
     //-------------------------constructor-----------------------
     constructor(id, temperature = 2.7255, hubble_cst = 67.74, matter_parameter = 3.089e-1, has_cmb = true, has_neutrino = true, is_flat = false) {
         super(id);
@@ -206,20 +222,20 @@ class Simulation_universe extends Simulation {
      *
      * @returns [step: number, x: number[], y:number[], yp: number[]].
      */
-    runge_kutta_universe_2(step, x_0 = 0, y_0 = 1, yp_0 = 1, funct, interval) {
+    runge_kutta_universe_2(step, x_0 = 0, y_0 = 1, dy_0 = 1, funct, interval) {
         // Init parameter
         let x = [x_0];
         let y = [y_0];
-        let yp = [yp_0];
+        let dy = [dy_0];
         // Computation loops
         // Computing with a positive step, i increments the array
         let i = 0;
         let result_runge_kutta;
         while (interval[0] <= y[i] && y[i] < interval[1]) {
-            result_runge_kutta = this.runge_kutta_equation_order2(this, step, x[i], y[i], yp[i], funct);
+            result_runge_kutta = this.runge_kutta_equation_order2(this, step, x[i], y[i], dy[i], funct);
             x.push(result_runge_kutta[0]);
             y.push(result_runge_kutta[1]);
-            yp.push(result_runge_kutta[2]);
+            dy.push(result_runge_kutta[2]);
             i++;
         }
         /*
@@ -228,13 +244,13 @@ class Simulation_universe extends Simulation {
             so for each step we take the first element of the array to compute the next one.
         */
         while (interval[0] <= y[0] && y[0] < interval[1]) {
-            result_runge_kutta = this.runge_kutta_equation_order2(this, -step, x[0], y[0], yp[0], funct);
+            result_runge_kutta = this.runge_kutta_equation_order2(this, -step, x[0], y[0], dy[0], funct);
             x.unshift(result_runge_kutta[0]);
             y.unshift(result_runge_kutta[1]);
-            yp.unshift(result_runge_kutta[2]);
+            dy.unshift(result_runge_kutta[2]);
             i++;
         }
-        return { x: x, y: y, dy: yp };
+        return { x: x, y: y, dy: dy };
     }
     /**
      * @returns the radiation density parameter
@@ -251,7 +267,7 @@ class Simulation_universe extends Simulation {
         if (this.has_neutrino) {
             omega_r *= 1.68;
         }
-        if (!(this.has_neutrino && this.has_cmb)) {
+        if (!this.has_cmb) {
             omega_r = 0;
         }
         return omega_r;
@@ -270,11 +286,17 @@ class Simulation_universe extends Simulation {
                 this.dark_energy.parameter_value);
         }
     }
+    /**
+     * Check if the sum of the density parameters is equal to 1. Otherwise modify one parameter to correct the sum.
+     * @param modify_matter true : modify the matter parameter, false : dark energy parameter instead
+     * @returns false if one parm has been modified, true otherwise
+     */
     check_sum_omegas(modify_matter = true) {
         let is_param_modified = false;
         let omega_r = this.calcul_omega_r();
         let sum = this.matter_parameter + omega_r + this.dark_energy.parameter_value + this.calcul_omega_k();
         if (this.is_flat && sum !== 1) {
+            is_param_modified = true;
             if (modify_matter) {
                 this.matter_parameter = 1 - this.dark_energy.parameter_value - omega_r;
             }
@@ -320,10 +342,13 @@ class Simulation_universe extends Simulation {
             this.Y(1 / (1 + x)) * this.dark_energy.parameter_value);
     }
     /**
-     * compute_a_tau in point
+     * compute the scale factor of the universe as function of time
      * @param step Computation step
+     * @param interval_a Array containing a_min et a_max value
+     * @param universe_age Permit to pass an already computed value for the universe age. If not given, the method recompute the value.
+     * @returns t value, a value, derivative of a
      */
-    compute_a_tau(step, interval_a = [0, 5], universe_age) {
+    compute_scale_factor(step, interval_a = [0, 5], universe_age) {
         let age;
         if (universe_age === undefined) {
             age = this.universe_age();
@@ -367,7 +392,18 @@ class Simulation_universe extends Simulation {
         */
         let age;
         age =
-            this.simpson(this, this.integral_duration_substituated, 0, 1, 100) /
+            this.simpson(this, this.integral_duration_substituated, 0, 1, 1000) /
+                this.hubble_cst;
+        return age;
+    }
+    /**
+     * name
+     */
+    emission_age(z) {
+        let infimum = z / (1 + z);
+        let age;
+        age =
+            this.simpson(this, this.integral_duration_substituated, infimum, 1, 1000) /
                 this.hubble_cst;
         return age;
     }
@@ -379,10 +415,12 @@ class Simulation_universe extends Simulation {
      */
     duration(z_1, z_2) {
         if (z_1 <= -1 || z_2 <= -1) {
-            throw new Error("Cosmologic shift z cannot be lower than -1 included");
+            throw new Error("Cosmologic shift z cannot be equal or lower than -1 included");
         }
+        let infimum = z_1 / (1 + z_1);
+        let supremum = z_2 / (1 + z_2);
         let duration;
-        duration = this.simpson(this, this.integral_duration, z_2, z_1, 1000) / this.hubble_cst;
+        duration = this.simpson(this, this.integral_duration_substituated, infimum, supremum, 1000) / this.hubble_cst;
         return duration;
     }
     /**
@@ -438,6 +476,16 @@ class Simulation_universe extends Simulation {
         return distance / (1 + z);
     }
     /**
+     * This fonction compute the distance with the simple formula c*t.
+     * @param z Cosmologic shift
+     * @returns c*t
+     */
+    light_distance(z) {
+        let duration = this.duration(0, z);
+        let c = this.constants.c;
+        return duration * c;
+    }
+    /**
      * Compute the luminosity of an astronomical object of an unifrom intensity I
      * @param I intensity
      * @returns luminosity
@@ -479,14 +527,7 @@ class Simulation_universe extends Simulation {
         return (D_e * (1 + z)) / distance;
     }
     /**
-     * @param x variable
-     * @returns 1/(1 + x) * 1/sqrt(F(x))
-     */
-    integral_duration(Simu, x) {
-        return ((1 / (1 + x))) / Math.sqrt(Simu.F(x));
-    }
-    /**
-     * Function integral_duration with the substitution x = y/(1 - y)
+     * formula 1/(1 + x) * 1/sqrt(E) with the substitution x = y/(1 - y), to be used with simpson method to compute duration.
      * @param y variable
      * @returns (1 - y) * 1/sqrt(F(x)) * 1/(1 - y)²\
      *
@@ -532,3 +573,4 @@ class Simulation_universe extends Simulation {
         return 1 / (this.hubble_cst * (1 + z) * Math.sqrt(Simu.F(z)));
     }
 }
+exports.Simulation_universe = Simulation_universe;

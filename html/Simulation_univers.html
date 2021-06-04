@@ -155,10 +155,10 @@
 				</div>
 				<div class="inp">
 					<label>w<sub>0</sub> = </label>
-					<input id="omega0" type="text" value="-1"></input>
+					<input id="omega0" type="text" value="-1" onchange="update_universe_value();"></input>
 					<div id="w-1">
 						<label>w<sub>1</sub> = </label>
-						<input id="omega1" type="text" value="0"></input>
+						<input id="omega1" type="text" value="0" onchange="update_universe_value();"></input>
 					</div>
 				</div>
 			</div>
@@ -168,15 +168,15 @@
 				<span id="txt_univplat"></span><input id="univ_plat" type="checkbox" name="univ_plat" onChange="updateUnivPlat_noir();"></input>
 			</div>
 			<div id="type_sim">
-				<select id="liste" onchange="update_omegar0_simu_noir();">
-					<option id="txt_MLRFCN" value="Matière, Lambda, RFC et Neutrinos"></option>
-					<option id="txt_MLRFC" value="Matière, Lambda et RFC"></option>
-					<option id="txt_ML" value="Matière et Lambda"></option>
+				<select id="liste" onchange="update_universe_rayonment();update_universe_value();">
+					<option id="0" value="Matière, Lambda, RFC et Neutrinos"></option>
+					<option id="1" value="Matière, Lambda et RFC"></option>
+					<option id="2" value="Matière et Lambda"></option>
 				</select>
 			</div>
 			<div id="trace_box">
 				<input class="myButton" id="monofluide" type="hidden" OnClick="trace_scale_factor()" value="Modèles Monofluides"></input>
-				<input id="trace" class="myButton" type="button" onClick="update_universe_value();" value="Tracer"></button>
+				<input id="trace" class="myButton" type="button" onClick="trace_scale_factor();" value="Tracer"></button>
 				<div id="gif" style="position:relative;display: inline-block;margin-left: 13px;"></div>
 			</div>
 		</div>
