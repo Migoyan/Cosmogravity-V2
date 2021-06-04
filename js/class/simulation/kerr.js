@@ -1,4 +1,7 @@
-import { Simulation_trajectory } from "./simulation_trajectory";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Kerr = void 0;
+const simulation_trajectory_1 = require("./simulation_trajectory");
 /**
  * @class Kerr
  *
@@ -17,7 +20,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * @method KM_PH_trajectory_A
  * @method KM_PH_trajectory_DO
  */
-export class Kerr extends Simulation_trajectory {
+class Kerr extends simulation_trajectory_1.Simulation_trajectory {
     //-------------------- Constructors --------------------
     constructor(id, collidable, mass, radius, angular_m) {
         super(id, collidable, mass, radius, angular_m);
@@ -161,3 +164,4 @@ export class Kerr extends Simulation_trajectory {
                 - Z * ((2 * r - R_s * a ** 2 / r ** 2) * E + R_s * a * L / r ** 2) * delta_r / W);
     }
 }
+exports.Kerr = Kerr;

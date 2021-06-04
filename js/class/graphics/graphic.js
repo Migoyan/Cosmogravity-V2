@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Graphic = void 0;
 /**
  * @class Graphic
  *
@@ -5,7 +8,7 @@
  * @param id_graph Identifier
  * @param simulation association between graphic and simulation
  */
-export class Graphic {
+class Graphic {
     //-------------------------constructor-----------------------
     constructor(id_graph, simulation) {
         this._id_graph = id_graph;
@@ -21,3 +24,4 @@ export class Graphic {
         return this._simulation;
     }
 }
+exports.Graphic = Graphic;

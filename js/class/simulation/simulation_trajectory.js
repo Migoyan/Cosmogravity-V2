@@ -1,5 +1,8 @@
-import { Simulation } from "./simulation";
-import { Central_body } from "./simulation objects/central_body";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Simulation_trajectory = void 0;
+const simulation_1 = require("./simulation");
+const central_body_1 = require("./simulation objects/central_body");
 /**
  * @class Simulation_trajectory
  * inheritance from Simulation class
@@ -13,14 +16,14 @@ import { Central_body } from "./simulation objects/central_body";
  * Methods:
  * @method add_mobile
  */
-export class Simulation_trajectory extends Simulation {
+class Simulation_trajectory extends simulation_1.Simulation {
     //-------------------- Constructors --------------------
     constructor(id, collidable, mass, radius, angular_m) {
         super(id);
         // Allows the possibility to modify the constants
         this.c = c;
         this.G = G;
-        this.central_body = new Central_body(collidable, mass, radius, angular_m);
+        this.central_body = new central_body_1.Central_body(collidable, mass, radius, angular_m);
         this.mobile_list = [];
     }
     //--------------------- Accessors ----------------------
@@ -40,3 +43,4 @@ export class Simulation_trajectory extends Simulation {
      */
     add_mobile(mobile) { this.mobile_list.push(mobile); }
 }
+exports.Simulation_trajectory = Simulation_trajectory;

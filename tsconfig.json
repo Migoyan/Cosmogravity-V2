@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"module": "commonJS",
 		"target": "es2018",
 		"jsx": "preserve",
 		"strictFunctionTypes": true,
@@ -9,9 +9,8 @@
         "noImplicitThis": true,
         "strictNullChecks": false,
 		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"moduleResolution": "node",
 		"typeRoots": [ "/node_modules/@types/" ],
-		"outDir": "./js"
+		"outDir": "./js",
+		"allowUmdGlobalAccess": true
 	}
 }
