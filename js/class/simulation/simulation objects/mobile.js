@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class Mobile
  *
@@ -10,9 +9,7 @@
  * @param r radial coordinate
  * @param phi angular coordinate
 */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Mobile = void 0;
-class Mobile {
+export class Mobile {
     //-------------------- Constructor- --------------------
     constructor(is_photon, collidable, r, phi) {
         this.is_photon = is_photon;
@@ -30,4 +27,3 @@ class Mobile {
     get_phi() { return this.phi; }
     set_phi(phi) { this.phi = phi; }
 }
-exports.Mobile = Mobile;

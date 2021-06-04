@@ -1,6 +1,5 @@
 // Init page
 
-import * as Plotly from "plotly.js";
 import { Simulation_universe } from "./class/simulation/simulation_universe";
 
 let universe = new Simulation_universe("universe", 3);

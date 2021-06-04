@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const simulation_universe_1 = require("./class/simulation/simulation_universe");
-let universe = new simulation_universe_1.Simulation_universe("our_universe");
+import { Simulation_universe } from "./class/simulation/simulation_universe";
+let universe = new Simulation_universe("our_universe");
 universe.matter_parameter = 1e10;
 universe.has_cmb = false;
 universe.has_neutrino = false;

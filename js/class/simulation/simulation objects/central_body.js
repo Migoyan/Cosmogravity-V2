@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class Central_body
  *
@@ -10,9 +9,7 @@
  * @param radius radius
  * @param angular_m angular momentum (J)
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Central_body = void 0;
-class Central_body {
+export class Central_body {
     //-------------------- Constructors --------------------
     constructor(collidable, mass, radius, angular_m) {
         this.collidable = collidable;
@@ -65,4 +62,3 @@ class Central_body {
         }
     }
 }
-exports.Central_body = Central_body;

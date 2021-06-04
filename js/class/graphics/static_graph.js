@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Static_graph = void 0;
-const Plotly = require("plotly.js");
-const graphic_1 = require("./graphic");
+import * as Plotly from "plotly.js";
+import { Graphic } from './graphic';
 /**
  * This is one of the two inherited class from Graphic.
  * It shouldn't be used for dynamic graphic representation.
  */
-class Static_graph extends graphic_1.Graphic {
+export class Static_graph extends Graphic {
     //-------------------------constructor-----------------------
     constructor(id_graph, simulation) {
         super(id_graph, simulation);
@@ -49,4 +46,3 @@ class Static_graph extends graphic_1.Graphic {
     plot_graph() {
     }
 }
-exports.Static_graph = Static_graph;
