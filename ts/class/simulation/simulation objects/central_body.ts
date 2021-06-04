@@ -1,26 +1,30 @@
 /**
  * @class Central_body
  * 
- * This class is used to describe the central mass of a system in trajectory simulations.
+ * This class is used to describe the central mass of a system
+ * in trajectory simulations.
  * 
  * @param collidable
  * @param mass
  * @param radius
  * @param angular_m
- * 
- * @method calculate_a
- * @method calculate_R_s
- * @method calculate_R_hp
- * @method calculate_R_hm
+ * @param R_s
+ * @param a
+ * @param R_hp
+ * @param R_hm
  */
 
 export class Central_body
 {
 
-    private _collidable: boolean;    // Can the object collide
-    private _mass: number;           // Mass
-    private _radius: number;         // Radius
-    private _angular_m: number;      // Angular momentum (J)
+    private _collidable: boolean;   // Can the object collide
+    private _mass: number;          // Mass
+    private _radius: number;        // Radius
+    private _angular_m: number;     // Angular momentum (J)
+    private _R_s: number;           // Schwarzschild radius
+    private _a: number;             // Calculated parameter a=J/cM
+    private _R_hp: number;          // See Kerr metric
+    private _R_hm: number;          // See Kerr metric
  
 
     //-------------------- Constructor ---------------------
@@ -34,9 +38,31 @@ export class Central_body
     ) {
         this._collidable = collidable;
         this._mass = mass;
-        this._radius = radius;
-        if ( angular_m === undefined) { this._angular_m = 0; }
-        else { this._angular_m = angular_m; }
+        this._R_s = 2*G*this._mass / c**2;
+        
+        /* If the radius of a body is smaller than its Schwarzschild radius,
+        it becomes a Black Hole and therefore a singularity. */
+        
+        if (radius <= this._R_s) { this._radius = 0; }
+        else { this._radius = radius; }
+        
+        /* If the angular momentum is not null, the Kerr metric is used and it
+        needs new calculated parameters. */
+
+        if ( angular_m === undefined || angular_m === 0)
+        {
+            this._angular_m = 0;
+            this._a = 0;
+            this._R_hp = this._R_s;
+            this._R_hm = 0;
+        }
+        else
+        {
+            this._angular_m = angular_m;
+            this._a = this._angular_m / (c * this._mass);
+            this._R_hp = (this._R_s + Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
+            this._R_hm = (this._R_s - Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
+        }
     }
 
 
@@ -46,86 +72,77 @@ export class Central_body
     // Collidable
     public get collidable() { return this._collidable; }
 
-    public set collidable(collidable: boolean) { this._collidable = collidable; }
+    private set collidable(collidable: boolean) { this._collidable = collidable; }
 
 
     // Mass
     public get mass() { return this._mass; }
 
-    public set mass(mass: number) { this._mass = mass; }
+    private set mass(mass: number) { this._mass = mass; }
 
 
     // Radius
     public get radius() { return this._radius; }
     
-    public set radius(radius: number)
+    private set radius(radius: number)
     {
-        /* If the radius of a body is smaller than its Schwarzschild radius,
-        it becomes a Black Hole and therefore a singularity. */
-        if (radius <= this.calculate_R_s())
-        {
-            this._radius = 0;
-        }
-        else
-        {
-            this._radius = radius;
-        }
+        if (radius <= this._R_s) { this._radius = 0; }
+        else { this._radius = radius; }
     }
 
 
     // Angular momentum
     public get angular_m() { return this._angular_m; }
 
-    public set angular_m(angular_m: number) { this._angular_m = angular_m; }
+    private set angular_m(angular_m: number) { this._angular_m = angular_m; }
+
+
+    // Schwarzschild radius
+    public get R_s() { return this._R_s; }
+
+    private set R_s(R_s: number) { this._R_s = R_s; }
+
+
+    // Parameter a
+    public get a() { return this._a; }
+
+    private set a(a: number) { this._a = a; }
+
+
+    // R_hp
+    public get R_hp() { return this._R_hp; }
+
+    private set R_hp(R_hp: number) { this._R_hp = R_hp; }
+
+
+    // R_hm
+    public get R_hm() { return this._R_hm; }
+
+    private set R_hm(R_hm: number) { this._R_hm = R_hm; }
 
 
     //---------------------- Methods -----------------------
 
 
     /**
-     * 
-     * @returns Calculated parameter a=J/cM
+     * Allows updating all the calculated parameters of a central body
+     * if one if the primordial parameter is modified.
      */
-    public calculate_a(): number
+    public update_parameters(): void
     {
-        if (this._angular_m == undefined) { return 0; }
-        else { return this._angular_m / (c * this._mass); }
+        this._R_s = 2*G*this._mass / c**2;
+        if (this._angular_m === 0)
+        {
+            this._a = 0;
+            this._R_hp = this._R_s;
+            this._R_hm = 0;
+        }
+        else
+        {
+            this._a = this._angular_m / (c * this._mass);
+            this._R_hp = (this._R_s + Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
+            this._R_hm = (this._R_s - Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
+        }
     }
-
-
-    /**
-     * 
-     * @returns Schwarzschild Radius
-     */
-    public calculate_R_s(): number { return 2*G*this.mass / c**2; }
-
-
-    /**
-     * 
-     * @param R_s 
-     * @param a 
-     * 
-     * @returns R_h+
-     */
-    public calculate_R_hp(R_s: number, a: number): number
-    {
-        if (this._angular_m == undefined) { return R_s; }
-        else { return (R_s + Math.sqrt(R_s**2 - 4 * a**2)) / 2; }
-    }
-
-
-    /**
-     * 
-     * @param R_s 
-     * @param a 
-     * 
-     * @returns R_h-
-     */
-    public calculate_R_hm(R_s: number, a: number): number
-    {
-        if (this._angular_m == undefined) { return 0; }
-        else { return (R_s - Math.sqrt(R_s**2 - 4 * a**2)) / 2; }
-    }
-
 
 }

@@ -11,7 +11,9 @@
  * @param phi
  * @param U_r
  * @param U_phi
-*/
+ * @param L
+ * @param E
+ */
 
 export class Mobile
 {
@@ -23,6 +25,12 @@ export class Mobile
     private _U_r: number;           // Velocity's radial coordinate
     private _U_phi: number;         // Velocity's angular coordinate
 
+    /* Integration constants, each simulation_trajectory child classes have
+    a method to set the proper value for these constants. These constants depends
+    on the type of the simulation and the initial conditions. */
+    private _L: number;
+    private _E: number;
+
 
     //-------------------- Constructor ---------------------
 
@@ -31,12 +39,27 @@ export class Mobile
         is_photon: boolean,
         collidable: boolean,
         r: number,
-        phi: number
+        phi: number,
+        U_r?: number,
+        U_phi?: number
     ) {
         this._is_photon = is_photon;
         this._collidable = collidable;
         this._r = r;
         this._phi = phi;
+        this._L = 0;
+        this._E = 0;
+
+        if (U_r === undefined && U_phi === undefined)
+        {
+            this._U_r = 0;
+            this._U_phi = 0;
+        }
+        else
+        {
+            this._U_r = U_r;
+            this._U_phi = U_phi;
+        }
     }
 
 
@@ -79,7 +102,15 @@ export class Mobile
     public set U_phi(U_phi: number) { this._U_phi = U_phi; }
 
 
+    // Integration constants
+    public get L() { return this._L; }
 
+    public set L(L: number) { this._L = L; }
+
+
+    public get E() { return this._E; }
+
+    public set E(E: number) { this._E = E; }
 
 
 }

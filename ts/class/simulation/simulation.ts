@@ -30,7 +30,7 @@ export abstract class Simulation
 	//---------------------- Methods -----------------------
 
 	
-      /**
+    /**
      * Fourth order Runge-Kutta method for first order derivatives.
      * 
      * @param step The step of computation
@@ -60,7 +60,7 @@ export abstract class Simulation
     }
 
 
-     /** 
+    /** 
      * Fourth order Runge-Kutta method for second order derivatives.
      * 
      * @param step Step of computation
@@ -104,17 +104,20 @@ export abstract class Simulation
      * @returns Value of the integral.
      */
     protected simpson(
-        funct: (x: number) => number, infimum: number, supremum: number, n: number
-    ): number
-    {
+        Simu: any,
+        funct: (Simu: any, x: number) => number,
+        infimum: number,
+        supremum: number,
+        n: number
+    ) {
         let step = (supremum - infimum) / n;
         let x = [];
         let y = [];
 
         for (let i=0; i<n; i++)
         {  
-            x[i] = infimum + i * h;
-            y[i] = funct(x[i]);
+            x[i] = infimum + i * step;
+            y[i] = funct(Simu, x[i]);
         }
         let res = 0;
         for (let i=0; i<n; i++)
@@ -132,5 +135,5 @@ export abstract class Simulation
         return res * step/3;
     }
 
-    
+
 }
