@@ -23,7 +23,7 @@ export class Central_body
     private _angular_m: number;      // Angular momentum (J)
  
 
-    //-------------------- Constructors --------------------
+    //-------------------- Constructor ---------------------
 
 
     constructor(

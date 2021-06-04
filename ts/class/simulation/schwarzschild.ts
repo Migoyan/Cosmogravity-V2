@@ -167,7 +167,7 @@ export class Schwarzchild extends Simulation_trajectory
         {
             return this.ESM_PH_trajectory_DO(R_s, mobile.r, L, E);
         }
-        else if (mobile.r < this.central_body.radius)
+        else if (mobile.r < radius)
         {
             let alpha_r = this.ISM_alpha_r(R_s, radius, mobile.r);
             let beta_r = this.ISM_beta_r(R_s, radius, mobile.r);
@@ -192,7 +192,7 @@ export class Schwarzchild extends Simulation_trajectory
      * All simulations take place on the theta=pi/2 plane
      * U_r and U_phi are the velocity coordinates
      * R_s Schwarzschild radius
-     * L_e and E_e are two Integration constants determined with the 
+     * L and E are two Integration constants determined with the 
      * initial conditions. L is a length and E is adimentional.
      * The "trajectory" functions are to be called by the Runge-Kutta algorithm.
      * The suffix A or DO refer to Astronaut or Distant Oberver.
@@ -220,10 +220,10 @@ export class Schwarzchild extends Simulation_trajectory
         U_phi_0: number
     ): number[]
     {
-        let L_e = U_phi_0 * r_0 / c;
-        let E_e = Math.sqrt(Math.pow(U_r_0 / c, 2)
+        let L = U_phi_0 * r_0 / c;
+        let E = Math.sqrt(Math.pow(U_r_0 / c, 2)
         + (1 - R_s / r_0) * (1 + Math.pow(U_phi_0 / c, 2)));
-        return [L_e, E_e];
+        return [L, E];
     }
 
 
@@ -233,13 +233,13 @@ export class Schwarzchild extends Simulation_trajectory
      * Potential for an astronaut (A) divided by c²
      * @param R_s Schwarzschild radius, attribute of @class Central_body
      * @param r Radial coordinate
-     * @param L_e Integration constant
+     * @param L Integration constant
      * 
      * @returns Potential
      */
-    protected ESM_MP_potential_A(R_s: number, r: number, L_e: number): number
+    protected ESM_MP_potential_A(R_s: number, r: number, L: number): number
     {
-        return (1 - R_s / r) * (1 + (L_e / r)**2);
+        return (1 - R_s / r) * (1 + (L / r)**2);
     }
 
 
@@ -249,15 +249,15 @@ export class Schwarzchild extends Simulation_trajectory
      * Potential for a distant observer (DO) divided by c²
      * @param R_s Schwarzschild radius, attribute of @class Central_body
      * @param r Radial coordinate
-     * @param E_e Integration constant
-     * @param L_e Integration constant
+     * @param E Integration constant
+     * @param L Integration constant
      * 
      * @returns Potential
      */
-    protected ESM_MP_potential_DO(R_s: number, r: number, L_e: number, E_e: number): number
+    protected ESM_MP_potential_DO(R_s: number, r: number, L: number, E: number): number
     {
-        let V_a = (1 - R_s / r) * (1 + (L_e / r)**2);
-        return E_e**2 - (c**2 - V_a / E_e**2) * (1 - R_s / r)**2 / c**2;
+        let V_a = (1 - R_s / r) * (1 + (L / r)**2);
+        return E**2 - (c**2 - V_a / E**2) * (1 - R_s / r)**2 / c**2;
     }
 
 
@@ -269,11 +269,11 @@ export class Schwarzchild extends Simulation_trajectory
      * This method is to be used with Runge-Kutta.
      * @param R_s Schwarzschild radius
      * @param r Radial coordinate
-     * @param L_e Integration constant
+     * @param L Integration constant
      */
-    protected ESM_MP_trajectory_A(R_s: number, r: number, L_e: number): number
+    protected ESM_MP_trajectory_A(R_s: number, r: number, L: number): number
     {
-        return c**2 / (2 * r**4) * (-R_s * r**2 + (2*r - 3*R_s) * L_e**2);
+        return c**2 / (2 * r**4) * (-R_s * r**2 + (2*r - 3*R_s) * L**2);
     }
 
 
@@ -285,16 +285,16 @@ export class Schwarzchild extends Simulation_trajectory
      * This method is to be used with Runge-Kutta.
      * @param R_s Schwarzschild radius
      * @param r Radial coordinate
-     * @param L_e Integration constant
-     * @param E_e Integration constant
+     * @param L Integration constant
+     * @param E Integration constant
      */
-    protected ESM_MP_trajectory_DO(R_s: number, r: number, L_e: number, E_e: number): number
+    protected ESM_MP_trajectory_DO(R_s: number, r: number, L: number, E: number): number
     {
         return c**2 * (r - R_s)
-        * (2 * E_e**2 * r**3 * R_s + 2 * (L_e * r)**2
-        - 7 * L_e**2 * r * R_s + 5 * (L_e * R_s)**2
+        * (2 * E**2 * r**3 * R_s + 2 * (L * r)**2
+        - 7 * L**2 * r * R_s + 5 * (L * R_s)**2
         - 3 * r**3 * R_s + 3 * (r * R_s)**2)
-        / (2 * E_e**2 * r**6);
+        / (2 * E**2 * r**6);
     }
 
 
@@ -319,10 +319,10 @@ export class Schwarzchild extends Simulation_trajectory
         U_phi_0: number
     ): number[]
     {
-        let L_e = U_phi_0 * r_0 / c;
-        let E_e = Math.sqrt(Math.pow(U_r_0 / c, 2)
+        let L = U_phi_0 * r_0 / c;
+        let E = Math.sqrt(Math.pow(U_r_0 / c, 2)
         + (1 - R_s / r_0) * Math.pow(U_phi_0 / c, 2));
-        return [L_e, E_e];
+        return [L, E];
     }
 
 
@@ -332,13 +332,13 @@ export class Schwarzchild extends Simulation_trajectory
      * Potential for an astronaut (A) divided by c²
      * @param R_s Schwarzschild radius
      * @param r Radial coordinate
-     * @param L_e Integration constant
+     * @param L Integration constant
      * 
      * @returns Potential
      */
-    protected ESM_PH_potential_A(R_s: number, r: number, L_e: number): number
+    protected ESM_PH_potential_A(R_s: number, r: number, L: number): number
     {
-        return (1 - R_s / r) * (1 + (L_e / r)**2);
+        return (1 - R_s / r) * (1 + (L / r)**2);
     }
 
 
@@ -348,15 +348,15 @@ export class Schwarzchild extends Simulation_trajectory
      * Potential for a distant observer (DO) divided by c²
      * @param R_s Schwarzschild radius
      * @param r Radial coordinate
-     * @param L_e Integration constant
-     * @param E_e Integration constant
+     * @param L Integration constant
+     * @param E Integration constant
      * 
      * @returns Potential
      */
-    protected ESM_PH_potential_DO(R_s: number, r: number, L_e: number, E_e: number): number
+    protected ESM_PH_potential_DO(R_s: number, r: number, L: number, E: number): number
     {
-        let V_a = (1 - R_s / r) * (1 + (L_e / r)**2);
-        return E_e**2 - (c**2 - V_a / E_e**2) * (1 - R_s / r)**2 / c**2;
+        let V_a = (1 - R_s / r) * (1 + (L / r)**2);
+        return E**2 - (c**2 - V_a / E**2) * (1 - R_s / r)**2 / c**2;
     }
 
 
@@ -368,11 +368,11 @@ export class Schwarzchild extends Simulation_trajectory
      * This method is to be used with Runge-Kutta.
      * @param R_s Schwarzschild radius
      * @param r Radial coordinate
-     * @param L_e Integration constant
+     * @param L Integration constant
      */
-    protected ESM_PH_trajectory_A(R_s: number, r: number, L_e: number): number
+    protected ESM_PH_trajectory_A(R_s: number, r: number, L: number): number
     {
-        return c**2 / (2 * r**4) * (2*r - 3*R_s) * L_e**2;
+        return c**2 / (2 * r**4) * (2*r - 3*R_s) * L**2;
     }
 
 
@@ -384,15 +384,15 @@ export class Schwarzchild extends Simulation_trajectory
      * This method is to be used with Runge-Kutta.
      * @param R_s Schwarzschild radius
      * @param r Radial coordinate
-     * @param L_e Integration constant
-     * @param E_e Integration constant
+     * @param L Integration constant
+     * @param E Integration constant
      */
-    protected ESM_PH_trajectory_DO(R_s: number, r: number, L_e: number, E_e: number): number
+    protected ESM_PH_trajectory_DO(R_s: number, r: number, L: number, E: number): number
     {
         return c**2 * (r - R_s)
-        * (2 * E_e**2 * r**3 * R_s + 2 * (L_e * r)**2
-        - 7 * L_e**2 * r * R_s + 5 * (L_e * R_s)**2)
-        / (2 * E_e**2 * r**6);
+        * (2 * E**2 * r**3 * R_s + 2 * (L * r)**2
+        - 7 * L**2 * r * R_s + 5 * (L * R_s)**2)
+        / (2 * E**2 * r**6);
     }
 
 
@@ -400,7 +400,7 @@ export class Schwarzchild extends Simulation_trajectory
 
     /*
      * r < R
-     * The Integration constants are now called L_i and E_i
+     * The Integration constants are now called L and E
      * Definition of two new variables alpha and beta.
      */
 
@@ -460,9 +460,9 @@ export class Schwarzchild extends Simulation_trajectory
         beta_0: number
     ): number[]
     {
-        let L_i = U_phi_0 * r_0 / c;
-        let E_i = beta_0 / c * Math.sqrt(U_r_0**2 / alpha_0 + U_phi_0**2 + c**2);
-        return [L_i, E_i];
+        let L = U_phi_0 * r_0 / c;
+        let E = beta_0 / c * Math.sqrt(U_r_0**2 / alpha_0 + U_phi_0**2 + c**2);
+        return [L, E];
     }
 
 
@@ -473,8 +473,8 @@ export class Schwarzchild extends Simulation_trajectory
      * @param R_s Schwarzschild radius
      * @param r Radial coordinate
      * @param alpha_0 ISM variable alpha(r)
-     * @param L_e Integration constant
-     * @param E_i Integration constant
+     * @param L Integration constant
+     * @param E Integration constant
      * 
      * @returns Potential
      */
@@ -482,11 +482,11 @@ export class Schwarzchild extends Simulation_trajectory
         r: number,
         alpha_r: number,
         beta_r: number,
-        E_i: number,
-        L_i: number
+        E: number,
+        L: number
     ): number
     {
-        return E_i**2 - alpha_r * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2) - 1);
+        return E**2 - alpha_r * (Math.pow(E / beta_r, 2) - Math.pow(L / r, 2) - 1);
     }
 
 
@@ -501,8 +501,8 @@ export class Schwarzchild extends Simulation_trajectory
      * @param r Radial coordinate
      * @param alpha_r ISM variable alpha(r)
      * @param beta_r ISM variable beta(r)
-     * @param L_i Integration constant
-     * @param E_i Integration constant
+     * @param L Integration constant
+     * @param E Integration constant
      */
     protected ISM_MP_trajectory_A(
         R_s: number,
@@ -510,14 +510,14 @@ export class Schwarzchild extends Simulation_trajectory
         r: number,
         alpha_r: number,
         beta_r: number,
-        L_i: number,
-        E_i: number
+        L: number,
+        E: number
     ): number
     {
         return -(c**2 * r * R_s / radius**3)
-        * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2) - 1)
-        + c**2 * alpha_r * .5 * (-(E_i**2 * r * R_s)
-        / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L_i**2 / r**3);
+        * (Math.pow(E / beta_r, 2) - Math.pow(L / r, 2) - 1)
+        + c**2 * alpha_r * .5 * (-(E**2 * r * R_s)
+        / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L**2 / r**3);
     }
 
 
@@ -542,9 +542,9 @@ export class Schwarzchild extends Simulation_trajectory
         beta_0: number
     ): number[]
     {
-        let L_i = U_phi_0 * r_0 / c;
-        let E_i = beta_0 / c * Math.sqrt(U_r_0**2 / alpha_0 + U_phi_0**2);
-        return [L_i, E_i];
+        let L = U_phi_0 * r_0 / c;
+        let E = beta_0 / c * Math.sqrt(U_r_0**2 / alpha_0 + U_phi_0**2);
+        return [L, E];
     }
 
 
@@ -555,8 +555,8 @@ export class Schwarzchild extends Simulation_trajectory
      * @param R_s Schwarzschild radius
      * @param r Radial coordinate
      * @param alpha_0 ISM variable alpha(r) at t=0
-     * @param L_e Integration constant
-     * @param E_i Integration constant
+     * @param L Integration constant
+     * @param E Integration constant
      * 
      * @returns Potential
      */
@@ -564,11 +564,11 @@ export class Schwarzchild extends Simulation_trajectory
         r: number,
         alpha_r: number,
         beta_r: number,
-        E_i: number,
-        L_i: number
+        E: number,
+        L: number
     ): number
     {
-        return E_i**2 - alpha_r * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2));
+        return E**2 - alpha_r * (Math.pow(E / beta_r, 2) - Math.pow(L / r, 2));
     }
 
 
@@ -583,8 +583,8 @@ export class Schwarzchild extends Simulation_trajectory
      * @param r Radial coordinate
      * @param alpha_r ISM variable alpha(r)
      * @param beta_r ISM variable beta(r)
-     * @param L_i Integration constant
-     * @param E_i Integration constant 
+     * @param L Integration constant
+     * @param E Integration constant 
      */
     protected ISM_PH_trajectory_A(
         R_s: number,
@@ -592,14 +592,14 @@ export class Schwarzchild extends Simulation_trajectory
         r: number,
         alpha_r: number,
         beta_r: number,
-        L_i: number,
-        E_i: number
+        L: number,
+        E: number
     ): number
     {
         return -(c**2 * r * R_s / radius**3)
-        * (Math.pow(E_i / beta_r, 2) - Math.pow(L_i / r, 2))
-        + c**2 * alpha_r * .5 * (-(E_i**2 * r * R_s)
-        / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L_i**2 / r**3);
+        * (Math.pow(E / beta_r, 2) - Math.pow(L / r, 2))
+        + c**2 * alpha_r * .5 * (-(E**2 * r * R_s)
+        / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L**2 / r**3);
     }
 
 

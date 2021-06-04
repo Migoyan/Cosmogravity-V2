@@ -4,24 +4,27 @@
  * This class is used to describe the different objects about which 
  * we are calculating the trajectory.
  * 
- * Attributes:
- * @param is_photon self explanatory
- * @param collidable can the object collide with others objets
- * @param mass mass
- * @param r radial coordinate
- * @param phi angular coordinate
+ * @param is_photon
+ * @param collidable
+ * @param mass
+ * @param r
+ * @param phi
+ * @param U_r
+ * @param U_phi
 */
 
-export class Mobile {
-
+export class Mobile
+{
 
     private _is_photon: boolean;
-    private _collidable: boolean;    // Can the object collide
-    private _r: number;              // Radial coordinate
-    private _phi: number;            // Angular coordinate
+    private _collidable: boolean;   // Can the object collide
+    private _r: number;             // Radial coordinate
+    private _phi: number;           // Angular coordinate
+    private _U_r: number;           // Velocity's radial coordinate
+    private _U_phi: number;         // Velocity's angular coordinate
 
 
-    //-------------------- Constructor- --------------------
+    //-------------------- Constructor ---------------------
 
 
     constructor(
@@ -62,6 +65,20 @@ export class Mobile {
     public get phi() { return this._phi; }
 
     public set phi(phi: number) { this._phi = phi; }
+
+
+    // Velocity U_r
+    public get U_r() { return this._U_r; }
+
+    public set U_r(U_r: number) { this._U_r = U_r; }
+
+
+    // Velocity U_phi
+    public get U_phi() { return this._U_phi; }
+
+    public set U_phi(U_phi: number) { this._U_phi = U_phi; }
+
+
 
 
 

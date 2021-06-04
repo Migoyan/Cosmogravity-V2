@@ -24,7 +24,7 @@ export abstract class Simulation_trajectory extends Simulation
 	private _G: number = G;
 
 
-	//-------------------- Constructors --------------------
+	//-------------------- Constructor --------------------
 
 
 	constructor(
