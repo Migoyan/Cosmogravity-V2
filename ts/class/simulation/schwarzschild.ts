@@ -88,43 +88,93 @@ export class Schwarzchild extends Simulation_trajectory
 
 
     /**
-     * Applies the Runge-Kutta algorithm to the relevant second derivative expression
-     * for the current simulation.
-     * @param mobile Mobile object
+     * Applies the Runge-Kutta algorithm to the relevant second derivative
+     * expression for the current simulation and updates the mobile with
+     * new position and velocity.
+     * @param mobile
      * @param reference_frame Astronaut (A), Distant Observer (DO)
-     * @returns [x_1, y_1, yp_1], value of the next point of computation
      */
-    public runge_kutta_trajectory(mobile: Mobile, reference_frame: "A" | "DO"): number
+    public runge_kutta_trajectory(mobile: Mobile, reference_frame: "A" | "DO"): void
     {
+        let dtau: number;
+        let tau: number;
         let radius = this.central_body.radius;
+        let r = mobile.r;
+        let U_r = mobile.U_r;
+        let runge_kutta_result: number[];
 
         if (mobile.r >= radius && !mobile.is_photon && reference_frame === "A")
         {
-            return this.ESM_MP_trajectory_A(mobile);
+            runge_kutta_result = this.runge_kutta_equation_order2(
+                mobile,
+                dtau,
+                tau,
+                r,
+                U_r,
+                this.ESM_MP_trajectory_A
+            );
         }
         else if (mobile.r >= radius && !mobile.is_photon && reference_frame === "DO")
         {
-            return this.ESM_MP_trajectory_DO(mobile);
+            runge_kutta_result = this.runge_kutta_equation_order2(
+                mobile,
+                dtau,
+                tau,
+                r,
+                U_r,
+                this.ESM_MP_trajectory_DO
+            );
         }
         else if (mobile.r >= radius && mobile.is_photon && reference_frame === "A")
         {
-            return this.ESM_PH_trajectory_A(mobile);
+            runge_kutta_result = this.runge_kutta_equation_order2(
+                mobile,
+                dtau,
+                tau,
+                r,
+                U_r,
+                this.ESM_PH_trajectory_A
+            );
         }
         else if (mobile.r >= radius && mobile.is_photon && reference_frame === "DO")
         {
-            return this.ESM_PH_trajectory_DO(mobile);
+            runge_kutta_result = this.runge_kutta_equation_order2(
+                mobile,
+                dtau,
+                tau,
+                r,
+                U_r,
+                this.ESM_PH_trajectory_DO
+            );
         }
         else if (mobile.r < radius)
         {
             if (!mobile.is_photon)
             {
-                return this.ISM_MP_trajectory_A(mobile);
+                runge_kutta_result = this.runge_kutta_equation_order2(
+                    mobile,
+                    dtau,
+                    tau,
+                    r,
+                    U_r,
+                    this.ISM_MP_trajectory_A
+                );
             }
             else
             {
-                return this.ISM_PH_trajectory_A(mobile);
+                runge_kutta_result = this.runge_kutta_equation_order2(
+                    mobile,
+                    dtau,
+                    tau,
+                    r,
+                    U_r,
+                    this.ISM_PH_trajectory_A
+                );
             }
-        }  
+        }
+        tau = runge_kutta_result[0];
+        mobile.r = runge_kutta_result[1];
+        mobile.U_r = runge_kutta_result[2];
     }
 
 
@@ -200,12 +250,14 @@ export class Schwarzchild extends Simulation_trajectory
      * 
      * This method is to be used with Runge-Kutta.
      * @param mobile
+     * @param t
+     * @param r
+     * @param U_r
      */
-    protected ESM_MP_trajectory_A(mobile: Mobile): number
+    protected ESM_MP_trajectory_A(mobile: any, t: number, r: number, U_r: number): number
     {
-        return c**2 / (2 * mobile.r**4)
-        * (-this.central_body.R_s * mobile.r**2
-        + (2*mobile.r - 3*this.central_body.R_s) * mobile.L**2);
+        return c**2 / (2 * r**4) * (-this.central_body.R_s * r**2
+            + (2*r - 3*this.central_body.R_s) * mobile.L**2);
     }
 
 
@@ -216,15 +268,16 @@ export class Schwarzchild extends Simulation_trajectory
      * 
      * This method is to be used with Runge-Kutta.
      * @param mobile
+     * @param t
+     * @param r
+     * @param U_r
      */
-    protected ESM_MP_trajectory_DO(mobile: Mobile): number
+    protected ESM_MP_trajectory_DO(mobile: any, t: number, r: number, U_r: number): number
     {
-        return c**2 * (mobile.r - this.central_body.R_s)
-        * (2 * mobile.E**2 * mobile.r**3 * this.central_body.R_s
-        + 2*(mobile.L * mobile.r)**2 - 7 * mobile.L**2 * mobile.r
-        * this.central_body.R_s + 5 * (mobile.L * this.central_body.R_s)**2
-        - 3 * mobile.r**3 * this.central_body.R_s + 3
-        * (mobile.r * this.central_body.R_s)**2) / (2 * mobile.E**2 * mobile.r**6);
+        return c**2 * (r - this.central_body.R_s) * (2 * mobile.E**2 * r**3 * this.central_body.R_s
+            + 2*(mobile.L * r)**2 - 7 * mobile.L**2 * r * this.central_body.R_s
+            + 5 * (mobile.L * this.central_body.R_s)**2 - 3 * r**3 * this.central_body.R_s
+            + 3 * (r * this.central_body.R_s)**2) / (2 * mobile.E**2 * r**6);
     }
 
 
@@ -285,11 +338,13 @@ export class Schwarzchild extends Simulation_trajectory
      * 
      * This method is to be used with Runge-Kutta.
      * @param mobile
+     * @param t
+     * @param r
+     * @param U_r
      */
-    protected ESM_PH_trajectory_A(mobile: Mobile): number
+    protected ESM_PH_trajectory_A(mobile: any, t: number, r: number, U_r: number): number
     {
-        return c**2 / (2 * mobile.r**4)
-        * (2*mobile.r - 3*this.central_body.R_s) * mobile.L**2;
+        return c**2 / (2 * r**4) * (2*r - 3*this.central_body.R_s) * mobile.L**2;
     }
 
 
@@ -300,14 +355,16 @@ export class Schwarzchild extends Simulation_trajectory
      * 
      * This method is to be used with Runge-Kutta.
      * @param mobile
+     * @param t
+     * @param r
+     * @param U_r
      */
-    protected ESM_PH_trajectory_DO(mobile: Mobile): number
+    protected ESM_PH_trajectory_DO(mobile: any, t: number, r: number, U_r: number): number
     {
-        return c**2 * (mobile.r - this.central_body.R_s)
-        * (2 * mobile.E**2 * mobile.r**3 * this.central_body.R_s
-        + 2*(mobile.L * mobile.r)**2 - 7 * mobile.L**2 * mobile.r
-        * this.central_body.R_s + 5 * (mobile.L * this.central_body.R_s)**2)
-        / (2 * mobile.E**2 * mobile.r**6);
+        return c**2 * (r - this.central_body.R_s) * (2 * mobile.E**2 * r**3
+            * this.central_body.R_s + 2*(mobile.L * r)**2 - 7 * mobile.L**2 * r
+            * this.central_body.R_s + 5 * (mobile.L * this.central_body.R_s)**2)
+            / (2 * mobile.E**2 * r**6);
     }
 
 
@@ -389,18 +446,18 @@ export class Schwarzchild extends Simulation_trajectory
      * Second derivative d²r/dtau² for an astronaut (A)
      * 
      * This method is to be used with Runge-Kutta.
-     * @param Mobile
+     * @param mobile
+     * @param t
+     * @param r
+     * @param U_r
      */
-    protected ISM_MP_trajectory_A(mobile: Mobile): number
+    protected ISM_MP_trajectory_A(mobile: any, t: number, r: number, U_r: number): number
     {
-        return -(c**2 * mobile.r * this.central_body.R_s
-            / this.central_body.radius**3)
-            * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2)
-            - Math.pow(mobile.L / mobile.r, 2) - 1) + c**2
-            * this.ISM_alpha_r(mobile) * .5*(-(mobile.E**2 * mobile.r
-            * this.central_body.R_s) / ((this.ISM_beta_r(mobile)
-            * this.central_body.radius)**3 * this.ISM_alpha_r(mobile)**.5)
-            + 2 * mobile.L**2 / mobile.r**3);
+        return -(c**2 * r * this.central_body.R_s / this.central_body.radius**3)
+        * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2) - Math.pow(mobile.L / r, 2) - 1)
+        + c**2 * this.ISM_alpha_r(mobile) * .5*(-(mobile.E**2 * r * this.central_body.R_s)
+        / ((this.ISM_beta_r(mobile) * this.central_body.radius)**3
+        * this.ISM_alpha_r(mobile)**.5) + 2 * mobile.L**2 / r**3);
     }
 
 
@@ -429,7 +486,7 @@ export class Schwarzchild extends Simulation_trajectory
      * @param mobile
      * @returns Potential
      */
-     protected ISM_PH_potential_A(mobile: Mobile): number
+    protected ISM_PH_potential_A(mobile: Mobile): number
     {
         return mobile.E**2 - this.ISM_alpha_r(mobile)
         * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2)
@@ -444,16 +501,17 @@ export class Schwarzchild extends Simulation_trajectory
      * 
      * This method is to be used with Runge-Kutta.
      * @param mobile
+     * @param t
+     * @param r
+     * @param U_r
      */
-    protected ISM_PH_trajectory_A(mobile: Mobile): number
+    protected ISM_PH_trajectory_A(mobile: any, t: number, r: number, U_r: number): number
     {
-        return -(c**2 * mobile.r * this.central_body.R_s
-            / this.central_body.radius**3)
-            * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2)
-            - Math.pow(mobile.L / mobile.r, 2)) + c**2 * this.ISM_alpha_r(mobile)
-            * .5*(-(mobile.E**2 * mobile.r * this.central_body.R_s)
-            / ((this.ISM_beta_r(mobile) * this.central_body.radius)**3
-            * this.ISM_alpha_r(mobile)**.5) + 2 * mobile.L**2 / mobile.r**3);
+        return -(c**2 * r * this.central_body.R_s / this.central_body.radius**3)
+        * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2) - Math.pow(mobile.L / r, 2))
+        + c**2 * this.ISM_alpha_r(mobile) * .5*(-(mobile.E**2 * r * this.central_body.R_s)
+        / ((this.ISM_beta_r(mobile) * this.central_body.radius)**3
+        * this.ISM_alpha_r(mobile)**.5) + 2 * mobile.L**2 / r**3);
     }
 
 

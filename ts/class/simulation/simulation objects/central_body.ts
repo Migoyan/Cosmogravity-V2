@@ -25,8 +25,8 @@ export class Central_body
     private _angular_m: number;     // Angular momentum (J)
     private _R_s: number;           // Schwarzschild radius
     private _a: number;             // Calculated parameter a=J/cM
-    private _R_hp: number;          // See Kerr metric
-    private _R_hm: number;          // See Kerr metric
+    private _R_hp: number;          // See Kerr metric theory
+    private _R_hm: number;          // See Kerr metric theory
  
 
     //-------------------- Constructor ---------------------
@@ -62,8 +62,10 @@ export class Central_body
         {
             this._angular_m = angular_m;
             this._a = this._angular_m / (c * this._mass);
-            this._R_hp = (this._R_s + Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
-            this._R_hm = (this._R_s - Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
+            this._R_hp = (this._R_s
+                + Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
+            this._R_hm = (this._R_s
+                - Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
         }
     }
 
@@ -74,7 +76,10 @@ export class Central_body
     // Collidable
     public get collidable() { return this._collidable; }
 
-    private set collidable(collidable: boolean) { this._collidable = collidable; }
+    private set collidable(collidable: boolean)
+    {
+        this._collidable = collidable;
+    }
 
 
     // Mass
@@ -96,7 +101,10 @@ export class Central_body
     // Angular momentum
     public get angular_m() { return this._angular_m; }
 
-    private set angular_m(angular_m: number) { this._angular_m = angular_m; }
+    private set angular_m(angular_m: number)
+    {
+        this._angular_m = angular_m;
+    }
 
 
     // Schwarzschild radius
@@ -142,9 +150,12 @@ export class Central_body
         else
         {
             this._a = this._angular_m / (c * this._mass);
-            this._R_hp = (this._R_s + Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
-            this._R_hm = (this._R_s - Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
+            this._R_hp = (this._R_s
+                + Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
+            this._R_hm = (this._R_s
+                - Math.sqrt(this._R_s**2 - 4 * this._a**2)) / 2;
         }
     }
+
 
 }

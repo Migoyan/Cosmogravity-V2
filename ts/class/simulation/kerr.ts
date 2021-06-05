@@ -73,24 +73,61 @@ export class Kerr extends Simulation_trajectory
      * @param reference_frame Astronaut (A), Distant Observer (DO)
      * @returns [x_1, y_1, yp_1], value of the next point of computation
      */
-    public runge_kutta_trajectory( mobile: Mobile, reference_frame: "A" | "DO"): number
+    public runge_kutta_trajectory( mobile: Mobile, reference_frame: "A" | "DO"): void
     {
+        let dtau: number;
+        let tau: number;
+        let r = mobile.r;
+        let U_r = mobile.U_r;
+        let runge_kutta_result: number[];
+
 		if (!mobile.is_photon && reference_frame === "A")
 		{
-			return this.KM_MP_trajectory_A(mobile);
+			runge_kutta_result = this.runge_kutta_equation_order2(
+				mobile,
+				dtau,
+				tau,
+				r,
+				U_r,
+				this.KM_MP_trajectory_A
+			);
 		}
 		else if (!mobile.is_photon && reference_frame === "DO")
 		{
-			return this.KM_MP_trajectory_DO(mobile);
+			runge_kutta_result = this.runge_kutta_equation_order2(
+				mobile,
+				dtau,
+				tau,
+				r,
+				U_r,
+				this.KM_MP_trajectory_DO
+			);
 		}
 		else if (mobile.is_photon && reference_frame === "A")
 		{
-			return this.KM_PH_trajectory_A(mobile);
+			runge_kutta_result = this.runge_kutta_equation_order2(
+				mobile,
+				dtau,
+				tau,
+				r,
+				U_r,
+				this.KM_PH_trajectory_A
+			);
 		}
 		else if (mobile.is_photon && reference_frame === "DO")
 		{
-			return this.KM_PH_trajectory_DO(mobile);
+			runge_kutta_result = this.runge_kutta_equation_order2(
+				mobile,
+				dtau,
+				tau,
+				r,
+				U_r,
+				this.KM_PH_trajectory_DO
+			);
 		}
+		tau = runge_kutta_result[0];
+        mobile.r = runge_kutta_result[1];
+        mobile.U_r = runge_kutta_result[2];
     }
 
 
@@ -98,7 +135,8 @@ export class Kerr extends Simulation_trajectory
 	 * The spacial and temporal coordinates are (r, theta, phi, t)
 	 * All simulations take place on the theta=pi/2 plane
 	 * U_r and U_phi are the velocity coordinates
-	 * this.central_body.R_s Schwarzschild radius. The Kerr metric also uses R_h+ and R_h-, see theory.
+	 * this.central_body.R_s Schwarzschild radius. 
+	 * The Kerr metric also uses R_h+ and R_h-, see theory.
 	 * A new variable delta is defined for the Kerr metric relative to R_h+ and R_h-.
 	 * L and E are two Integration constants determined with the 
 	 * initial conditions. L is a length and E is adimentional.
@@ -191,11 +229,13 @@ export class Kerr extends Simulation_trajectory
 	 * 
 	 * This method is to be used with Runge-Kutta.
 	 * @param mobile
+	 * @param t
+     * @param r
+     * @param U_r
 	 */
-	protected KM_MP_trajectory_A(mobile: Mobile): number
+	protected KM_MP_trajectory_A(mobile: any, t: number, r: number, U_r: number): number
 	{
-		return c**2 / (2 * mobile.r**4)
-		* (this.central_body.R_s * mobile.r**2 + 2*mobile.r
+		return c**2 / (2 * r**4) * (this.central_body.R_s * r**2 + 2*r
 			* (this.central_body.a**2 * (mobile.E**2 - 1) - mobile.L**2)
 			+ 3*this.central_body.R_s * (mobile.L - this.central_body.a * mobile.E)**2);
 	}
@@ -208,26 +248,29 @@ export class Kerr extends Simulation_trajectory
 	 * 
 	 * This method is to be used with Runge-Kutta.
 	 * @param mobile
+	 * @param t
+     * @param r
+     * @param U_r
 	 */
-	protected KM_MP_trajectory_DO(mobile: Mobile): number
+	protected KM_MP_trajectory_DO(mobile: any, t: number, r: number, U_r: number): number
 	{
 		let R_s = this.central_body.R_s;
 		let a = this.central_body.a;
 
-		let W = (mobile.r**2 + a**2 + R_s * a**2 / mobile.r)
-		* mobile.E - R_s * a * mobile.L / mobile.r;
+		let W = (r**2 + a**2 + R_s * a**2 / r)
+		* mobile.E - R_s * a * mobile.L / r;
 
 		let X = mobile.E**2 * a**2 - mobile.L**2 - a**2;
 
 		let Y = R_s * (mobile.L - a * mobile.E)**2;
 
-		let Z = 2*(mobile.E**2 - 1 + R_s / mobile.r + X / mobile.r**2 + Y / mobile.r**3);
+		let Z = 2*(mobile.E**2 - 1 + R_s / r + X / r**2 + Y / r**3);
 
 		return c**2 * this.KM_delta_r(mobile) / (2 * W**2)
-		* ((-R_s / mobile.r**2 - 2*X / mobile.r**3 - 3*Y / mobile.r**4)
-		* this.KM_delta_r(mobile) + Z * (2*mobile.r - R_s)
-		- Z * ((2*mobile.r - R_s * a**2 / mobile.r**2) 
-		* mobile.E + R_s * a * mobile.L / mobile.r**2) * this.KM_delta_r(mobile) / W);
+		* ((-R_s / r**2 - 2*X / r**3 - 3*Y / r**4) * this.KM_delta_r(mobile)
+		+ Z * (2*r - R_s)
+		- Z * ((2*r - R_s * a**2 / r**2) * mobile.E + R_s * a * mobile.L / r**2)
+		* this.KM_delta_r(mobile) / W);
 	}
 
 
@@ -297,11 +340,14 @@ export class Kerr extends Simulation_trajectory
 	 * 
 	 * This method is to be used with Runge-Kutta.
 	 * @param mobile
+	 * @param t
+     * @param r
+     * @param U_r
 	 */
-	protected KM_PH_trajectory_A(mobile: Mobile): number
+	protected KM_PH_trajectory_A(mobile: any, t: number, r: number, U_r: number): number
 	{
-		return -(c**2 / (2 * mobile.r**4))
-		* (2*mobile.r * (this.central_body.a**2 * mobile.E**2 - mobile.L**2)
+		return -(c**2 / (2 * r**4))
+		* (2*r * (this.central_body.a**2 * mobile.E**2 - mobile.L**2)
 		+ 3*this.central_body.R_s * (mobile.L - this.central_body.a * mobile.E)**2);
 	}
 
@@ -313,25 +359,27 @@ export class Kerr extends Simulation_trajectory
 	 * 
 	 * This method is to be used with Runge-Kutta.
 	 * @param mobile
+	 * @param t
+     * @param r
+     * @param U_r
 	 */
-	protected KM_PH_trajectory_DO(mobile: Mobile): number
+	protected KM_PH_trajectory_DO(mobile: any, t: number, r: number, U_r: number): number
 	{
 		let R_s = this.central_body.R_s;
 		let a = this.central_body.a;
 
-		let W = (mobile.r**2 + a**2 + R_s * a**2 / mobile.r)
-		* mobile.E - R_s * a * mobile.L / mobile.r;
+		let W = (r**2 + a**2 + R_s * a**2 / r)
+		* mobile.E - R_s * a * mobile.L / r;
 
 		let X = mobile.E**2 * a**2 - mobile.L**2;
 
 		let Y = R_s * (mobile.L - a * mobile.E)**2;
 
-		let Z = 2*(mobile.E**2 + X / mobile.r**2 + Y / mobile.r**3);
+		let Z = 2*(mobile.E**2 + X / r**2 + Y / r**3);
 
-		return c**2 * this.KM_delta_r(mobile) / (2 * W**2)
-		* ((-2*X / mobile.r**3 - 3*Y / mobile.r**4) * this.KM_delta_r(mobile)
-		+ Z * (2*mobile.r - R_s) - Z * ((2*mobile.r - R_s * a**2 / mobile.r**2)
-		* mobile.E + R_s * a * mobile.L / mobile.r**2) * this.KM_delta_r(mobile) / W);
+		return c**2 * this.KM_delta_r(mobile) / (2 * W**2) * ((-2*X / r**3 - 3*Y / r**4)
+		* this.KM_delta_r(mobile) + Z * (2*r - R_s) - Z * ((2*r - R_s * a**2 / r**2)
+		* mobile.E + R_s * a * mobile.L / r**2) * this.KM_delta_r(mobile) / W);
 	}
 
 

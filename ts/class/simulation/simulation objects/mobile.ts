@@ -13,7 +13,7 @@
  * @param U_phi
  * @param L
  * @param E
- */
+*/
 
 export class Mobile
 {
@@ -25,9 +25,10 @@ export class Mobile
     private _U_r: number;           // Velocity's radial coordinate
     private _U_phi: number;         // Velocity's angular coordinate
 
-    /* Integration constants, each simulation_trajectory child classes have
-    a method to set the proper value for these constants. These constants depends
-    on the type of the simulation and the initial conditions. */
+    /* Integration constants, each simulation_trajectory child classes
+    have a method to set the proper value for these constants.
+    These constants depends on the type of the simulation and
+    the initial conditions. */
     private _L: number;
     private _E: number;
 
@@ -69,13 +70,17 @@ export class Mobile
     // Is photon?
     public get is_photon() { return this._is_photon; }
 
-    public set is_photon(is_photon: boolean) { this._is_photon = is_photon; }
+    public set is_photon(is_photon: boolean) {
+        this._is_photon = is_photon;
+    }
 
 
     // Collidable
     public get collidable() { return this._collidable; }
 
-    public set collidable(collidable: boolean) { this._collidable = collidable; }
+    public set collidable(collidable: boolean)
+    { this._collidable = collidable;
+    }
 
 
     // Coordinate r

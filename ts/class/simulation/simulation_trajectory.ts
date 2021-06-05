@@ -35,7 +35,12 @@ export abstract class Simulation_trajectory extends Simulation
 		angular_m: number
 	) {
 		super(id);
-		this._central_body = new Central_body(collidable, mass, radius, angular_m);
+		this._central_body = new Central_body(
+			collidable,
+			mass,
+			radius,
+			angular_m
+		);
 		this._mobile_list = [];
 	}
 
@@ -67,11 +72,12 @@ export abstract class Simulation_trajectory extends Simulation
 
 	/**
 	 * Add a new mobile object to the simulation
-	 * 
-	 * @param mobile New mobile
+	 * @param mobile
 	 */
-	public add_mobile(mobile: Mobile): void { this.mobile_list.push(mobile); }
-
+	public add_mobile(mobile: Mobile): void
+	{
+		this.mobile_list.push(mobile);
+	}
 
 	
 }
