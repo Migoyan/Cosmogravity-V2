@@ -246,10 +246,9 @@ export class Kerr extends Simulation_trajectory
 		* mobile.r**3 + this.KM_delta_r(mobile)**2 * mobile.U_phi**2)
 		/ (c**2 * mobile.r**2 * this.KM_delta_r(mobile));
 
-        mobile.L = 1 / (c * (mobile.r - this.central_body.R_s)) * (this.KM_delta_r(mobile)
+		mobile.L = 1 / (c * (mobile.r - this.central_body.R_s)) * (this.KM_delta_r(mobile)
 		* mobile.U_phi - this.central_body.R_s * this.central_body.a * c * mobile.E);
-
-    }
+	}
 
 
 	/**

@@ -37,7 +37,6 @@ export abstract class Simulation
 	 * @param x_0, 
 	 * @param y_0 initial value of y
 	 * @param funct function or method that define the equation to resolve
-     * 
      * @returns [x_1, y_1], value of the next point of computation
      */
     protected runge_kutta_equation_order1(
@@ -64,11 +63,10 @@ export abstract class Simulation
      * Fourth order Runge-Kutta method for second order derivatives.
      * 
      * @param step Step of computation
-	 * @param x_0 Initial value of x
-	 * @param y_0 Initial value of y
+     * @param x_0 Initial value of x
+     * @param y_0 Initial value of y
 	 * @param dy_0 Initial value of the derivative of y
 	 * @param funct Function or method that define the equation to resolve
-     * 
      * @returns [x_1, y_1, yp_1], value of the next point of computation
      */
     protected runge_kutta_equation_order2(
@@ -100,7 +98,6 @@ export abstract class Simulation
      * @param infimum
      * @param supremum
      * @param n Number of computation points.
-     * 
      * @returns Value of the integral.
      */
     protected simpson(
