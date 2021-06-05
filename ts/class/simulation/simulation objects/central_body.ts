@@ -12,6 +12,8 @@
  * @param a
  * @param R_hp
  * @param R_hm
+ * 
+ * @method update_parameters
  */
 
 export class Central_body
@@ -126,7 +128,7 @@ export class Central_body
 
     /**
      * Allows updating all the calculated parameters of a central body
-     * if one if the primordial parameter is modified.
+     * if one of the primordial parameters is modified.
      */
     public update_parameters(): void
     {

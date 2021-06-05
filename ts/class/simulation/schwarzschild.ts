@@ -53,132 +53,76 @@ export class Schwarzchild extends Simulation_trajectory
 
 
     /**
-     * Determines which mathematical expression should be used to calculated the
-     * integration constant for a specific simulation and mobile type.
-     * 
-     * @returns Table containing the integration constants for each mobile object
+     * Method that loops over the mobile list and determines
+     * the correct integration constants before storing them
+     * in each mobile as a property.
      */
-    public integration_constants(): number[][]
+    public integration_constants(): void
     {
-        let result: number[][];
         this.mobile_list.forEach(mobile =>
         {
             if (mobile.r >= this.central_body.radius)
             {
                 if (!mobile.is_photon)
                 {
-                    result.push(
-                        this.ESM_MP_integration_constants(
-                            this.central_body.calculate_R_s(),
-                            mobile.r,
-                            mobile.U_r,
-                            mobile.U_phi
-                        )
-                    );
+                    this.ESM_MP_integration_constants(mobile);
                 }
                 else if (mobile.is_photon)
                 {
-                    result.push(
-                        this.ESM_PH_integration_constants(
-                            this.central_body.calculate_R_s(),
-                            mobile.r,
-                            mobile.U_r,
-                            mobile.U_phi
-                        )
-                    );
+                    this.ESM_PH_integration_constants(mobile);
                 }
             }
             else if (mobile.r < this.central_body.radius)
             {
-                let alpha_0: number = this.ISM_alpha_r(
-                    this.central_body.calculate_R_s(),
-                    this.central_body.radius,
-                    mobile.r
-                );
-                let beta_0: number = this.ISM_beta_r(
-                    this.central_body.calculate_R_s(),
-                    this.central_body.radius,
-                    mobile.r
-                );
                 if (!mobile.is_photon)
                 {
-                    result.push(
-                        this.ISM_MP_integration_constants(
-                            mobile.r,
-                            mobile.U_r,
-                            mobile.U_phi,
-                            alpha_0,
-                            beta_0
-                        )
-                    );
+                    this.ISM_MP_integration_constants(mobile);
                 }
                 else if (mobile.is_photon)
                 {
-                    result.push(
-                        this.ISM_PH_integration_constants(
-                            mobile.r,
-                            mobile.U_r,
-                            mobile.U_phi,
-                            alpha_0,
-                            beta_0
-                        )
-                    );
+                    this.ISM_PH_integration_constants(mobile);
                 }
             }
         });
-        return result;
     }
 
 
     /**
      * Applies the Runge-Kutta algorithm to the relevant second derivative expression
      * for the current simulation.
-     * 
      * @param mobile Mobile object
      * @param reference_frame Astronaut (A), Distant Observer (DO)
-     * @param L Integration constant
-     * @param E Integration constant
-     * 
      * @returns [x_1, y_1, yp_1], value of the next point of computation
      */
-    public runge_kutta_trajectory(
-        mobile: Mobile,
-        reference_frame: "A" | "DO",
-        L: number, 
-        E: number
-    ): number
+    public runge_kutta_trajectory(mobile: Mobile, reference_frame: "A" | "DO"): number
     {
-        let R_s = this.central_body.calculate_R_s();
         let radius = this.central_body.radius;
 
         if (mobile.r >= radius && !mobile.is_photon && reference_frame === "A")
         {
-            return this.ESM_MP_trajectory_A(R_s, mobile.r, L);
+            return this.ESM_MP_trajectory_A(mobile);
         }
         else if (mobile.r >= radius && !mobile.is_photon && reference_frame === "DO")
         {
-            return this.ESM_MP_trajectory_DO(R_s, mobile.r, L, E);
+            return this.ESM_MP_trajectory_DO(mobile);
         }
         else if (mobile.r >= radius && mobile.is_photon && reference_frame === "A")
         {
-            return this.ESM_PH_trajectory_A(R_s, mobile.r, L);
+            return this.ESM_PH_trajectory_A(mobile);
         }
         else if (mobile.r >= radius && mobile.is_photon && reference_frame === "DO")
         {
-            return this.ESM_PH_trajectory_DO(R_s, mobile.r, L, E);
+            return this.ESM_PH_trajectory_DO(mobile);
         }
         else if (mobile.r < radius)
         {
-            let alpha_r = this.ISM_alpha_r(R_s, radius, mobile.r);
-            let beta_r = this.ISM_beta_r(R_s, radius, mobile.r);
-            
             if (!mobile.is_photon)
             {
-                return this.ISM_MP_trajectory_A(R_s, radius, mobile.r, alpha_r, beta_r, L, E);
+                return this.ISM_MP_trajectory_A(mobile);
             }
-            else if (mobile.is_photon)
+            else
             {
-                return this.ISM_PH_trajectory_A(R_s, radius, mobile.r, alpha_r, beta_r, L, E);
+                return this.ISM_PH_trajectory_A(mobile);
             }
         }  
     }
@@ -191,7 +135,7 @@ export class Schwarzchild extends Simulation_trajectory
      * The spacial and temporal coordinates are (r, theta, phi, t)
      * All simulations take place on the theta=pi/2 plane
      * U_r and U_phi are the velocity coordinates
-     * R_s Schwarzschild radius
+     * this.central_body.R_s Schwarzschild radius
      * L and E are two Integration constants determined with the 
      * initial conditions. L is a length and E is adimentional.
      * The "trajectory" functions are to be called by the Runge-Kutta algorithm.
@@ -205,25 +149,16 @@ export class Schwarzchild extends Simulation_trajectory
     /**
      * External Schwarzschild metric for a Massive Particle (ESM_MP)
      * 
-     * Integration constants in a list of two elements.
-     * @param R_s Schwarzschild radius, attribute of @class Central_body
-     * @param r_0 r(0), Radial coordinate at t=0
-     * @param U_r_0 U_r(0), velocity's radial coordinate at t=0
-     * @param U_phi_0 U_phi(0), velocity's angular coordinate at t=0
-     * 
-     * @returns List where list[0]=L and list[1]=E
+     * Calculate the integration constants for a mobile in the current
+     * simulation and store the value as a mobile property.
+     * @param mobile 
      */
-    protected ESM_MP_integration_constants(
-        R_s: number,
-        r_0: number,
-        U_r_0: number,
-        U_phi_0: number
-    ): number[]
+    protected ESM_MP_integration_constants(mobile: Mobile): void
     {
-        let L = U_phi_0 * r_0 / c;
-        let E = Math.sqrt(Math.pow(U_r_0 / c, 2)
-        + (1 - R_s / r_0) * (1 + Math.pow(U_phi_0 / c, 2)));
-        return [L, E];
+        mobile.L = mobile.U_phi * mobile.r / c;
+        mobile.E = Math.sqrt(Math.pow(mobile.U_r / c, 2)
+        + (1 - this.central_body.R_s / mobile.r)
+        * (1 + Math.pow(mobile.U_phi / c, 2)));
     }
 
 
@@ -231,15 +166,13 @@ export class Schwarzchild extends Simulation_trajectory
      * External Schwarzschild metric for a Massive Particle (ESM_MP)
      * 
      * Potential for an astronaut (A) divided by c²
-     * @param R_s Schwarzschild radius, attribute of @class Central_body
-     * @param r Radial coordinate
-     * @param L Integration constant
-     * 
+     * @param mobile
      * @returns Potential
      */
-    protected ESM_MP_potential_A(R_s: number, r: number, L: number): number
+    protected ESM_MP_potential_A(mobile: Mobile): number
     {
-        return (1 - R_s / r) * (1 + (L / r)**2);
+        return (1 - this.central_body.R_s / mobile.r)
+        * (1 + (mobile.L / mobile.r)**2);
     }
 
 
@@ -247,17 +180,16 @@ export class Schwarzchild extends Simulation_trajectory
      * External Schwarzschild metric for a Massive Particle (ESM_MP)
      * 
      * Potential for a distant observer (DO) divided by c²
-     * @param R_s Schwarzschild radius, attribute of @class Central_body
-     * @param r Radial coordinate
-     * @param E Integration constant
-     * @param L Integration constant
-     * 
+     * @param mobile
      * @returns Potential
      */
-    protected ESM_MP_potential_DO(R_s: number, r: number, L: number, E: number): number
+    protected ESM_MP_potential_DO(mobile: Mobile): number
     {
-        let V_a = (1 - R_s / r) * (1 + (L / r)**2);
-        return E**2 - (c**2 - V_a / E**2) * (1 - R_s / r)**2 / c**2;
+        let V_a = (1 - this.central_body.R_s / mobile.r)
+        * (1 + (mobile.L / mobile.r)**2);
+
+        return mobile.E**2 - (c**2 - V_a / mobile.E**2)
+        * (1 - this.central_body.R_s / mobile.r)**2 / c**2;
     }
 
 
@@ -267,13 +199,13 @@ export class Schwarzchild extends Simulation_trajectory
      * Second derivative d²r/dtau² for an astronaut (A)
      * 
      * This method is to be used with Runge-Kutta.
-     * @param R_s Schwarzschild radius
-     * @param r Radial coordinate
-     * @param L Integration constant
+     * @param mobile
      */
-    protected ESM_MP_trajectory_A(R_s: number, r: number, L: number): number
+    protected ESM_MP_trajectory_A(mobile: Mobile): number
     {
-        return c**2 / (2 * r**4) * (-R_s * r**2 + (2*r - 3*R_s) * L**2);
+        return c**2 / (2 * mobile.r**4)
+        * (-this.central_body.R_s * mobile.r**2
+        + (2*mobile.r - 3*this.central_body.R_s) * mobile.L**2);
     }
 
 
@@ -283,18 +215,16 @@ export class Schwarzchild extends Simulation_trajectory
      * Second derivative d²r/dt² for a distant observer (DO)
      * 
      * This method is to be used with Runge-Kutta.
-     * @param R_s Schwarzschild radius
-     * @param r Radial coordinate
-     * @param L Integration constant
-     * @param E Integration constant
+     * @param mobile
      */
-    protected ESM_MP_trajectory_DO(R_s: number, r: number, L: number, E: number): number
+    protected ESM_MP_trajectory_DO(mobile: Mobile): number
     {
-        return c**2 * (r - R_s)
-        * (2 * E**2 * r**3 * R_s + 2 * (L * r)**2
-        - 7 * L**2 * r * R_s + 5 * (L * R_s)**2
-        - 3 * r**3 * R_s + 3 * (r * R_s)**2)
-        / (2 * E**2 * r**6);
+        return c**2 * (mobile.r - this.central_body.R_s)
+        * (2 * mobile.E**2 * mobile.r**3 * this.central_body.R_s
+        + 2*(mobile.L * mobile.r)**2 - 7 * mobile.L**2 * mobile.r
+        * this.central_body.R_s + 5 * (mobile.L * this.central_body.R_s)**2
+        - 3 * mobile.r**3 * this.central_body.R_s + 3
+        * (mobile.r * this.central_body.R_s)**2) / (2 * mobile.E**2 * mobile.r**6);
     }
 
 
@@ -304,25 +234,16 @@ export class Schwarzchild extends Simulation_trajectory
     /**
      * External Schwarzschild metric for a photon (ESM_PH)
      * 
-     * Integration constants in a list of two elements.
-     * @param R_s Schwarzschild radius
-     * @param r_0 r(0), radial coordinate at t=0
-     * @param U_r_0 U_r(0), velocity's radial coordinate at t=0
-     * @param U_phi_0 U_phi(0), velocity's angular coordinate at t=0
-     * 
-     * @returns List where list[0]=L and list[1]=E
+     * Calculate the integration constants for a mobile in the current
+     * simulation and store the value as a mobile property.
+     * @param mobile 
      */
-    protected ESM_PH_integration_constants(
-        R_s: number,
-        r_0: number,
-        U_r_0: number,
-        U_phi_0: number
-    ): number[]
+    protected ESM_PH_integration_constants(mobile: Mobile): void
     {
-        let L = U_phi_0 * r_0 / c;
-        let E = Math.sqrt(Math.pow(U_r_0 / c, 2)
-        + (1 - R_s / r_0) * Math.pow(U_phi_0 / c, 2));
-        return [L, E];
+        mobile.L = mobile.U_phi * mobile.r / c;
+        mobile.E = Math.sqrt(Math.pow(mobile.U_r / c, 2)
+        + (1 - this.central_body.R_s / mobile.r) 
+        * Math.pow(mobile.U_phi / c, 2));
     }
 
 
@@ -330,15 +251,13 @@ export class Schwarzchild extends Simulation_trajectory
      * External Schwarzschild metric for a photon (ESM_PH)
      * 
      * Potential for an astronaut (A) divided by c²
-     * @param R_s Schwarzschild radius
-     * @param r Radial coordinate
-     * @param L Integration constant
-     * 
+     * @param mobile
      * @returns Potential
      */
-    protected ESM_PH_potential_A(R_s: number, r: number, L: number): number
+    protected ESM_PH_potential_A(mobile: Mobile): number
     {
-        return (1 - R_s / r) * (1 + (L / r)**2);
+        return (1 - this.central_body.R_s / mobile.r)
+        * (1 + (mobile.L / mobile.r)**2);
     }
 
 
@@ -346,17 +265,16 @@ export class Schwarzchild extends Simulation_trajectory
      * External Schwarzschild metric for a photon (ESM_PH)
      * 
      * Potential for a distant observer (DO) divided by c²
-     * @param R_s Schwarzschild radius
-     * @param r Radial coordinate
-     * @param L Integration constant
-     * @param E Integration constant
-     * 
+     * @param mobile
      * @returns Potential
      */
-    protected ESM_PH_potential_DO(R_s: number, r: number, L: number, E: number): number
+    protected ESM_PH_potential_DO(mobile: Mobile): number
     {
-        let V_a = (1 - R_s / r) * (1 + (L / r)**2);
-        return E**2 - (c**2 - V_a / E**2) * (1 - R_s / r)**2 / c**2;
+        let V_a = (1 - this.central_body.R_s / mobile.r)
+        * (1 + (mobile.L / mobile.r)**2);
+
+        return mobile.E**2 - (c**2 - V_a / mobile.E**2)
+        * (1 - this.central_body.R_s / mobile.r)**2 / c**2;
     }
 
 
@@ -366,13 +284,12 @@ export class Schwarzchild extends Simulation_trajectory
      * Second derivative d²r/dlambda² for an astronaut (A)
      * 
      * This method is to be used with Runge-Kutta.
-     * @param R_s Schwarzschild radius
-     * @param r Radial coordinate
-     * @param L Integration constant
+     * @param mobile
      */
-    protected ESM_PH_trajectory_A(R_s: number, r: number, L: number): number
+    protected ESM_PH_trajectory_A(mobile: Mobile): number
     {
-        return c**2 / (2 * r**4) * (2*r - 3*R_s) * L**2;
+        return c**2 / (2 * mobile.r**4)
+        * (2*mobile.r - 3*this.central_body.R_s) * mobile.L**2;
     }
 
 
@@ -382,17 +299,15 @@ export class Schwarzchild extends Simulation_trajectory
      * Second derivative d²r/dt² for a distant observer (DO)
      * 
      * This method is to be used with Runge-Kutta.
-     * @param R_s Schwarzschild radius
-     * @param r Radial coordinate
-     * @param L Integration constant
-     * @param E Integration constant
+     * @param mobile
      */
-    protected ESM_PH_trajectory_DO(R_s: number, r: number, L: number, E: number): number
+    protected ESM_PH_trajectory_DO(mobile: Mobile): number
     {
-        return c**2 * (r - R_s)
-        * (2 * E**2 * r**3 * R_s + 2 * (L * r)**2
-        - 7 * L**2 * r * R_s + 5 * (L * R_s)**2)
-        / (2 * E**2 * r**6);
+        return c**2 * (mobile.r - this.central_body.R_s)
+        * (2 * mobile.E**2 * mobile.r**3 * this.central_body.R_s
+        + 2*(mobile.L * mobile.r)**2 - 7 * mobile.L**2 * mobile.r
+        * this.central_body.R_s + 5 * (mobile.L * this.central_body.R_s)**2)
+        / (2 * mobile.E**2 * mobile.r**6);
     }
 
 
@@ -409,15 +324,13 @@ export class Schwarzchild extends Simulation_trajectory
      * Internal Schwarzschild metric (ISM)
      * 
      * Defines a new variable alpha(r)
-     * @param R_s Schwarzschild radius
-     * @param radius Radius of the central body
-     * @param r Radial coordinate
-     * 
+     * @param mobile 
      * @returns alpha(r)
      */
-    protected ISM_alpha_r(R_s: number, radius: number, r: number): number
+    protected ISM_alpha_r(mobile: Mobile): number
     {
-        return 1 - r**2 * R_s / radius**3;
+        return 1 - mobile.r**2 * this.central_body.R_s
+        / this.central_body.radius**3;
     }
 
 
@@ -425,15 +338,15 @@ export class Schwarzchild extends Simulation_trajectory
      * Internal Schwarzschild metric (ISM)
      * 
      * Defines a new variable beta(r)
-     * @param R_s Schwarzschild radius
-     * @param radius Radius of the central body
-     * @param r Radial coordinate
-     * 
+     * @param mobile 
      * @returns beta(r)
      */
-    protected ISM_beta_r(R_s: number, radius: number, r: number): number
+    protected ISM_beta_r(mobile: Mobile): number
     {
-        return 3/2 * (1 - R_s / radius)**.5 - .5 * (1 - r**2 * R_s / radius**3)**.5;
+        return 3/2 * (1 - this.central_body.R_s
+            / this.central_body.radius)**.5 - .5
+            * (1 - mobile.r**2 * this.central_body.R_s
+            / this.central_body.radius**3)**.5;
     }
 
 
@@ -443,26 +356,15 @@ export class Schwarzchild extends Simulation_trajectory
     /**
      * Internal Schwarzschild metric for a massive particle (ISM_MP)
      * 
-     * Integration constants in a list of two elements.
-     * @param r_0 r(0), radial coordinate at t=0
-     * @param U_r_0 U_r(0), velocity's radial coordinate at t=0
-     * @param U_phi_0 U_phi(0), velocity's angular coordinate at t=0
-     * @param alpha_0 ISM variable alpha(r) at t=0
-     * @param beta_0 ISM variable alpha(r) at t=0
-     * 
-     * @returns List where list[0]=L and list[1]=E
+     * Calculate the integration constants for a mobile in the current
+     * simulation and store the value as a mobile property.
+     * @param mobile 
      */
-    protected ISM_MP_integration_constants(
-        r_0: number,
-        U_r_0: number,
-        U_phi_0: number,
-        alpha_0: number,
-        beta_0: number
-    ): number[]
+    protected ISM_MP_integration_constants(mobile: Mobile): void
     {
-        let L = U_phi_0 * r_0 / c;
-        let E = beta_0 / c * Math.sqrt(U_r_0**2 / alpha_0 + U_phi_0**2 + c**2);
-        return [L, E];
+        mobile.L = mobile.U_phi * mobile.r / c;
+        mobile.E = this.ISM_beta_r(mobile) / c * Math.sqrt(mobile.U_r**2
+            / this.ISM_alpha_r(mobile) + mobile.U_phi**2 + c**2);
     }
 
 
@@ -470,23 +372,14 @@ export class Schwarzchild extends Simulation_trajectory
      * Internal Schwarzschild metric for a massive particle (ISM_MP)
      * 
      * Potential for an astronaut (A) divided by c²
-     * @param R_s Schwarzschild radius
-     * @param r Radial coordinate
-     * @param alpha_0 ISM variable alpha(r)
-     * @param L Integration constant
-     * @param E Integration constant
-     * 
+     * @param mobile
      * @returns Potential
      */
-    protected ISM_MP_potential_A(
-        r: number,
-        alpha_r: number,
-        beta_r: number,
-        E: number,
-        L: number
-    ): number
+    protected ISM_MP_potential_A(mobile: Mobile): number
     {
-        return E**2 - alpha_r * (Math.pow(E / beta_r, 2) - Math.pow(L / r, 2) - 1);
+        return mobile.E**2 - this.ISM_alpha_r(mobile)
+        * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2)
+        - Math.pow(mobile.L / mobile.r, 2) - 1);
     }
 
 
@@ -496,28 +389,18 @@ export class Schwarzchild extends Simulation_trajectory
      * Second derivative d²r/dtau² for an astronaut (A)
      * 
      * This method is to be used with Runge-Kutta.
-     * @param R_s Schwarzschild radius
-     * @param radius Radius of the central body
-     * @param r Radial coordinate
-     * @param alpha_r ISM variable alpha(r)
-     * @param beta_r ISM variable beta(r)
-     * @param L Integration constant
-     * @param E Integration constant
+     * @param Mobile
      */
-    protected ISM_MP_trajectory_A(
-        R_s: number,
-        radius: number,
-        r: number,
-        alpha_r: number,
-        beta_r: number,
-        L: number,
-        E: number
-    ): number
+    protected ISM_MP_trajectory_A(mobile: Mobile): number
     {
-        return -(c**2 * r * R_s / radius**3)
-        * (Math.pow(E / beta_r, 2) - Math.pow(L / r, 2) - 1)
-        + c**2 * alpha_r * .5 * (-(E**2 * r * R_s)
-        / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L**2 / r**3);
+        return -(c**2 * mobile.r * this.central_body.R_s
+            / this.central_body.radius**3)
+            * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2)
+            - Math.pow(mobile.L / mobile.r, 2) - 1) + c**2
+            * this.ISM_alpha_r(mobile) * .5*(-(mobile.E**2 * mobile.r
+            * this.central_body.R_s) / ((this.ISM_beta_r(mobile)
+            * this.central_body.radius)**3 * this.ISM_alpha_r(mobile)**.5)
+            + 2 * mobile.L**2 / mobile.r**3);
     }
 
 
@@ -525,26 +408,17 @@ export class Schwarzchild extends Simulation_trajectory
 
 
     /**
-     * Internal Schwarzschild metric for a photon (ISM_PH)
-     * @param r_0 r(0), Radial coordinate at t=0
-     * @param U_r_0 U_r(0), velocity's Radial coordinate at t=0
-     * @param U_phi_0 U_phi(0), velocity's angular coordinate at t=0
-     * @param alpha_0 ISM variable alpha(r) at t=0
-     * @param beta_0 ISM variable beta(r) at t=0
+     * Internal Schwarzschild metric for a massive particle (ISM_MP)
      * 
-     * @returns List where list[0]=L and list[1]=E
+     * Calculate the integration constants for a mobile in the current
+     * simulation and store the value as a mobile property.
+     * @param mobile 
      */
-    protected ISM_PH_integration_constants(
-        r_0: number,
-        U_r_0: number,
-        U_phi_0: number,
-        alpha_0: number,
-        beta_0: number
-    ): number[]
+    protected ISM_PH_integration_constants(mobile: Mobile): void
     {
-        let L = U_phi_0 * r_0 / c;
-        let E = beta_0 / c * Math.sqrt(U_r_0**2 / alpha_0 + U_phi_0**2);
-        return [L, E];
+        mobile.L = mobile.U_phi * mobile.r / c;
+        mobile.E = this.ISM_beta_r(mobile) / c
+        * Math.sqrt(mobile.U_r**2 / this.ISM_alpha_r(mobile) + mobile.U_phi**2);
     }
 
 
@@ -552,23 +426,14 @@ export class Schwarzchild extends Simulation_trajectory
      * Internal Schwarzschild metric for a photon (ISM_PH)
      * 
      * Potential for an astronaut (A) divided by c²
-     * @param R_s Schwarzschild radius
-     * @param r Radial coordinate
-     * @param alpha_0 ISM variable alpha(r) at t=0
-     * @param L Integration constant
-     * @param E Integration constant
-     * 
+     * @param mobile
      * @returns Potential
      */
-     protected ISM_PH_potential_A(
-        r: number,
-        alpha_r: number,
-        beta_r: number,
-        E: number,
-        L: number
-    ): number
+     protected ISM_PH_potential_A(mobile: Mobile): number
     {
-        return E**2 - alpha_r * (Math.pow(E / beta_r, 2) - Math.pow(L / r, 2));
+        return mobile.E**2 - this.ISM_alpha_r(mobile)
+        * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2)
+        - Math.pow(mobile.L / mobile.r, 2));
     }
 
 
@@ -578,28 +443,17 @@ export class Schwarzchild extends Simulation_trajectory
      * Second derivative d²r/dlambda² for an astronaut (A)
      * 
      * This method is to be used with Runge-Kutta.
-     * @param R_s Schwarzschild radius
-     * @param radius Radius of the central body
-     * @param r Radial coordinate
-     * @param alpha_r ISM variable alpha(r)
-     * @param beta_r ISM variable beta(r)
-     * @param L Integration constant
-     * @param E Integration constant 
+     * @param mobile
      */
-    protected ISM_PH_trajectory_A(
-        R_s: number,
-        radius: number,
-        r: number,
-        alpha_r: number,
-        beta_r: number,
-        L: number,
-        E: number
-    ): number
+    protected ISM_PH_trajectory_A(mobile: Mobile): number
     {
-        return -(c**2 * r * R_s / radius**3)
-        * (Math.pow(E / beta_r, 2) - Math.pow(L / r, 2))
-        + c**2 * alpha_r * .5 * (-(E**2 * r * R_s)
-        / ((beta_r * radius)**3 * alpha_r**.5) + 2 * L**2 / r**3);
+        return -(c**2 * mobile.r * this.central_body.R_s
+            / this.central_body.radius**3)
+            * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2)
+            - Math.pow(mobile.L / mobile.r, 2)) + c**2 * this.ISM_alpha_r(mobile)
+            * .5*(-(mobile.E**2 * mobile.r * this.central_body.R_s)
+            / ((this.ISM_beta_r(mobile) * this.central_body.radius)**3
+            * this.ISM_alpha_r(mobile)**.5) + 2 * mobile.L**2 / mobile.r**3);
     }
 
 
