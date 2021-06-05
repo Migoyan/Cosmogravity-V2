@@ -80,13 +80,13 @@ export abstract class Simulation
         funct: (Simu: any, x: number, y: number, dy: number) => number
     ): number[]
     {
-		let k_1 = funct(Simu, x_0, y_0, dy_0);
+        let k_1 = funct(Simu, x_0, y_0, dy_0);
         let k_2 = funct(Simu, x_0 + step/2, y_0 + step/2 * dy_0, dy_0 + step/2 * k_1);
         let k_3 = funct(Simu, x_0 + step/2, y_0 + step/2 * dy_0 + step**2/4 * k_1, dy_0 + step/2 * k_2);
         let k_4 = funct(Simu, x_0 + step, y_0 + step * dy_0 + step**2/2 * k_2, dy_0 + step * k_3);
 
-		let x_1 = x_0 + step;
-		let y_1 = y_0 + step * dy_0 + step**2/6 * (k_1 + k_2 + k_3);
+        let x_1 = x_0 + step;
+        let y_1 = y_0 + step * dy_0 + step**2/6 * (k_1 + k_2 + k_3);
         let dy_1 = dy_0 + step/6 * (k_1 + 2*k_2 + 2*k_3 + k_4);
 
         return [x_1, y_1, dy_1];
