@@ -6,34 +6,42 @@ import { Mobile } from "./simulation objects/mobile";
  * @class Simulation_trajectory
  * inheritance from Simulation class
  * 
- * Attributes:
  * @param central_body
  * @param mobile_list
  * @param c
  * @param G
  * 
- * Methods:
- * @method add_mobile 
+ * @method add_mobile
  */
 
-export abstract class Simulation_trajectory extends Simulation {
+export abstract class Simulation_trajectory extends Simulation
+{
 
-
-	private central_body: Central_body;
-	private mobile_list: Mobile[];
+	private _central_body: Central_body;
+	private _mobile_list: Mobile[];
 	// Allows the possibility to modify the constants
-	private c: number = c;
-	private G: number = G;
+	private _c: number = c;
+	private _G: number = G;
 
 
-	//-------------------- Constructors --------------------
+	//-------------------- Constructor --------------------
 
 
-	constructor(id: string, collidable: boolean, mass: number, radius: number, angular_m: number)
-	{
+	constructor(
+		id: string,
+		collidable: boolean,
+		mass: number,
+		radius: number,
+		angular_m: number
+	) {
 		super(id);
-		this.central_body = new Central_body(collidable, mass, radius, angular_m);
-		this.mobile_list = [];
+		this._central_body = new Central_body(
+			collidable,
+			mass,
+			radius,
+			angular_m
+		);
+		this._mobile_list = [];
 	}
 
 
@@ -41,22 +49,22 @@ export abstract class Simulation_trajectory extends Simulation {
 
 
 	// Central body
-	public get_central_body() { return this.central_body; }
+	public get central_body() { return this._central_body; }
 
 
 	// Mobiles
-	public get_mobile_list() { return this.mobile_list; }
+	public get mobile_list() { return this._mobile_list; }
 
 
 	// Constants
-	public get_c() { return this.c; }
+	public get c() { return this._c; }
 
-	public set_c(c: number) { this.c = c; }
+	public set c(c: number) { this._c = c; }
 
 
-	public get_G() { return this.G; }
+	public get G() { return this._G; }
 
-	public set_G(G: number) { this.G = G; }
+	public set G(G: number) { this._G = G; }
 
 
 	//---------------------- Methods -----------------------
@@ -64,9 +72,12 @@ export abstract class Simulation_trajectory extends Simulation {
 
 	/**
 	 * Add a new mobile object to the simulation
-	 * @param mobile new mobile
+	 * @param mobile
 	 */
-	public add_mobile(mobile: Mobile) { this.mobile_list.push(mobile); }
+	public add_mobile(mobile: Mobile): void
+	{
+		this.mobile_list.push(mobile);
+	}
 
-
+	
 }
