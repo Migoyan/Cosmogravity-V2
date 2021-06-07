@@ -1,3 +1,5 @@
+import { Mobile } from "./simulation objects/mobile";
+
 /**
  * @class Simulation : abstract class.
  * No inheritance
@@ -62,12 +64,13 @@ export abstract class Simulation {
      * @returns [x_1, y_1, yp_1], value of the next point of computation
      */
     protected runge_kutta_equation_order2(Simu: any, step: number, x_0: number, y_0: number, dy_0: number,
-        funct: (Simu: any, x: number, y: number, dy: number) => number
+        funct: (Simu: any, x: number, y: number, dy: number, mobile?: Mobile) => number,
+        mobile?: Mobile
     ): number[] {
-		let k_1 = funct(Simu, x_0, y_0, dy_0);
-        let k_2 = funct(Simu, x_0 + step/2, y_0 + step/2 * dy_0, dy_0 + step/2 * k_1);
-        let k_3 = funct(Simu, x_0 + step/2, y_0 + step/2 * dy_0 + step**2/4 * k_1, dy_0 + step/2 * k_2);
-        let k_4 = funct(Simu, x_0 + step, y_0 + step * dy_0 + step**2/2 * k_2, dy_0 + step * k_3);
+		let k_1 = funct(Simu, x_0, y_0, dy_0, mobile);
+        let k_2 = funct(Simu, x_0 + step/2, y_0 + step/2 * dy_0, dy_0 + step/2 * k_1, mobile);
+        let k_3 = funct(Simu, x_0 + step/2, y_0 + step/2 * dy_0 + step**2/4 * k_1, dy_0 + step/2 * k_2, mobile);
+        let k_4 = funct(Simu, x_0 + step, y_0 + step * dy_0 + step**2/2 * k_2, dy_0 + step * k_3, mobile);
 
 		let x_1 = x_0 + step;
 		let y_1 = y_0 + step * dy_0 + step**2/6 * (k_1 + k_2 + k_3);

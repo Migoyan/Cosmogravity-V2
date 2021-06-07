@@ -412,7 +412,7 @@ export class Simulation_universe extends Simulation {
 	 * @param x variable
 	 * @returns value of Y at position x
 	 */
-	public Y(x: number): number {
+	protected Y(x: number): number {
 		return Math.exp(
 			-3 *
 				(this.dark_energy.w_0 + this.dark_energy.w_1 + 1) *
@@ -427,7 +427,7 @@ export class Simulation_universe extends Simulation {
 	 * @param x variable
 	 * @returns value of the derivative of Y at position x
 	 */
-	public dY(x: number): number {
+	 protected dY(x: number): number {
 		return (
 			this.Y(x) *
 			(3 * this.dark_energy.w_1 -
@@ -441,7 +441,7 @@ export class Simulation_universe extends Simulation {
 	 * @param x variable
 	 * @returns value of F(x)
 	 */
-	public F(x: number): number {
+	 protected F(x: number): number {
 		return (
 			(1 + x) ** 2 * this.calcul_omega_k() +
 			(1 + x) ** 3 * this.matter_parameter +
@@ -665,7 +665,20 @@ export class Simulation_universe extends Simulation {
 	}
 
 	/**
-	 * formula 1/(1 + x) * 1/sqrt(E) with the substitution x = y/(1 - y), to be used with simpson method to compute duration.
+	 * formula 1/(1 + x) * sqrt(1 / F)
+	 * @param Simu object in witch method is applied, permit to use this function with simulation method
+	 * @param x variable
+	 * @returns 1/(1 + x) * sqrt(1 / F)
+	 */
+	protected integral_duration(Simu: Simulation_universe, x: number): number {
+		return (
+			(1/(1 + x)) * Math.sqrt(1/Simu.F(x))
+		)
+	}
+
+	/**
+	 * formula 1/(1 + x) * 1/sqrt(F) with the substitution x = y/(1 - y), to be used with simpson method to compute duration.
+	 * @param Simu object in witch method is applied, permit to use this function with simulation method
 	 * @param y variable
 	 * @returns (1 - y) * 1/sqrt(F(x)) * 1/(1 - y)²\
 	 *
@@ -680,6 +693,7 @@ export class Simulation_universe extends Simulation {
 
 	/**
 	 * Integral used to compute the distances
+	 * @param Simu object in witch method is applied, permit to use this function with simulation method
 	 * @param x variable
 	 * @returns 1/F²(x)
 	 */
@@ -689,6 +703,7 @@ export class Simulation_universe extends Simulation {
 
 	/**
 	 * Right part of the differential equation of a(tau) designed to be used in runge_kutta_universe_2 method
+	 * @param Simu object in witch method is applied, permit to use this function with simulation method
 	 * @param tau time
 	 * @param a function a(t)
 	 * @param da derivative of a(t)
@@ -709,6 +724,7 @@ export class Simulation_universe extends Simulation {
 
 	/**
 	 * Right part of the differential equation of t(z) designed to be used in runge_kutta_universe_1 method
+	 * @param Simu object in witch method is applied, permit to use this function with simulation method
 	 * @param z Cosmologic shift
 	 * @param t function time t(z)
 	 * @returns result of the right part\

@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"target": "es2018",
 		"jsx": "preserve",
+		"moduleResolution": "node",
 		"strictFunctionTypes": true,
 		"sourceMap": false,
 		"noImplicitAny": true,
