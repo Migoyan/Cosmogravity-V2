@@ -10,7 +10,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * Note: This code uses acronyms to differentiate between the different categories
  * covered by the theory (example: EMS_PH = External Schwarzschild metric for a Photon).
  * 
- * @method integration_constants
+ * @method mobile_initialization
  * @method runge_kutta_trajectory
  * @method ESM_MP_integration_constants
  * @method ESM_MP_potential_A
@@ -55,20 +55,35 @@ export class Schwarzchild extends Simulation_trajectory
     /**
      * Method that loops over the mobile list and determines
      * the correct integration constants before storing them
-     * in each mobile as a property.
+     * in each mobile as a property. It also takes the user input
+     * in terms of physical velocity and calculate the corresponding
+     * U_r and U_phi.
      */
-    public integration_constants(): void
+    public mobile_initialization(): void
     {
+        let R_s = this.central_body.R_s;
+
         this.mobile_list.forEach(mobile =>
         {
             if (mobile.r >= this.central_body.radius)
             {
                 if (!mobile.is_photon)
                 {
+                    let E = (1 - R_s / mobile.r)**.5
+                    / (1 - Math.pow(mobile.v_r / c, 2))**.5;
+
+                    mobile.U_r = Math.cos(mobile.v_alpha) * mobile.v_r * E;
+                    mobile.U_phi = Math.sin(mobile.v_alpha) * mobile.v_r * E
+                    / (1 - R_s / mobile.r)**.5;
+
                     this.ESM_MP_integration_constants(mobile);
                 }
                 else if (mobile.is_photon)
                 {
+                    mobile.U_r = Math.cos(mobile.v_alpha) * c;
+                    mobile.U_phi = Math.sin(mobile.v_alpha) * c
+                    / (1 - R_s / mobile.r)**.5;
+                    
                     this.ESM_PH_integration_constants(mobile);
                 }
             }
@@ -76,10 +91,22 @@ export class Schwarzchild extends Simulation_trajectory
             {
                 if (!mobile.is_photon)
                 {
+                    let E = this.ISM_beta_r(mobile)**.5
+                    / (1 - mobile.v_r * 2 / c**2)**.5;
+
+                    mobile.U_r = Math.cos(mobile.v_alpha) * this.ISM_alpha_r(mobile)**.5
+                    * mobile.v_r * E;
+                    mobile.U_phi = Math.sin(mobile.v_alpha) * mobile.v_r * E
+                    / this.ISM_beta_r(mobile);
+
                     this.ISM_MP_integration_constants(mobile);
                 }
                 else if (mobile.is_photon)
                 {
+                    mobile.U_r = Math.cos(mobile.v_alpha) * this.ISM_alpha_r(mobile)**.5 * c
+                    / this.ISM_beta_r(mobile);
+                    mobile.U_phi = Math.sin(mobile.v_alpha) * c / this.ISM_beta_r(mobile);
+
                     this.ISM_PH_integration_constants(mobile);
                 }
             }

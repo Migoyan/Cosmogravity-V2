@@ -22,8 +22,10 @@ export class Mobile
     private _collidable: boolean;   // Can the object collide
     private _r: number;             // Radial coordinate
     private _phi: number;           // Angular coordinate
-    private _U_r: number;           // Velocity's radial coordinate
-    private _U_phi: number;         // Velocity's angular coordinate
+    private _v_r: number;           // Physical speed radius
+    private _v_alpha: number;       // Physical speed polar angle
+    private _U_r: number;           // d_r
+    private _U_phi: number;         // d_phi
 
     /* Integration constants, each simulation_trajectory child classes
     have a method to set the proper value for these constants.
@@ -41,26 +43,19 @@ export class Mobile
         collidable: boolean,
         r: number,
         phi: number,
-        U_r?: number,
-        U_phi?: number
+        v_r: number,
+        v_alpha: number
     ) {
         this._is_photon = is_photon;
         this._collidable = collidable;
         this._r = r;
-        this._phi = phi;
+        this._phi = phi * Math.PI / 180;
         this._L = 0;
         this._E = 0;
+        this._v_r = v_r;
+        this._v_alpha = v_alpha * Math.PI / 180;
 
-        if (U_r === undefined && U_phi === undefined)
-        {
-            this._U_r = 0;
-            this._U_phi = 0;
-        }
-        else
-        {
-            this._U_r = U_r;
-            this._U_phi = U_phi;
-        }
+        if (is_photon) { this._v_r = c }
     }
 
 
@@ -70,7 +65,8 @@ export class Mobile
     // Is photon?
     public get is_photon() { return this._is_photon; }
 
-    public set is_photon(is_photon: boolean) {
+    public set is_photon(is_photon: boolean)
+    {
         this._is_photon = is_photon;
     }
 
@@ -79,7 +75,8 @@ export class Mobile
     public get collidable() { return this._collidable; }
 
     public set collidable(collidable: boolean)
-    { this._collidable = collidable;
+    { 
+        this._collidable = collidable;
     }
 
 
@@ -95,13 +92,25 @@ export class Mobile
     public set phi(phi: number) { this._phi = phi; }
 
 
-    // Velocity U_r
+    // Physical velocity norm
+    public get v_r() { return this._v_r; }
+
+    public set v_r(v_r: number) { this._v_r = v_r; }
+
+
+    // Physical velocity starting angle
+    public get v_alpha() { return this._v_alpha; }
+
+    public set v_alpha(v_alpha: number) { this._v_alpha = v_alpha; }
+
+
+    // dr 
     public get U_r() { return this._U_r; }
 
     public set U_r(U_r: number) { this._U_r = U_r; }
 
 
-    // Velocity U_phi
+    // dphi
     public get U_phi() { return this._U_phi; }
 
     public set U_phi(U_phi: number) { this._U_phi = U_phi; }

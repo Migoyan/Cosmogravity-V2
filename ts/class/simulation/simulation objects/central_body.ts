@@ -51,7 +51,7 @@ export class Central_body
         /* If the angular momentum is not null, the Kerr metric is used and it
         needs new calculated parameters. */
 
-        if ( angular_m === undefined || angular_m === 0)
+        if (angular_m === undefined || angular_m === 0)
         {
             this._angular_m = 0;
             this._a = 0;
