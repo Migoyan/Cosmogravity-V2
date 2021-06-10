@@ -50,12 +50,20 @@ export class Kerr extends Simulation_trajectory
      * the correct integration constants before storing them
      * in each mobile as a property.
      */
-	public integration_constants(): void
+	public mobile_initialization(): void
 	{
 		this.mobile_list.forEach(mobile =>
 		{
+			let R_s = this.central_body.R_s;
+
 			if (!mobile.is_photon)
 			{
+				mobile.U_r = mobile.v_r * Math.cos(mobile.v_alpha) * c
+				* this.KM_delta_r(mobile)**.5 / (mobile.r * (c**2 - mobile.v_r**2)**.5);
+				mobile.U_phi = mobile.v_r * Math.sin(mobile.v_alpha) * c * Math.sqrt(
+					Math.abs(mobile.r * (mobile.r - R_s)) / Math.sqrt(
+						this.KM_delta_r(mobile) * (c**2 - mobile.v_r**2)));
+
 				this.KM_MP_integration_constants(mobile);
 			}
 			else
