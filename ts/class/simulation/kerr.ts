@@ -12,6 +12,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * 
  * @method integration_constants
  * @method runge_kutta_trajectory
+ * @method mobile_new_position
  * @method KM_delta_r
  * @method KM_MP_integration_constants
  * @method KM_MP_potential_A
@@ -45,10 +46,23 @@ export class Kerr extends Simulation_trajectory
 	//---------------------- Methods -----------------------
 
 
+	/*
+     * The first three methods of this class are critical to the simulation.
+     * 1) The initialization of every mobile
+     * 2) Choosing the right equation to integrate for a given mobile
+     * 3) Updating the current mobile with the new coordinate and velocity
+     * 
+     * The animation class will call these methods to plot the trajectory.
+     * 
+     * The rest of the methods are meant to represent a mathematical equation.
+     */
+
+
 	/**
-     * Method that loops over the mobile list and determines
-     * the correct integration constants before storing them
-     * in each mobile as a property.
+     * Method that loops over the mobile list and determines the 
+     * correct integration constants before storing them in each
+     * mobile as a property. It also takes the user input in terms
+     * of physical velocity and calculate the corresponding U_r and U_phi.
      */
 	public mobile_initialization(): void
 	{
@@ -62,12 +76,21 @@ export class Kerr extends Simulation_trajectory
 				* this.KM_delta_r(mobile)**.5 / (mobile.r * (c**2 - mobile.v_r**2)**.5);
 				mobile.U_phi = mobile.v_r * Math.sin(mobile.v_alpha) * c * Math.sqrt(
 					Math.abs(mobile.r * (mobile.r - R_s)) / Math.sqrt(
-						this.KM_delta_r(mobile) * (c**2 - mobile.v_r**2)));
+						this.KM_delta_r(mobile) * (c**2 - mobile.v_r**2)
+					)
+				);
 
 				this.KM_MP_integration_constants(mobile);
 			}
 			else
 			{
+				mobile.U_r = c * Math.cos(mobile.v_alpha) * Math.sqrt(
+					this.KM_delta_r(mobile) / (mobile.r * (mobile.r - R_s))
+				);
+				mobile.U_phi = c * Math.sin(mobile.v_alpha) * mobile.r / Math.sqrt(
+					this.KM_delta_r(mobile)
+				);
+				
 				this.KM_PH_integration_constants(mobile);
 			}
 		});
@@ -75,23 +98,24 @@ export class Kerr extends Simulation_trajectory
 
 
    /**
-     * * Applies the Runge-Kutta algorithm to the relevant second derivative expression
-     * for the current simulation.
-     * @param mobile Mobile object
+     * Applies the Runge-Kutta algorithm to the relevant second derivative
+     * expression for the current simulation.
+     * @param mobile
+     * @param step dtau
      * @param reference_frame Astronaut (A), Distant Observer (DO)
-     * @returns [x_1, y_1, yp_1], value of the next point of computation
+     * 
+     * @returns [tau, r, U_r]
      */
-    public runge_kutta_trajectory( mobile: Mobile, reference_frame: "A" | "DO"): void
+    public runge_kutta_trajectory( mobile: Mobile, step: number, reference_frame: "A" | "DO"): number[]
     {
-        let dtau: number;
+        let dtau = step;
         let tau: number;
         let r = mobile.r;
         let U_r = mobile.U_r;
-        let runge_kutta_result: number[];
 
 		if (!mobile.is_photon && reference_frame === "A")
 		{
-			runge_kutta_result = this.runge_kutta_equation_order2(
+			return this.runge_kutta_equation_order2(
 				mobile,
 				dtau,
 				tau,
@@ -102,7 +126,7 @@ export class Kerr extends Simulation_trajectory
 		}
 		else if (!mobile.is_photon && reference_frame === "DO")
 		{
-			runge_kutta_result = this.runge_kutta_equation_order2(
+			return this.runge_kutta_equation_order2(
 				mobile,
 				dtau,
 				tau,
@@ -113,7 +137,7 @@ export class Kerr extends Simulation_trajectory
 		}
 		else if (mobile.is_photon && reference_frame === "A")
 		{
-			runge_kutta_result = this.runge_kutta_equation_order2(
+			return this.runge_kutta_equation_order2(
 				mobile,
 				dtau,
 				tau,
@@ -124,7 +148,7 @@ export class Kerr extends Simulation_trajectory
 		}
 		else if (mobile.is_photon && reference_frame === "DO")
 		{
-			runge_kutta_result = this.runge_kutta_equation_order2(
+			return this.runge_kutta_equation_order2(
 				mobile,
 				dtau,
 				tau,
@@ -133,17 +157,44 @@ export class Kerr extends Simulation_trajectory
 				this.KM_PH_trajectory_DO
 			);
 		}
-		tau = runge_kutta_result[0];
-        mobile.r = runge_kutta_result[1];
-        mobile.U_r = runge_kutta_result[2];
     }
+
+
+	/**
+     * 
+     * @param mobile 
+     * @param step 
+     * @param reference_frame 
+     */
+	public mobile_new_position(mobile: Mobile, step: number, reference_frame: "A" | "DO"): void
+	{
+		let dtau = step;
+		let R_s = this.central_body.R_s;
+		let a = this.central_body.a;
+		let runge_kutta_result = this.runge_kutta_trajectory(mobile, dtau, reference_frame);
+		mobile.r = runge_kutta_result[1];
+		mobile.U_r = runge_kutta_result[2];
+
+		if (reference_frame === "A")
+		{
+			mobile.phi += c * dtau / this.KM_delta_r(mobile)
+			* (R_s * a * mobile.E / mobile.r + (1 - R_s / mobile.r) * mobile.L);
+		}
+		else
+		{
+			mobile.phi += c * dtau
+			* (R_s * a * mobile.E / mobile.r + (1 - R_s / mobile.r) * mobile.L)
+			/ ((mobile.r**2 + a**2 + R_s * a**2 / mobile.r)
+			* mobile.E - R_s * a * mobile.L / mobile.r);
+		}
+	}
 
 
 	/*
 	 * The spacial and temporal coordinates are (r, theta, phi, t)
 	 * All simulations take place on the theta=pi/2 plane
-	 * U_r and U_phi are the velocity coordinates
-	 * this.central_body.R_s Schwarzschild radius. 
+	 * U_r is dr and U_phi is dphi
+	 * R_s Schwarzschild radius. 
 	 * The Kerr metric also uses R_h+ and R_h-, see theory.
 	 * A new variable delta is defined for the Kerr metric relative to R_h+ and R_h-.
 	 * L and E are two Integration constants determined with the 

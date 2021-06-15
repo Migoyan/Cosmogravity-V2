@@ -32,7 +32,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * @method ISM_PH_trajectory_A
  */
 
-export class Schwarzchild extends Simulation_trajectory
+export class Schwarzschild extends Simulation_trajectory
 {
  
     //-------------------- Constructor --------------------
@@ -53,11 +53,10 @@ export class Schwarzchild extends Simulation_trajectory
 
 
     /**
-     * Method that loops over the mobile list and determines
-     * the correct integration constants before storing them
-     * in each mobile as a property. It also takes the user input
-     * in terms of physical velocity and calculate the corresponding
-     * U_r and U_phi.
+     * Method that loops over the mobile list and determines the 
+     * correct integration constants before storing them in each
+     * mobile as a property. It also takes the user input in terms
+     * of physical velocity and calculate the corresponding U_r and U_phi.
      */
     public mobile_initialization(): void
     {
@@ -119,11 +118,12 @@ export class Schwarzchild extends Simulation_trajectory
      * expression for the current simulation and updates the mobile with
      * new position and velocity.
      * @param mobile
+     * @param step dtau
      * @param reference_frame Astronaut (A), Distant Observer (DO)
      */
-    public runge_kutta_trajectory(mobile: Mobile, reference_frame: "A" | "DO"): void
+    public runge_kutta_trajectory(mobile: Mobile, step: number, reference_frame: "A" | "DO"): void
     {
-        let dtau: number;
+        let dtau: number = step;
         let tau: number;
         let radius = this.central_body.radius;
         let r = mobile.r;
