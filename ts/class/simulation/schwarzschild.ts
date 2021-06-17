@@ -14,6 +14,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * @method mobile_trajectory
  * @method mobile_new_position
  * @method mobile_velocity
+ * @method mobile_clocks
  * @method ESM_MP_integration_constants
  * @method ESM_MP_potential_A
  * @method ESM_MP_potential_DO
@@ -54,19 +55,6 @@ export class Schwarzschild extends Simulation_trajectory
     //---------------------- Methods -----------------------
 
 
-    /*
-     * The first four methods of this class are critical to the simulation.
-     * 1) The initialization of every mobile
-     * 2) Choosing the right equation to integrate for a given mobile
-     * 3) Updating the current mobile with its new velocity
-     * 4) Updating the current mobile with the new coordinate
-     * 
-     * The animation class will call these methods to plot the trajectory.
-     * 
-     * The rest of the methods are meant to represent a mathematical equation.
-     */
-
-
     /**
      * Method that loops over the mobile list and determines the 
      * correct integration constants before storing them in each
@@ -76,10 +64,12 @@ export class Schwarzschild extends Simulation_trajectory
     public mobile_initialization(): void
     {
         let R_s = this.central_body.R_s;
+        let radius = this.central_body.radius;
+        let mass = this.central_body.mass;
 
         this.mobile_list.forEach(mobile =>
         {
-            if (mobile.r >= this.central_body.radius)
+            if (mobile.r >= radius || radius === 0)
             {
                 if (!mobile.is_photon)
                 {
@@ -101,7 +91,7 @@ export class Schwarzschild extends Simulation_trajectory
                     this.ESM_PH_integration_constants(mobile);
                 }
             }
-            else if (mobile.r < this.central_body.radius)
+            else if (mobile.r < radius && radius !== 0)
             {
                 let alpha = this.ISM_alpha_r(mobile);
                 let beta = this.ISM_beta_r(mobile);
@@ -145,10 +135,11 @@ export class Schwarzschild extends Simulation_trajectory
         let dtau = step;
         let tau: number;
         let radius = this.central_body.radius;
+        let is_photon = mobile.is_photon;
         let r = mobile.r;
         let U_r = mobile.U_r;
 
-        if (mobile.r >= radius && !mobile.is_photon && reference_frame === "A")
+        if ((mobile.r >= radius || radius === 0) && !is_photon && reference_frame === "A")
         {
             return this.runge_kutta_equation_order2(
                 mobile,
@@ -159,7 +150,7 @@ export class Schwarzschild extends Simulation_trajectory
                 this.ESM_MP_trajectory_A
             );
         }
-        else if (mobile.r >= radius && !mobile.is_photon && reference_frame === "DO")
+        else if ((mobile.r >= radius || radius === 0) && !is_photon && reference_frame === "DO")
         {
             return this.runge_kutta_equation_order2(
                 mobile,
@@ -170,7 +161,7 @@ export class Schwarzschild extends Simulation_trajectory
                 this.ESM_MP_trajectory_DO
             );
         }
-        else if (mobile.r >= radius && mobile.is_photon && reference_frame === "A")
+        else if ((mobile.r >= radius || radius === 0) && is_photon && reference_frame === "A")
         {
             return this.runge_kutta_equation_order2(
                 mobile,
@@ -181,7 +172,7 @@ export class Schwarzschild extends Simulation_trajectory
                 this.ESM_PH_trajectory_A
             );
         }
-        else if (mobile.r >= radius && mobile.is_photon && reference_frame === "DO")
+        else if ((mobile.r >= radius || radius === 0) && is_photon && reference_frame === "DO")
         {
             return this.runge_kutta_equation_order2(
                 mobile,
@@ -192,9 +183,9 @@ export class Schwarzschild extends Simulation_trajectory
                 this.ESM_PH_trajectory_DO
             );
         }
-        else if (mobile.r < radius)
+        else if (mobile.r < radius && radius !== 0)
         {
-            if (!mobile.is_photon)
+            if (!is_photon)
             {
                 return this.runge_kutta_equation_order2(
                     mobile,
@@ -255,7 +246,7 @@ export class Schwarzschild extends Simulation_trajectory
         let radius = this.central_body.radius;
         let R_s = this.central_body.R_s;
 
-        if (mobile.r >= radius)
+        if (mobile.r >= radius || radius === 0)
         {
             let dt = mobile.E / (1 - R_s / mobile.r);
             let dphi = c * mobile.L / mobile.r**2;
@@ -274,7 +265,7 @@ export class Schwarzschild extends Simulation_trajectory
                 mobile.v_r = Math.abs(dr / (1 - R_s / mobile.r)**2)**.5;
             }
         }
-        else
+        else if (mobile.r < radius && radius !== 0)
         {
             let alpha = this.ISM_alpha_r(mobile);
             let beta = this.ISM_beta_r(mobile);
@@ -295,6 +286,67 @@ export class Schwarzschild extends Simulation_trajectory
             }
         }
         mobile.v_norm = (mobile.v_r**2 + mobile.v_phi**2)**.5;
+    }
+
+
+    /**
+     * Updates time parameters of a mobile
+     * @param mobile 
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
+     */
+    public mobile_clocks(mobile: Mobile, reference_frame: "A" | "DO")
+    {
+        let radius = this.central_body.radius;
+        let R_s = this.central_body.R_s;
+
+        if (mobile.r >= radius || radius === 0)
+        {
+            if (reference_frame === "A")
+            {
+                if (!mobile.is_photon)
+                {
+                    mobile.clock_a += mobile.dtau;
+                }
+                if (mobile.r > R_s)
+                {
+                    mobile.clock_do += mobile.E / (1 - R_s / mobile.r) * mobile.dtau;
+                }
+                else
+                {
+                    mobile.clock_do = Infinity;
+                }
+            }
+            else
+            {
+                mobile.clock_do += mobile.dtau;
+
+                if (mobile.r >= R_s && !mobile.is_photon)
+                {
+                    mobile.clock_a += mobile.dtau * (1 - R_s / mobile.r) / mobile.E;
+                }
+            }
+        }
+        else if (mobile.r < radius && radius !== 0)
+        {
+            if (reference_frame === "A")
+            {
+                mobile.clock_do += mobile.dtau * mobile.E / this.ISM_beta_r(mobile)**2;
+
+                if (!mobile.is_photon)
+                {
+                    mobile.clock_a += mobile.dtau;
+                }
+            }
+            else
+            {
+                mobile.clock_do += mobile.dtau;
+
+                if (!mobile.is_photon)
+                {
+                    mobile.clock_a += mobile.dtau * this.ISM_beta_r(mobile)**2 / mobile.E;
+                }
+            }
+        }
     }
 
 
