@@ -8,8 +8,8 @@ import { Graphic } from './graphic';
  * This is one of the two inherited class from Graphic.
  * It shouldn't be used for static graphic representation.
  * 
- * @method draw
  * @method main_trajectory
+ * @method draw
  */
 
 class Animation extends Graphic
@@ -27,36 +27,48 @@ class Animation extends Graphic
     //---------------------- Methods -----------------------
     
     
-    public draw(): void {}
 
 
     public main_trajectory(simulation: any, reference_frame: "A" | "DO"): void
     {
-        let r_f = reference_frame;
+        let tau: number = 0;
+        let dtau: number;
+        let schwarzschild_metric: boolean = false;
+        let kerr_metric: boolean = false;
+        let rebound: boolean = false;
 
-        if (simulation instanceof Schwarzschild === true)
+        if (simulation instanceof Schwarzschild)
         {
-            var schwarzschild_metric = true;
+            schwarzschild_metric = true;
+
+            if (simulation.central_body.collidable)
+            {
+                rebound = true;
+            }
         }
-        else
+        else if (simulation instanceof Kerr)
         {
-            var kerr_metric = true;
+            kerr_metric = true;
         }
 
         simulation.mobile_initialization();
 
-        let trajectory_result: number[][];
-
         for (let i=0; i<1000; i++)
         {
+            tau += dtau;
+
             simulation.mobile_list.forEach((mobile: Mobile) =>
             {
-                simulation.runge_kutta_trajectory(mobile, r_f);
+                simulation.mobile_new_position(mobile, dtau, reference_frame);
             });
         }
 
     }
 
     
+
+
+    public draw(): void {}
+
 
 }

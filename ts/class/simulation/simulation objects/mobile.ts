@@ -4,28 +4,42 @@
  * This class is used to describe the different objects about which 
  * we are calculating the trajectory.
  * 
+ * @param id
  * @param is_photon
- * @param collidable
- * @param mass
  * @param r
  * @param phi
+ * @param v_r
+ * @param v_phi
+ * @param v_norm
+ * @param v_alpha
  * @param U_r
  * @param U_phi
  * @param L
  * @param E
+ * @param dtau
+ * @param proper_time
+ * @param time_DO
 */
 
 export class Mobile
 {
 
+    private _id: string;
     private _is_photon: boolean;
-    private _collidable: boolean;   // Can the object collide
     private _r: number;             // Radial coordinate
     private _phi: number;           // Angular coordinate
-    private _v_r: number;           // Physical speed radius
-    private _v_alpha: number;       // Physical speed polar angle
-    private _U_r: number;           // d_r
-    private _U_phi: number;         // d_phi
+    private _v_r: number;           // Physical speed radial component
+    private _v_phi: number;         // Physical speed tangential component
+    private _v_norm: number         // Physical speed norm
+    private _v_alpha: number;       // Physical speed starting angle
+    private _U_r: number;           // dr
+    private _U_phi: number;         // dphi
+    private _dtau: number;          // dtau
+
+    // time in the reference frame where the mobile is motionless
+    private _proper_time: number;
+    // time in the reference frame of a distant observer
+    private _time_DO: number;
 
     /* Integration constants, each simulation_trajectory child classes
     have a method to set the proper value for these constants.
@@ -39,27 +53,35 @@ export class Mobile
 
 
     constructor(
+        id: string,
         is_photon: boolean,
-        collidable: boolean,
         r: number,
         phi: number,
         v_r: number,
         v_alpha: number
     ) {
+        this._id = id;
         this._is_photon = is_photon;
-        this._collidable = collidable;
         this._r = r;
-        this._phi = phi * Math.PI / 180;
+        this._phi = phi * Math.PI/180;
         this._L = 0;
         this._E = 0;
         this._v_r = v_r;
-        this._v_alpha = v_alpha * Math.PI / 180;
+        this._v_alpha = v_alpha * Math.PI/180;
+        this._v_phi = v_r * Math.sin(this.v_alpha);
+        this._v_norm = (v_r**2 + this.v_phi**2)**.5
 
-        if (is_photon) { this._v_r = c }
+        if (is_photon) { this._v_r = c; this._v_norm = c; }
     }
 
 
     //--------------------- Accessors ----------------------
+
+
+    // Id
+    public get id() { return this._id; }
+
+    public set id(id: string) { this._id = id; }
 
 
     // Is photon?
@@ -69,16 +91,7 @@ export class Mobile
     {
         this._is_photon = is_photon;
     }
-
-
-    // Collidable
-    public get collidable() { return this._collidable; }
-
-    public set collidable(collidable: boolean)
-    { 
-        this._collidable = collidable;
-    }
-
+    
 
     // Coordinate r
     public get r() { return this._r; }
@@ -92,16 +105,28 @@ export class Mobile
     public set phi(phi: number) { this._phi = phi; }
 
 
-    // Physical velocity norm
+    // Physical velocity radius
     public get v_r() { return this._v_r; }
 
     public set v_r(v_r: number) { this._v_r = v_r; }
 
 
+    // Physical speed tangential
+    public get v_phi() { return this._v_phi; }
+
+    public set v_phi(v_phi: number) { this._v_phi = v_phi; }
+
+    
     // Physical velocity starting angle
     public get v_alpha() { return this._v_alpha; }
 
     public set v_alpha(v_alpha: number) { this._v_alpha = v_alpha; }
+
+
+    // Physical velocity norm
+    public get v_norm() { return this._v_norm; }
+
+    public set v_norm(v_norm: number) { this._v_norm = v_norm; }
 
 
     // dr 
@@ -126,5 +151,25 @@ export class Mobile
 
     public set E(E: number) { this._E = E; }
 
+
+    // dtau
+    public get dtau() { return this._dtau; }
+
+    public set dtau(dtau: number) { this._dtau = dtau; }
+
+
+    // proper time
+    public get proper_time() { return this._proper_time; }
+
+    public set proper_time(proper_time: number)
+    { 
+        this._proper_time = proper_time;
+    }
+
+
+    // time distant observer
+    public get time_DO() { return this._time_DO; }
+
+    public set time_DO(time_DO: number) { this._time_DO = time_DO; }
 
 }
