@@ -9,7 +9,6 @@ import { Graphic } from './graphic';
  * It shouldn't be used for static graphic representation.
  * 
  * @method main_trajectory
- * @method draw
  */
 
 class Animation extends Graphic
@@ -26,8 +25,6 @@ class Animation extends Graphic
 
     //---------------------- Methods -----------------------
     
-    
-
 
     public main_trajectory(simulation: any, reference_frame: "A" | "DO"): void
     {
@@ -36,6 +33,14 @@ class Animation extends Graphic
         let schwarzschild_metric: boolean = false;
         let kerr_metric: boolean = false;
         let rebound: boolean = false;
+        
+        // The following instruction bloc allows us to store the data for each mobile
+        // in a Map object (dictionnary).
+        let mobiles_data = new Map<string, number[]>();
+        simulation.mobile_list.forEach((mobile: Mobile) => 
+        {
+            mobiles_data.set(mobile.id, []);
+        });
 
         if (simulation instanceof Schwarzschild)
         {
@@ -53,7 +58,7 @@ class Animation extends Graphic
 
         simulation.mobile_initialization();
 
-        for (let i=0; i<1000; i++)
+        for (let i=0; i<100; i++)
         {
             tau += dtau;
 
@@ -67,8 +72,6 @@ class Animation extends Graphic
 
     
 
-
-    public draw(): void {}
 
 
 }

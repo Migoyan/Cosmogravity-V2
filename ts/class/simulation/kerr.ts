@@ -10,9 +10,18 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * Note: This code uses acronyms to differentiate between the different categories
  * covered by the theory (example: KM_PH = Kerr Metric for a Photon).
  * 
- * @method integration_constants
- * @method runge_kutta_trajectory
+ * @param id
+ * @param central_body
+ * @param mobile_list
+ * @param c
+ * @param G
+ * 
+ * @method add_mobile
+ * @method mobile_initialization
+ * @method mobile_trajectory
  * @method mobile_new_position
+ * @method mobile_velocity
+ * @method mobile_clocks
  * @method KM_delta_r
  * @method KM_MP_integration_constants
  * @method KM_MP_potential_A
@@ -46,18 +55,6 @@ export class Kerr extends Simulation_trajectory
 	//---------------------- Methods -----------------------
 
 
-	/*
-     * The first three methods of this class are critical to the simulation.
-     * 1) The initialization of every mobile
-     * 2) Choosing the right equation to integrate for a given mobile
-     * 3) Updating the current mobile with the new coordinate and velocity
-     * 
-     * The animation class will call these methods to plot the trajectory.
-     * 
-     * The rest of the methods are meant to represent a mathematical equation.
-     */
-
-
 	/**
      * Method that loops over the mobile list and determines the 
      * correct integration constants before storing them in each
@@ -69,14 +66,15 @@ export class Kerr extends Simulation_trajectory
 		this.mobile_list.forEach(mobile =>
 		{
 			let R_s = this.central_body.R_s;
+			let delta = this.KM_delta_r(mobile);
 
 			if (!mobile.is_photon)
 			{
 				mobile.U_r = mobile.v_r * Math.cos(mobile.v_alpha) * c
-				* this.KM_delta_r(mobile)**.5 / (mobile.r * (c**2 - mobile.v_r**2)**.5);
+				* delta**.5 / (mobile.r * (c**2 - mobile.v_r**2)**.5);
 				mobile.U_phi = mobile.v_r * Math.sin(mobile.v_alpha) * c * Math.sqrt(
 					Math.abs(mobile.r * (mobile.r - R_s)) / Math.sqrt(
-						this.KM_delta_r(mobile) * (c**2 - mobile.v_r**2)
+						delta * (c**2 - mobile.v_r**2)
 					)
 				);
 
@@ -85,10 +83,10 @@ export class Kerr extends Simulation_trajectory
 			else
 			{
 				mobile.U_r = c * Math.cos(mobile.v_alpha) * Math.sqrt(
-					this.KM_delta_r(mobile) / (mobile.r * (mobile.r - R_s))
+					delta / (mobile.r * (mobile.r - R_s))
 				);
 				mobile.U_phi = c * Math.sin(mobile.v_alpha) * mobile.r / Math.sqrt(
-					this.KM_delta_r(mobile)
+					delta
 				);
 				
 				this.KM_PH_integration_constants(mobile);
@@ -106,7 +104,7 @@ export class Kerr extends Simulation_trajectory
      * 
      * @returns [tau, r, U_r]
      */
-    public runge_kutta_trajectory( mobile: Mobile, step: number, reference_frame: "A" | "DO"): number[]
+    public mobile_trajectory( mobile: Mobile, step: number, reference_frame: "A" | "DO"): number[]
     {
         let dtau = step;
         let tau: number;
@@ -161,17 +159,17 @@ export class Kerr extends Simulation_trajectory
 
 
 	/**
-     * 
+     * Updates a mobile with its new position
      * @param mobile 
-     * @param step 
-     * @param reference_frame 
+     * @param step dtau
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
      */
-	public mobile_new_position(mobile: Mobile, step: number, reference_frame: "A" | "DO"): void
-	{
+ 	public mobile_new_position(mobile: Mobile, step: number, reference_frame: "A" | "DO"): void
+ 	{
 		let dtau = step;
 		let R_s = this.central_body.R_s;
 		let a = this.central_body.a;
-		let runge_kutta_result = this.runge_kutta_trajectory(mobile, dtau, reference_frame);
+		let runge_kutta_result = this.mobile_trajectory(mobile, dtau, reference_frame);
 		mobile.r = runge_kutta_result[1];
 		mobile.U_r = runge_kutta_result[2];
 
@@ -186,6 +184,86 @@ export class Kerr extends Simulation_trajectory
 			* (R_s * a * mobile.E / mobile.r + (1 - R_s / mobile.r) * mobile.L)
 			/ ((mobile.r**2 + a**2 + R_s * a**2 / mobile.r)
 			* mobile.E - R_s * a * mobile.L / mobile.r);
+		}
+	}
+
+
+	/**
+     * Update the physical velocity of a mobile
+     * @param mobile 
+     */
+	public mobile_velocity(mobile: Mobile)
+	{
+		let R_s = this.central_body.R_s;
+		let a = this.central_body.a;
+		let delta = this.KM_delta_r(mobile);
+		let dphi = c * ((R_s * a * mobile.E) / mobile. r + (1 - R_s / mobile.r)*mobile.L)
+		/ ((mobile.r**2 + a**2 + (R_s / mobile.r) * a**2)
+		* mobile.E - R_s * a * mobile.L / mobile.r);
+		mobile.v_phi = Math.sqrt(delta * dphi**2
+			/ (1 - (R_s / mobile.r) + R_s * a * dphi / (c * mobile.r)**2));
+ 
+		if (!mobile.is_photon)
+		{
+			let dr = c**2 * (mobile.E**2 - 1 + (R_s / mobile.r) + (a**2 * (mobile.E**2 - 1)
+			- mobile.L**2) / mobile.r**2 + R_s * (((mobile.L - a * mobile.E)**2) / mobile.r**3));
+                dr *= (delta**2) / ((mobile.r**2 + a**2 + (R_s / mobile.r) * a**2)
+				* mobile.E - R_s * a * mobile.L / mobile.r)**2;
+            mobile.v_r = Math.sqrt(Math.abs((1 - R_s / mobile.r) * (mobile.r**2 * dr / delta)
+			/ ((1 - (R_s / mobile.r) + R_s * a * dphi / (c * mobile.r))**2)));
+		}
+		else
+		{
+			let dr = c**2 * (mobile.E**2 + (a**2 * mobile.E**2 - mobile.L**2) / mobile.r**2
+			+ R_s * (((mobile.L - a * mobile.E)**2) / (mobile.r**3)));
+            dr *= delta**2 / (((mobile.r**2 + a**2 + R_s / mobile.r * a**2) * mobile.E
+			- R_s* a * mobile.L / mobile.r)**2);
+            
+			mobile.v_r = Math.sqrt(Math.abs((1 - R_s / mobile.r) * (mobile.r**2 * dr / delta)
+			/ (1 - R_s / mobile.r + R_s * a * dphi / (c * mobile.r))**2));
+		}
+		mobile.v_norm = (mobile.v_r**2 + mobile.v_phi**2)**.5;
+	}
+
+
+  	/**
+     * Updates time parameters of a mobile
+     * @param mobile 
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
+     */
+	public mobile_clocks(mobile: Mobile, reference_frame: "A" | "DO")
+	{
+		let radius = this.central_body.radius;
+		let a = this.central_body.a;
+		let R_s = this.central_body.R_s;
+		let R_hp = this.central_body.R_hp;
+
+		if (reference_frame === "A")
+		{
+			if (!mobile.is_photon)
+			{
+				mobile.clock_a += mobile.dtau;
+
+				if (mobile.r > R_hp)
+				{
+					mobile.clock_do += mobile.dtau * ((mobile.r**2 + a**2 + R_s * a**2 / mobile.E)
+					- R_s * a * mobile.L / mobile.r) / this.KM_delta_r(mobile);
+				}
+				else
+				{
+					mobile.clock_do = Infinity;
+				}
+			}
+		}
+		else
+		{
+			mobile.clock_do += mobile.dtau;
+
+			if (!mobile.is_photon && mobile.r >= R_hp)
+			{
+				mobile.clock_a += mobile.dtau * this.KM_delta_r(mobile) / ((mobile.r**2 + a**2
+					/ mobile.r) * mobile.E - R_s * a * mobile.L / mobile.r);
+			}
 		}
 	}
 

@@ -6,6 +6,7 @@ import { Mobile } from "./simulation objects/mobile";
  * @class Simulation_trajectory
  * inheritance from Simulation class
  * 
+ * @param id
  * @param central_body
  * @param mobile_list
  * @param c
