@@ -10,6 +10,13 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * Note: This code uses acronyms to differentiate between the different categories
  * covered by the theory (example: EMS_PH = External Schwarzschild metric for a Photon).
  * 
+ * @param id
+ * @param central_body
+ * @param mobile_list
+ * @param c
+ * @param G
+ * 
+ * @method add_mobile
  * @method mobile_initialization
  * @method mobile_trajectory
  * @method mobile_new_position

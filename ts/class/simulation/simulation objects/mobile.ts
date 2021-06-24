@@ -17,8 +17,8 @@
  * @param L
  * @param E
  * @param dtau
- * @param proper_time
- * @param time_DO
+ * @param clock_a
+ * @param clock_do
 */
 
 export class Mobile
@@ -37,9 +37,9 @@ export class Mobile
     private _dtau: number;          // dtau
 
     // time in the reference frame where the mobile is motionless
-    private _proper_time: number;
+    private _clock_a: number;
     // time in the reference frame of a distant observer
-    private _time_DO: number;
+    private _clock_do: number;
 
     /* Integration constants, each simulation_trajectory child classes
     have a method to set the proper value for these constants.
@@ -70,6 +70,8 @@ export class Mobile
         this._v_alpha = v_alpha * Math.PI/180;
         this._v_phi = v_r * Math.sin(this.v_alpha);
         this._v_norm = (v_r**2 + this.v_phi**2)**.5
+        this._clock_a = 0;
+        this._clock_do = 0;
 
         if (is_photon) { this._v_r = c; this._v_norm = c; }
     }
@@ -143,7 +145,7 @@ export class Mobile
 
     // Integration constants
     public get L() { return this._L; }
-
+ 
     public set L(L: number) { this._L = L; }
 
 
@@ -159,17 +161,17 @@ export class Mobile
 
 
     // proper time
-    public get proper_time() { return this._proper_time; }
+    public get clock_a() { return this._clock_a; }
 
-    public set proper_time(proper_time: number)
+    public set clock_a(clock_a: number)
     { 
-        this._proper_time = proper_time;
+        this._clock_a = clock_a;
     }
 
 
     // time distant observer
-    public get time_DO() { return this._time_DO; }
+    public get clock_do() { return this._clock_do; }
 
-    public set time_DO(time_DO: number) { this._time_DO = time_DO; }
+    public set clock_do(clock_do: number) { this._clock_do = clock_do; }
 
 }
