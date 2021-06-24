@@ -1,17 +1,6 @@
-import { Simulation } from "./simulation";
-// Physics constants
-const c: number = 2.99792458e8;        // Light constant
-const k: number = 1.38064852e-23;      // Boltzmann constant
-const h: number = 6.62607004e-34;      // Planck constant
-const G: number = 6.67430e-11;         // Newton constant : Système international 2018
-
-
-// Distances
-const AU: number = 1.495978707e11;      // Astronomical unit in meters
-const parsec: number = 3.0857e16;       // Parsec in meters
-const k_parsec: number = 3.0857e19;     // Kiloparsec in meters
-const M_parsec: number = 3.0857e22;     // Megaparsec in meters
-const ly: number = 9.4607e15;           // Light-year in meters
+import {
+	Simulation
+} from "./simulation";
 
 /**
  * @class Simulation_universe.
@@ -31,6 +20,7 @@ const ly: number = 9.4607e15;           // Light-year in meters
  * methods names :
  * @method modify_dark_energy
  * @method modify_constants
+ * @method runge_kutta_universe_1
  * @method runge_kutta_universe_2
  * @method calcul_omega_r
  * @method calcul_omega_k
@@ -38,7 +28,8 @@ const ly: number = 9.4607e15;           // Light-year in meters
  * @method Y
  * @method dY
  * @method F
- * @method compute_a_tau
+ * @method compute_scale_factor
+ * @method compute_omegas
  * @method time
  * @method universe_age
  * @method duration
@@ -100,6 +91,7 @@ export class Simulation_universe extends Simulation {
 
 	public set temperature(temperature: number) {
 		this._temperature = temperature;
+		this.check_sum_omegas();
 	}
 
 	// hubble_cst
@@ -109,6 +101,7 @@ export class Simulation_universe extends Simulation {
 
 	public set hubble_cst(hubble_cst: number) {
 		this._hubble_cst = (hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
+		this.check_sum_omegas();
 	}
 
 	// matter_parameter
@@ -118,6 +111,7 @@ export class Simulation_universe extends Simulation {
 
 	public set matter_parameter(matter_parameter: number) {
 		this._matter_parameter = matter_parameter;
+		this.check_sum_omegas();
 	}
 
 	// dark_energy
@@ -137,6 +131,7 @@ export class Simulation_universe extends Simulation {
 
 	public set has_cmb(has_cmb: boolean) {
 		this._has_cmb = has_cmb;
+		this.check_sum_omegas();
 	}
 
 	// has_neutrino
@@ -146,6 +141,7 @@ export class Simulation_universe extends Simulation {
 
 	public set has_neutrino(has_neutrino: boolean) {
 		this._has_neutrino = has_neutrino;
+		this.check_sum_omegas();
 	}
 
 	// is_flat
@@ -155,6 +151,7 @@ export class Simulation_universe extends Simulation {
 
 	public set is_flat(is_flat: boolean) {
 		this._is_flat = is_flat;
+		this.check_sum_omegas();
 	}
 
 	//---------------------------methods-------------------------
@@ -172,12 +169,13 @@ export class Simulation_universe extends Simulation {
 	 * Note : w_0, w_1 are parameters that describe the nature of the dark energy.
 	 */
 	public modify_dark_energy(
-		DE_parameter_value?: number,
-		DE_w_0?: number,
-		DE_w_1?: number
+		DE_parameter_value ? : number,
+		DE_w_0 ? : number,
+		DE_w_1 ? : number
 	): void {
 		if (DE_parameter_value !== undefined) {
 			this._dark_energy.parameter_value = DE_parameter_value;
+			this.check_sum_omegas(true);
 		}
 		if (DE_w_0 !== undefined) {
 			this._dark_energy.w_0 = DE_w_0;
@@ -196,10 +194,10 @@ export class Simulation_universe extends Simulation {
 	 * @param G Newton constant
 	 */
 	public modify_constants(
-		c?: number,
-		k?: number,
-		h?: number,
-		G?: number
+		c ? : number,
+		k ? : number,
+		h ? : number,
+		G ? : number
 	): void {
 		if (c !== undefined) {
 			this._constants.c = c;
@@ -272,7 +270,10 @@ export class Simulation_universe extends Simulation {
 			i++;
 		}
 
-		return { x: x, y: y };
+		return {
+			x: x,
+			y: y
+		};
 	}
 
 	/**
@@ -339,10 +340,15 @@ export class Simulation_universe extends Simulation {
 			i++;
 		}
 
-		return { x: x, y: y, dy: dy };
+		return {
+			x: x,
+			y: y,
+			dy: dy
+		};
 	}
 
 	/**
+	 * compute radiation density parameter at current time
 	 * @returns the radiation density parameter
 	 */
 	public calcul_omega_r(): number {
@@ -370,6 +376,7 @@ export class Simulation_universe extends Simulation {
 	}
 
 	/**
+	 * Compute curvature density parameter at current time
 	 * @returns the curvature density parameter
 	 */
 	public calcul_omega_k(): number {
@@ -382,7 +389,7 @@ export class Simulation_universe extends Simulation {
 				this.matter_parameter -
 				this.dark_energy.parameter_value
 			);
-		}   
+		}
 	}
 
 	/**
@@ -396,9 +403,9 @@ export class Simulation_universe extends Simulation {
 		let sum = this.matter_parameter + omega_r + this.dark_energy.parameter_value + this.calcul_omega_k();
 		if (this.is_flat && sum !== 1) {
 			is_param_modified = true;
-			if (modify_matter){
+			if (modify_matter) {
 				this.matter_parameter = 1 - this.dark_energy.parameter_value - omega_r;
-			} else{
+			} else {
 				this.modify_dark_energy(1 - this.matter_parameter - omega_r);
 			}
 		}
@@ -415,9 +422,9 @@ export class Simulation_universe extends Simulation {
 	protected Y(x: number): number {
 		return Math.exp(
 			-3 *
-				(this.dark_energy.w_0 + this.dark_energy.w_1 + 1) *
-				Math.log(x) -
-				3 * this.dark_energy.w_1 * (1 - x)
+			(this.dark_energy.w_0 + this.dark_energy.w_1 + 1) *
+			Math.log(x) -
+			3 * this.dark_energy.w_1 * (1 - x)
 		);
 	}
 
@@ -427,11 +434,11 @@ export class Simulation_universe extends Simulation {
 	 * @param x variable
 	 * @returns value of the derivative of Y at position x
 	 */
-	 protected dY(x: number): number {
+	protected dY(x: number): number {
 		return (
 			this.Y(x) *
 			(3 * this.dark_energy.w_1 -
-				3 * (1 + this.dark_energy.w_0 + this.dark_energy.w_1))
+				3 * (1 + this.dark_energy.w_0 + this.dark_energy.w_1) / x)
 		);
 	}
 
@@ -441,7 +448,7 @@ export class Simulation_universe extends Simulation {
 	 * @param x variable
 	 * @returns value of F(x)
 	 */
-	 protected F(x: number): number {
+	protected F(x: number): number {
 		return (
 			(1 + x) ** 2 * this.calcul_omega_k() +
 			(1 + x) ** 3 * this.matter_parameter +
@@ -457,13 +464,16 @@ export class Simulation_universe extends Simulation {
 	 * @param universe_age Permit to pass an already computed value for the universe age. If not given, the method recompute the value.
 	 * @returns t value, a value, derivative of a
 	 */
-	public compute_scale_factor(step: number, interval_a : number[] = [0, 5], universe_age?: number) {
+	public compute_scale_factor(step: number, interval_a: number[] = [0, 5], universe_age ? : number) {
 		let age: number;
 		if (universe_age === undefined) {
 			age = this.universe_age();
 		} else {
 			age = universe_age;
 		}
+		if (isNaN(age)) {
+			age = 0;
+		} 
 		let result = this.runge_kutta_universe_2(
 			step,
 			0,
@@ -473,10 +483,36 @@ export class Simulation_universe extends Simulation {
 			interval_a
 		);
 		for (let index = 0; index < result.x.length; index++) {
-			result.x[index] = (result.x[index]/this.hubble_cst + age)/(3600*24*365.2425);
+			result.x[index] = (result.x[index] / this.hubble_cst + age) / (3600 * 24 * 365.2425);
 		}
-		console.log(this.universe_age()/(3600*24*365.2425));
 		return result;
+	}
+
+	/**
+	 * Computing the 4 density parameters given an array of cosmologic shift value
+	 * @param z_array array containing z points where to compute the omegas
+	 */
+	public compute_omegas(z_array: number[]) {
+		let omega_matter: number[] = [];
+		let omega_rad: number[] = [];
+		let omega_de: number[] = [];
+		let omega_courbure: number[] = [];
+		let radiation = this.calcul_omega_r();
+		let curvature = this.calcul_omega_k();
+
+		z_array.forEach(z => {
+			omega_matter.push(this.matter_parameter * (1 + z)**3 / this.F(z));
+			omega_rad.push(radiation * (1 + z)**3 / this.F(z));
+			omega_de.push(this.dark_energy.parameter_value * (1 + z)**3 / this.F(z));
+			omega_courbure.push(curvature * (1 + z)**3 / this.F(z));
+		});
+
+		return {
+			omega_matter: omega_matter,
+			omega_rad: omega_rad,
+			omega_de: omega_de,
+			omega_courbure: omega_courbure
+		};
 	}
 
 	/**
@@ -515,7 +551,7 @@ export class Simulation_universe extends Simulation {
 		*/
 		let age: number;
 		age =
-			this.simpson(this, this.integral_duration_substituated, 0, 1, 1000) /
+			this.simpson(this, this.integral_duration_substituated, 0, 1, 10000) /
 			this.hubble_cst;
 		return age;
 	}
@@ -524,7 +560,7 @@ export class Simulation_universe extends Simulation {
 	 * name
 	 */
 	public emission_age(z: number) {
-		let infimum = z/(1 + z);
+		let infimum = z / (1 + z);
 		let age: number;
 		age =
 			this.simpson(this, this.integral_duration_substituated, infimum, 1, 1000) /
@@ -543,8 +579,8 @@ export class Simulation_universe extends Simulation {
 			throw new Error("Cosmologic shift z cannot be equal or lower than -1 included");
 		}
 
-		let infimum = z_1/(1 + z_1);
-		let supremum = z_2/(1 + z_2);
+		let infimum = z_1 / (1 + z_1);
+		let supremum = z_2 / (1 + z_2);
 
 		let duration: number;
 		duration = this.simpson(this, this.integral_duration_substituated, infimum, supremum, 1000) / this.hubble_cst;
@@ -558,16 +594,16 @@ export class Simulation_universe extends Simulation {
 	 */
 	public metric_distance(z: number): number {
 		let distance: number;
-		let courbure: number = this.calcul_omega_k();
+		let curvature: number = this.calcul_omega_k();
 		distance = this.simpson(this, this.integral_distance, 0, z, 100);
-		if (courbure < 0) {
+		if (curvature < 0) {
 			distance =
-				Math.sinh(Math.sqrt(Math.abs(courbure)) * distance) /
-				Math.sqrt(Math.abs(courbure));
-		} else if (courbure > 0) {
+				Math.sinh(Math.sqrt(Math.abs(curvature)) * distance) /
+				Math.sqrt(Math.abs(curvature));
+		} else if (curvature > 0) {
 			distance =
-				Math.sin(Math.sqrt(Math.abs(courbure)) * distance) /
-				Math.sqrt(Math.abs(courbure));
+				Math.sin(Math.sqrt(Math.abs(curvature)) * distance) /
+				Math.sqrt(Math.abs(curvature));
 		}
 		distance *= this.constants.c / this.hubble_cst;
 		return distance;
@@ -634,7 +670,7 @@ export class Simulation_universe extends Simulation {
 	public brightness(
 		z: number,
 		luminosity: number,
-		distance_metric?: number
+		distance_metric ? : number
 	): number {
 		let distance: number;
 		if (distance_metric === undefined) {
@@ -672,7 +708,7 @@ export class Simulation_universe extends Simulation {
 	 */
 	protected integral_duration(Simu: Simulation_universe, x: number): number {
 		return (
-			(1/(1 + x)) * Math.sqrt(1/Simu.F(x))
+			(1 / (1 + x)) * Math.sqrt(1 / Simu.F(x))
 		)
 	}
 
@@ -715,10 +751,10 @@ export class Simulation_universe extends Simulation {
 		let omega_m = Simu.matter_parameter;
 		let omega_de = Simu.dark_energy.parameter_value;
 		return (
-			-(omega_r / a ** 2) -
+			-(omega_r / a ** 3) -
 			(0.5 * omega_m) / a ** 2 +
 			omega_de *
-				(a * Simu.Y(a) + (a ** 2 * Simu.dY(a)) / 2)
+			(a * Simu.Y(a) + (a ** 2 * Simu.dY(a)) / 2)
 		);
 	}
 
@@ -730,7 +766,7 @@ export class Simulation_universe extends Simulation {
 	 * @returns result of the right part\
 	 * Note: t is not used but has to be defined for this method to be accepted in the runge_kutta_equation_order1 method of simulation class
 	 */
-	protected equa_diff_time(Simu: Simulation_universe, z: number, t: number = 0) {
+	protected equa_diff_time(Simu: Simulation_universe, z: number, t: number = 0): number {
 		return 1 / (this.hubble_cst * (1 + z) * Math.sqrt(Simu.F(z)));
 	}
 }

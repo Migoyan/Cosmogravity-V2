@@ -76,7 +76,7 @@ export class Central_body
     // Collidable
     public get collidable() { return this._collidable; }
 
-    private set collidable(collidable: boolean)
+    public set collidable(collidable: boolean)
     {
         this._collidable = collidable;
     }
@@ -85,13 +85,13 @@ export class Central_body
     // Mass
     public get mass() { return this._mass; }
 
-    private set mass(mass: number) { this._mass = mass; }
+    public set mass(mass: number) { this._mass = mass; }
 
 
     // Radius
     public get radius() { return this._radius; }
     
-    private set radius(radius: number)
+    public set radius(radius: number)
     {
         if (radius <= this._R_s) { this._radius = 0; }
         else { this._radius = radius; }
@@ -101,7 +101,7 @@ export class Central_body
     // Angular momentum
     public get angular_m() { return this._angular_m; }
 
-    private set angular_m(angular_m: number)
+    public set angular_m(angular_m: number)
     {
         this._angular_m = angular_m;
     }
@@ -110,25 +110,25 @@ export class Central_body
     // Schwarzschild radius
     public get R_s() { return this._R_s; }
 
-    private set R_s(R_s: number) { this._R_s = R_s; }
+    public set R_s(R_s: number) { this._R_s = R_s; }
 
 
     // Parameter a
     public get a() { return this._a; }
 
-    private set a(a: number) { this._a = a; }
+    public set a(a: number) { this._a = a; }
 
 
     // R_hp
     public get R_hp() { return this._R_hp; }
 
-    private set R_hp(R_hp: number) { this._R_hp = R_hp; }
+    public set R_hp(R_hp: number) { this._R_hp = R_hp; }
 
 
     // R_hm
     public get R_hm() { return this._R_hm; }
 
-    private set R_hm(R_hm: number) { this._R_hm = R_hm; }
+    public set R_hm(R_hm: number) { this._R_hm = R_hm; }
 
 
     //---------------------- Methods -----------------------

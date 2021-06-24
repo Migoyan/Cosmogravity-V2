@@ -2,10 +2,11 @@
 import { Decimal } from "decimal.js"
 import { Simulation_universe } from "./class/simulation/simulation_universe";
 
-let universe = new Simulation_universe("universe", 3);
+let universe = new Simulation_universe("universe");
 let universe_1 = new Simulation_universe("matter_universe", 0, 32, 1, false, false, true);
 function trace_scale_factor() {
-	let result_a_tau = universe.compute_scale_factor(0.001, [0, 10]);
+	console.log(universe.universe_age() / (3600 * 24 * 365.2425 * 1e9))
+	let result_a_tau = universe.compute_scale_factor(0.0001, [0.01, 10]);
 	universe_1.compute_scale_factor(0.01);
 	let trace_1 = {
 		x: result_a_tau.x,
@@ -39,5 +40,14 @@ function update_universe_rayonment() {
 	} else {
 		universe.has_cmb = false;
 		universe.has_neutrino = false;
+	}
+}
+
+function update_flat(){
+	if((<HTMLInputElement>document.getElementById("univ_plat")).checked){
+		universe.is_flat = true;
+	}
+	else{
+		universe.is_flat = false;
 	}
 }
