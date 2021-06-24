@@ -1,3 +1,4 @@
+import { Mobile } from "./simulation objects/mobile";
 import { Simulation_trajectory } from "./simulation_trajectory";
 
 /**
@@ -9,41 +10,272 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * Note: This code uses acronyms to differentiate between the different categories
  * covered by the theory (example: KM_PH = Kerr Metric for a Photon).
  * 
- * Methods:
+ * @param id
+ * @param central_body
+ * @param mobile_list
+ * @param c
+ * @param G
+ * 
+ * @method add_mobile
+ * @method mobile_initialization
+ * @method mobile_trajectory
+ * @method mobile_new_position
+ * @method mobile_velocity
+ * @method mobile_clocks
  * @method KM_delta_r
  * @method KM_MP_integration_constants
+ * @method KM_MP_potential_A
+ * @method KM_MP_potential_DO
  * @method KM_MP_trajectory_A
  * @method KM_MP_trajectory_DO
  * @method KM_PH_integration_constants
+ * @method KM_PH_potential_A
+ * @method KM_PH_potential_DO
  * @method KM_PH_trajectory_A
  * @method KM_PH_trajectory_DO
  */
 
-export class Kerr extends Simulation_trajectory {
+export class Kerr extends Simulation_trajectory
+{
+
+    //-------------------- Constructor ---------------------
 
 
-    //-------------------- Constructors --------------------
-
-
-    constructor(id: string, collidable: boolean, mass: number, radius: number, angular_m: number)
-	{
+    constructor(
+		id: string,
+		collidable: boolean,
+		mass: number,
+		radius: number,
+		angular_m: number
+	) {
     	super(id, collidable, mass, radius, angular_m);
 	}
-
-
-    //--------------------- Accessors ----------------------
 
 
 	//---------------------- Methods -----------------------
 
 
+	/**
+     * Method that loops over the mobile list and determines the 
+     * correct integration constants before storing them in each
+     * mobile as a property. It also takes the user input in terms
+     * of physical velocity and calculate the corresponding U_r and U_phi.
+     */
+	public mobile_initialization(): void
+	{
+		this.mobile_list.forEach(mobile =>
+		{
+			let R_s = this.central_body.R_s;
+			let delta = this.KM_delta_r(mobile);
+
+			if (!mobile.is_photon)
+			{
+				mobile.U_r = mobile.v_r * Math.cos(mobile.v_alpha) * c
+				* delta**.5 / (mobile.r * (c**2 - mobile.v_r**2)**.5);
+				mobile.U_phi = mobile.v_r * Math.sin(mobile.v_alpha) * c * Math.sqrt(
+					Math.abs(mobile.r * (mobile.r - R_s)) / Math.sqrt(
+						delta * (c**2 - mobile.v_r**2)
+					)
+				);
+
+				this.KM_MP_integration_constants(mobile);
+			}
+			else
+			{
+				mobile.U_r = c * Math.cos(mobile.v_alpha) * Math.sqrt(
+					delta / (mobile.r * (mobile.r - R_s))
+				);
+				mobile.U_phi = c * Math.sin(mobile.v_alpha) * mobile.r / Math.sqrt(
+					delta
+				);
+				
+				this.KM_PH_integration_constants(mobile);
+			}
+		});
+	}
+
+
+   /**
+     * Applies the Runge-Kutta algorithm to the relevant second derivative
+     * expression for the current simulation.
+     * @param mobile
+     * @param step dtau
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
+     * 
+     * @returns [tau, r, U_r]
+     */
+    public mobile_trajectory( mobile: Mobile, step: number, reference_frame: "A" | "DO"): number[]
+    {
+        let dtau = step;
+        let tau: number;
+        let r = mobile.r;
+        let U_r = mobile.U_r;
+
+		if (!mobile.is_photon && reference_frame === "A")
+		{
+			return this.runge_kutta_equation_order2(
+				mobile,
+				dtau,
+				tau,
+				r,
+				U_r,
+				this.KM_MP_trajectory_A
+			);
+		}
+		else if (!mobile.is_photon && reference_frame === "DO")
+		{
+			return this.runge_kutta_equation_order2(
+				mobile,
+				dtau,
+				tau,
+				r,
+				U_r,
+				this.KM_MP_trajectory_DO
+			);
+		}
+		else if (mobile.is_photon && reference_frame === "A")
+		{
+			return this.runge_kutta_equation_order2(
+				mobile,
+				dtau,
+				tau,
+				r,
+				U_r,
+				this.KM_PH_trajectory_A
+			);
+		}
+		else if (mobile.is_photon && reference_frame === "DO")
+		{
+			return this.runge_kutta_equation_order2(
+				mobile,
+				dtau,
+				tau,
+				r,
+				U_r,
+				this.KM_PH_trajectory_DO
+			);
+		}
+    }
+
+
+	/**
+     * Updates a mobile with its new position
+     * @param mobile 
+     * @param step dtau
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
+     */
+ 	public mobile_new_position(mobile: Mobile, step: number, reference_frame: "A" | "DO"): void
+ 	{
+		let dtau = step;
+		let R_s = this.central_body.R_s;
+		let a = this.central_body.a;
+		let runge_kutta_result = this.mobile_trajectory(mobile, dtau, reference_frame);
+		mobile.r = runge_kutta_result[1];
+		mobile.U_r = runge_kutta_result[2];
+
+		if (reference_frame === "A")
+		{
+			mobile.phi += c * dtau / this.KM_delta_r(mobile)
+			* (R_s * a * mobile.E / mobile.r + (1 - R_s / mobile.r) * mobile.L);
+		}
+		else
+		{
+			mobile.phi += c * dtau
+			* (R_s * a * mobile.E / mobile.r + (1 - R_s / mobile.r) * mobile.L)
+			/ ((mobile.r**2 + a**2 + R_s * a**2 / mobile.r)
+			* mobile.E - R_s * a * mobile.L / mobile.r);
+		}
+	}
+
+
+	/**
+     * Update the physical velocity of a mobile
+     * @param mobile 
+     */
+	public mobile_velocity(mobile: Mobile)
+	{
+		let R_s = this.central_body.R_s;
+		let a = this.central_body.a;
+		let delta = this.KM_delta_r(mobile);
+		let dphi = c * ((R_s * a * mobile.E) / mobile. r + (1 - R_s / mobile.r)*mobile.L)
+		/ ((mobile.r**2 + a**2 + (R_s / mobile.r) * a**2)
+		* mobile.E - R_s * a * mobile.L / mobile.r);
+		mobile.v_phi = Math.sqrt(delta * dphi**2
+			/ (1 - (R_s / mobile.r) + R_s * a * dphi / (c * mobile.r)**2));
+ 
+		if (!mobile.is_photon)
+		{
+			let dr = c**2 * (mobile.E**2 - 1 + (R_s / mobile.r) + (a**2 * (mobile.E**2 - 1)
+			- mobile.L**2) / mobile.r**2 + R_s * (((mobile.L - a * mobile.E)**2) / mobile.r**3));
+                dr *= (delta**2) / ((mobile.r**2 + a**2 + (R_s / mobile.r) * a**2)
+				* mobile.E - R_s * a * mobile.L / mobile.r)**2;
+            mobile.v_r = Math.sqrt(Math.abs((1 - R_s / mobile.r) * (mobile.r**2 * dr / delta)
+			/ ((1 - (R_s / mobile.r) + R_s * a * dphi / (c * mobile.r))**2)));
+		}
+		else
+		{
+			let dr = c**2 * (mobile.E**2 + (a**2 * mobile.E**2 - mobile.L**2) / mobile.r**2
+			+ R_s * (((mobile.L - a * mobile.E)**2) / (mobile.r**3)));
+            dr *= delta**2 / (((mobile.r**2 + a**2 + R_s / mobile.r * a**2) * mobile.E
+			- R_s* a * mobile.L / mobile.r)**2);
+            
+			mobile.v_r = Math.sqrt(Math.abs((1 - R_s / mobile.r) * (mobile.r**2 * dr / delta)
+			/ (1 - R_s / mobile.r + R_s * a * dphi / (c * mobile.r))**2));
+		}
+		mobile.v_norm = (mobile.v_r**2 + mobile.v_phi**2)**.5;
+	}
+
+
+  	/**
+     * Updates time parameters of a mobile
+     * @param mobile 
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
+     */
+	public mobile_clocks(mobile: Mobile, reference_frame: "A" | "DO")
+	{
+		let radius = this.central_body.radius;
+		let a = this.central_body.a;
+		let R_s = this.central_body.R_s;
+		let R_hp = this.central_body.R_hp;
+
+		if (reference_frame === "A")
+		{
+			if (!mobile.is_photon)
+			{
+				mobile.clock_a += mobile.dtau;
+
+				if (mobile.r > R_hp)
+				{
+					mobile.clock_do += mobile.dtau * ((mobile.r**2 + a**2 + R_s * a**2 / mobile.E)
+					- R_s * a * mobile.L / mobile.r) / this.KM_delta_r(mobile);
+				}
+				else
+				{
+					mobile.clock_do = Infinity;
+				}
+			}
+		}
+		else
+		{
+			mobile.clock_do += mobile.dtau;
+
+			if (!mobile.is_photon && mobile.r >= R_hp)
+			{
+				mobile.clock_a += mobile.dtau * this.KM_delta_r(mobile) / ((mobile.r**2 + a**2
+					/ mobile.r) * mobile.E - R_s * a * mobile.L / mobile.r);
+			}
+		}
+	}
+
+
 	/*
 	 * The spacial and temporal coordinates are (r, theta, phi, t)
 	 * All simulations take place on the theta=pi/2 plane
-	 * U_r and U_phi are the velocity coordinates
-	 * R_s Schwarzschild radius. The Kerr metric also uses R_h+ and R_h-, see theory.
+	 * U_r is dr and U_phi is dphi
+	 * R_s Schwarzschild radius. 
+	 * The Kerr metric also uses R_h+ and R_h-, see theory.
 	 * A new variable delta is defined for the Kerr metric relative to R_h+ and R_h-.
-	 * L and E are two integration constants determined with the 
+	 * L and E are two Integration constants determined with the 
 	 * initial conditions. L is a length and E is adimentional.
 	 * The "trajectory" functions are to be called by the Runge-Kutta algorithm.
 	 * The suffix A or DO refer to Astronaut or Distant Oberver.
@@ -54,14 +286,13 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric (KM)
 	 * 
 	 * Defines a new variable delta(r)
-	 * @param R_hp parameter of the central body R_h+
-	 * @param R_hm parameter of the central body R_h-
-	 * @param r radial coordinate
+	 * @param mobile
 	 * @returns delta(r)
 	 */
-	public KM_delta_r(R_hp: number, R_hm: number, r: number)
+	protected KM_delta_r(mobile: Mobile): number
 	{
-		return (r - R_hp) * (r - R_hm);
+		return (mobile.r - this.central_body.R_hp)
+		* (mobile.r - this.central_body.R_hm);
 	}
 
 
@@ -72,21 +303,60 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric for a massive particle (KM_MP)
 	 * 
 	 * Integration constants in a list of two elements.
-	 * @param R_s schwarzschild radius
-	 * @param a calculated central mass parameter
-	 * @param delta_0 kerr metric variable delta(r) at t=0
-	 * @param r_0 r(0), radial coordinate at t=0
-	 * @param U_r_0 U_r(r_0), velocity's radial coordinate
-	 * @param U_phi_0 U_phi(r_0), velocity's angular coordinate at t=0
-	 * @returns list where list[0]=L and list[1]=E
+	 * @param mobile
 	 */
-	public KM_MP_integration_constants(R_s: number, a: number, delta_0: number, r_0: number, U_r_0: number, U_phi_0: number)
+	protected KM_MP_integration_constants(mobile: Mobile): void
 	{
-		let E = Math.sqrt(U_r_0**2 * (r_0 - R_s) * r_0**3 + c**2 * r_0 * (r_0 - R_s) * delta_0 + delta_0**2 * U_phi_0**2)
-		/ (c**2 * r_0**2 * delta_0);
-        let L = 1 / (c * (r_0 - R_s)) * (delta_0 * U_phi_0 - R_s * a * c * E);
-        return [L, E];
+		mobile.E = Math.sqrt(mobile.U_r**2 * (mobile.r - this.central_body.R_s)
+		* mobile.r**3 + c**2 * mobile.r * (mobile.r - this.central_body.R_s)
+		* this.KM_delta_r(mobile) + this.KM_delta_r(mobile)**2 * mobile.U_phi**2)
+		/ (c**2 * mobile.r**2 * this.KM_delta_r(mobile));
+
+		mobile.L = 1 / (c * (mobile.r - this.central_body.R_s))
+		* (this.KM_delta_r(mobile) * mobile.U_phi - this.central_body.R_s
+		* this.central_body.a * c * mobile.E);
     }
+
+
+	/**
+	 * Kerr metric for a massive particle (KM_MP)
+	 * 
+	 * Potential for an astronaut (A) divided by c²
+	 * @param mobile
+	 * @result Potential
+	 */
+	protected KM_MP_potential_A(mobile: Mobile): number
+	{
+		return 1 - this.central_body.R_s / mobile.r
+		- (this.central_body.a**2 * (mobile.E**2 - 1) - mobile.L**2) / mobile.r**2
+		- this.central_body.R_s * Math.pow(mobile.L - this.central_body.a * mobile.E, 2)
+		/ mobile.r**3;
+	}
+
+
+	/**
+	 * Kerr metric for a massive particle (KM_MP)
+	 * 
+	 * Potential for a distant observer (DO) divided by c²
+	 * @param mobile
+	 * @result Potential
+	 */
+	protected KM_MP_potential_DO(mobile: Mobile): number
+	{
+		let R_s = this.central_body.R_s;
+		let a = this.central_body.a;
+
+		let V_a = 1 - R_s / mobile.r
+		- (a**2 * (mobile.E**2 - 1) - mobile.L**2) / mobile.r**2
+		- R_s * Math.pow(mobile.L - a * mobile.E, 2) / mobile.r**3;
+
+		let X = (c**2 * mobile.E**2 - V_a) * this.KM_delta_r(mobile)**2;
+
+		let Y = (mobile.r**2 + a**2 + R_s * a**2 / mobile.r)
+		* mobile.E - R_s * a * mobile.L / mobile.r;
+
+		return mobile.E**2 - X / (Y**2 * c**2);
+	}
 
 
 	/**
@@ -95,15 +365,16 @@ export class Kerr extends Simulation_trajectory {
 	 * Second derivative d²r/dtau² for an astronaut (A).
 	 * 
 	 * This method is to be used with Runge-Kutta.
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param mobile
+	 * @param t
+     * @param r
+     * @param U_r
 	 */
-	public KM_MP_trajectory_A(R_s: number, r: number, a: number, L: number, E: number)
+	protected KM_MP_trajectory_A(mobile: any, t: number, r: number, U_r: number): number
 	{
-		return c**2 / (2 * r**4) * (R_s * r**2 + 2*r * (a**2 * (E**2 - 1) - L**2) + 3*R_s * (L - a * E)**2);
+		return c**2 / (2 * r**4) * (this.central_body.R_s * r**2 + 2*r
+			* (this.central_body.a**2 * (mobile.E**2 - 1) - mobile.L**2)
+			+ 3*this.central_body.R_s * (mobile.L - this.central_body.a * mobile.E)**2);
 	}
 
 
@@ -113,24 +384,30 @@ export class Kerr extends Simulation_trajectory {
 	 * Second derivative d²r/dt² for a distant observer (DO)
 	 * 
 	 * This method is to be used with Runge-Kutta.
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param delta_r kerr metric variable delta(r)
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param mobile
+	 * @param t
+     * @param r
+     * @param U_r
 	 */
-	public KM_MP_trajectory_DO(R_s: number, r: number, a: number, delta_r: number, L: number, E: number)
+	protected KM_MP_trajectory_DO(mobile: any, t: number, r: number, U_r: number): number
 	{
-		let W = (r**2 + a**2 + R_s * a**2 / r) * E - R_s * a * L / r;
-		let X = E**2 * a**2 - L**2 - a**2;
-		let Y = R_s * (L - a * E)**2;
-		let Z = 2*(E**2 - 1 + R_s / r + X / r**2 + Y / r**3);
+		let R_s = this.central_body.R_s;
+		let a = this.central_body.a;
 
-		return c**2 * delta_r / (2 * W**2)
-		* ((-R_s / r**2 - 2*X / r**3 - 3*Y / r**4) * delta_r
+		let W = (r**2 + a**2 + R_s * a**2 / r)
+		* mobile.E - R_s * a * mobile.L / r;
+
+		let X = mobile.E**2 * a**2 - mobile.L**2 - a**2;
+
+		let Y = R_s * (mobile.L - a * mobile.E)**2;
+
+		let Z = 2*(mobile.E**2 - 1 + R_s / r + X / r**2 + Y / r**3);
+
+		return c**2 * this.KM_delta_r(mobile) / (2 * W**2)
+		* ((-R_s / r**2 - 2*X / r**3 - 3*Y / r**4) * this.KM_delta_r(mobile)
 		+ Z * (2*r - R_s)
-		- Z * ((2*r - R_s * a**2 / r**2) * E + R_s * a * L / r**2) * delta_r / W);
+		- Z * ((2*r - R_s * a**2 / r**2) * mobile.E + R_s * a * mobile.L / r**2)
+		* this.KM_delta_r(mobile) / W);
 	}
 
 
@@ -141,37 +418,74 @@ export class Kerr extends Simulation_trajectory {
 	 * Kerr metric for a photon (KM_PH)
 	 * 
 	 * Integration constants in a list of two elements.
-	 * @param R_s schwarzschild radius
-	 * @param a calculated central mass parameter
-	 * @param delta_0 delta(r_0), kerr metric variable at t=0
-	 * @param r_0 r(0), radial coordinate at t=0
-	 * @param U_r_0 U_r(r_0), velocity's radial coordinate
-	 * @param U_phi_0 U_phi(r_0), velocity's angular coordinate at t=0
-	 * @returns list where list[0]=L and list[1]=E
+	 * @param mobile
 	 */
-	public KM_PH_integration_constants(R_s: number, a: number, delta_0: number, r_0: number, U_r_0: number, U_phi_0: number)
-		{
-			let E = Math.sqrt(U_r_0**2 * (r_0 - R_s) * r_0**3 + delta_0**2 * U_phi_0**2) / (c**2 * r_0**2 * delta_0);
-        	let L = 1 / (c * (r_0 - R_s)) * (delta_0 * U_phi_0 - R_s * a * c * E);
-        	return [L, E];
-    	}
+	protected KM_PH_integration_constants(mobile: Mobile): void
+	{
+		mobile.E = Math.sqrt(mobile.U_r**2 * (mobile.r - this.central_body.R_s)
+		* mobile.r**3 + this.KM_delta_r(mobile)**2 * mobile.U_phi**2)
+		/ (c**2 * mobile.r**2 * this.KM_delta_r(mobile));
+
+		mobile.L = 1 / (c * (mobile.r - this.central_body.R_s)) * (this.KM_delta_r(mobile)
+		* mobile.U_phi - this.central_body.R_s * this.central_body.a * c * mobile.E);
+	}
 
 
+	/**
+	 * Kerr metric for a massive particle (KM_PH)
+	 * 
+	 * Potential for an astronaut (A) divided by c²
+	 * @param mobile
+	 * @result potential
+	 */
+	protected KM_PH_potential_A(mobile: Mobile): number
+	{
+		return -(this.central_body.a**2 * mobile.E**2 - mobile.L**2)
+		/ mobile.r**2 - this.central_body.R_s
+		* Math.pow(mobile.L - this.central_body.a * mobile.E, 2) / mobile.r**3;
+	}
+
+
+	/**
+	 * Kerr metric for a massive particle (KM_MP)
+	 * 
+	 * Potential for a distant observer (DO) divided by c²
+	 * @param mobile
+	 * @result potential
+	 */
+	protected KM_PH_potential_DO(mobile: Mobile): number
+	{
+		let R_s = this.central_body.R_s;
+		let a = this.central_body.a;
+
+		let V_a = -(a**2 * mobile.E**2 - mobile.L**2) / mobile.r**2
+		- R_s * Math.pow(mobile.L - a * mobile.E, 2) / mobile.r**3;
+
+		let X = (c**2 * mobile.E**2 - V_a) * this.KM_delta_r(mobile)**2;
+
+		let Y = (mobile.r**2 + a**2 + R_s * a**2 / mobile.r)
+		* mobile.E - R_s * a * mobile.L / mobile.r;
+
+		return mobile.E**2 - X / (Y**2 * c**2);
+	}
+
+	
 	/**
 	 * Kerr metric for a photon (KM_PH)
 	 * 
 	 * Second derivative d²r/dlambda² for an astronaut (A)
 	 * 
 	 * This method is to be used with Runge-Kutta.
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param mobile
+	 * @param t
+     * @param r
+     * @param U_r
 	 */
-	public KM_PH_trajectory_A(R_s: number, r: number, a: number, L: number, E: number)
+	protected KM_PH_trajectory_A(mobile: any, t: number, r: number, U_r: number): number
 	{
-		return -(c**2 / (2 * r**4)) * (2*r * (a**2 * E**2 - L**2) + 3*R_s * (L - a * E)**2);
+		return -(c**2 / (2 * r**4))
+		* (2*r * (this.central_body.a**2 * mobile.E**2 - mobile.L**2)
+		+ 3*this.central_body.R_s * (mobile.L - this.central_body.a * mobile.E)**2);
 	}
 
 
@@ -181,24 +495,28 @@ export class Kerr extends Simulation_trajectory {
 	 * Second derivative d²r/dt² for a distant observer (DO)
 	 * 
 	 * This method is to be used with Runge-Kutta.
-	 * @param R_s schwarzschild radius
-	 * @param r radial coordinate
-	 * @param a calculated central mass parameter
-	 * @param delta_r kerr metric variable delta(r)
-	 * @param L integration constant
-	 * @param E integration constant
+	 * @param mobile
+	 * @param t
+     * @param r
+     * @param U_r
 	 */
-	public KM_PH_trajectory_DO(R_s: number, r: number, a: number, delta_r: number, L: number, E: number)
+	protected KM_PH_trajectory_DO(mobile: any, t: number, r: number, U_r: number): number
 	{
-		let W = (r**2 + a**2 + R_s * a**2 / r) * E - R_s * a * L / r;
-		let X = E**2 * a**2 - L**2;
-		let Y = R_s * (L - a * E)**2;
-		let Z = 2*(E**2 + X / r**2 + Y / r**3);
+		let R_s = this.central_body.R_s;
+		let a = this.central_body.a;
 
-		return c**2 * delta_r / (2 * W**2)
-		* ((-2*X / r**3 - 3*Y / r**4) * delta_r
-		+ Z * (2*r - R_s)
-		- Z * ((2*r - R_s * a**2 / r**2) * E + R_s * a * L / r**2) * delta_r / W);
+		let W = (r**2 + a**2 + R_s * a**2 / r)
+		* mobile.E - R_s * a * mobile.L / r;
+
+		let X = mobile.E**2 * a**2 - mobile.L**2;
+
+		let Y = R_s * (mobile.L - a * mobile.E)**2;
+
+		let Z = 2*(mobile.E**2 + X / r**2 + Y / r**3);
+
+		return c**2 * this.KM_delta_r(mobile) / (2 * W**2) * ((-2*X / r**3 - 3*Y / r**4)
+		* this.KM_delta_r(mobile) + Z * (2*r - R_s) - Z * ((2*r - R_s * a**2 / r**2)
+		* mobile.E + R_s * a * mobile.L / r**2) * this.KM_delta_r(mobile) / W);
 	}
 
 
