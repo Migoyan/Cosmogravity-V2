@@ -43,7 +43,8 @@ export class Central_body
         this._R_s = 2*G*this._mass / c**2;
         
         /* If the radius of a body is smaller than its Schwarzschild radius,
-        it becomes a Black Hole and therefore a singularity. */
+        it becomes a black hole and therefore a singularity in the framework
+        of general relativity. */
         
         if (radius <= this._R_s) { this._radius = 0; }
         else { this._radius = radius; }
@@ -51,7 +52,7 @@ export class Central_body
         /* If the angular momentum is not null, the Kerr metric is used and it
         needs new calculated parameters. */
 
-        if ( angular_m === undefined || angular_m === 0)
+        if (angular_m === undefined || angular_m === 0)
         {
             this._angular_m = 0;
             this._a = 0;
@@ -141,6 +142,7 @@ export class Central_body
     public update_parameters(): void
     {
         this._R_s = 2*G*this._mass / c**2;
+
         if (this._angular_m === 0)
         {
             this._a = 0;

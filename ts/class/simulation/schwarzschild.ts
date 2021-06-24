@@ -10,8 +10,18 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * Note: This code uses acronyms to differentiate between the different categories
  * covered by the theory (example: EMS_PH = External Schwarzschild metric for a Photon).
  * 
- * @method integration_constants
- * @method runge_kutta_trajectory
+ * @param id
+ * @param central_body
+ * @param mobile_list
+ * @param c
+ * @param G
+ * 
+ * @method add_mobile
+ * @method mobile_initialization
+ * @method mobile_trajectory
+ * @method mobile_new_position
+ * @method mobile_velocity
+ * @method mobile_clocks
  * @method ESM_MP_integration_constants
  * @method ESM_MP_potential_A
  * @method ESM_MP_potential_DO
@@ -32,7 +42,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * @method ISM_PH_trajectory_A
  */
 
-export class Schwarzchild extends Simulation_trajectory
+export class Schwarzschild extends Simulation_trajectory
 {
  
     //-------------------- Constructor --------------------
@@ -53,33 +63,64 @@ export class Schwarzchild extends Simulation_trajectory
 
 
     /**
-     * Method that loops over the mobile list and determines
-     * the correct integration constants before storing them
-     * in each mobile as a property.
+     * Method that loops over the mobile list and determines the 
+     * correct integration constants before storing them in each
+     * mobile as a property. It also takes the user input in terms
+     * of physical velocity and calculate the corresponding U_r and U_phi.
      */
-    public integration_constants(): void
+    public mobile_initialization(): void
     {
+        let R_s = this.central_body.R_s;
+        let radius = this.central_body.radius;
+        let mass = this.central_body.mass;
+
         this.mobile_list.forEach(mobile =>
         {
-            if (mobile.r >= this.central_body.radius)
+            if (mobile.r >= radius || radius === 0)
             {
                 if (!mobile.is_photon)
                 {
+                    let E = (1 - R_s / mobile.r)**.5
+                    / (1 - Math.pow(mobile.v_r / c, 2))**.5;
+
+                    mobile.U_r = Math.cos(mobile.v_alpha) * mobile.v_r * E;
+                    mobile.U_phi = Math.sin(mobile.v_alpha) * mobile.v_r * E
+                    / (1 - R_s / mobile.r)**.5;
+
                     this.ESM_MP_integration_constants(mobile);
                 }
                 else if (mobile.is_photon)
                 {
+                    mobile.U_r = Math.cos(mobile.v_alpha) * c;
+                    mobile.U_phi = Math.sin(mobile.v_alpha) * c
+                    / (1 - R_s / mobile.r)**.5;
+                    
                     this.ESM_PH_integration_constants(mobile);
                 }
             }
-            else if (mobile.r < this.central_body.radius)
+            else if (mobile.r < radius && radius !== 0)
             {
+                let alpha = this.ISM_alpha_r(mobile);
+                let beta = this.ISM_beta_r(mobile);
+
                 if (!mobile.is_photon)
                 {
+                    let E = beta**.5
+                    / (1 - mobile.v_r * 2 / c**2)**.5;
+
+                    mobile.U_r = Math.cos(mobile.v_alpha) * alpha**.5
+                    * mobile.v_r * E;
+                    mobile.U_phi = Math.sin(mobile.v_alpha) * mobile.v_r * E
+                    / beta;
+
                     this.ISM_MP_integration_constants(mobile);
                 }
                 else if (mobile.is_photon)
                 {
+                    mobile.U_r = Math.cos(mobile.v_alpha) * alpha**.5 * c
+                    / beta;
+                    mobile.U_phi = Math.sin(mobile.v_alpha) * c / beta;
+
                     this.ISM_PH_integration_constants(mobile);
                 }
             }
@@ -89,23 +130,25 @@ export class Schwarzchild extends Simulation_trajectory
 
     /**
      * Applies the Runge-Kutta algorithm to the relevant second derivative
-     * expression for the current simulation and updates the mobile with
-     * new position and velocity.
+     * expression for the current simulation.
      * @param mobile
+     * @param step dtau
      * @param reference_frame Astronaut (A), Distant Observer (DO)
+     * 
+     * @returns [tau, r, U_r]
      */
-    public runge_kutta_trajectory(mobile: Mobile, reference_frame: "A" | "DO"): void
+    public mobile_trajectory(mobile: Mobile, step: number, reference_frame: "A" | "DO"): number[]
     {
-        let dtau: number;
+        let dtau = step;
         let tau: number;
         let radius = this.central_body.radius;
+        let is_photon = mobile.is_photon;
         let r = mobile.r;
         let U_r = mobile.U_r;
-        let runge_kutta_result: number[];
 
-        if (mobile.r >= radius && !mobile.is_photon && reference_frame === "A")
+        if ((mobile.r >= radius || radius === 0) && !is_photon && reference_frame === "A")
         {
-            runge_kutta_result = this.runge_kutta_equation_order2(
+            return this.runge_kutta_equation_order2(
                 mobile,
                 dtau,
                 tau,
@@ -114,9 +157,9 @@ export class Schwarzchild extends Simulation_trajectory
                 this.ESM_MP_trajectory_A
             );
         }
-        else if (mobile.r >= radius && !mobile.is_photon && reference_frame === "DO")
+        else if ((mobile.r >= radius || radius === 0) && !is_photon && reference_frame === "DO")
         {
-            runge_kutta_result = this.runge_kutta_equation_order2(
+            return this.runge_kutta_equation_order2(
                 mobile,
                 dtau,
                 tau,
@@ -125,9 +168,9 @@ export class Schwarzchild extends Simulation_trajectory
                 this.ESM_MP_trajectory_DO
             );
         }
-        else if (mobile.r >= radius && mobile.is_photon && reference_frame === "A")
+        else if ((mobile.r >= radius || radius === 0) && is_photon && reference_frame === "A")
         {
-            runge_kutta_result = this.runge_kutta_equation_order2(
+            return this.runge_kutta_equation_order2(
                 mobile,
                 dtau,
                 tau,
@@ -136,9 +179,9 @@ export class Schwarzchild extends Simulation_trajectory
                 this.ESM_PH_trajectory_A
             );
         }
-        else if (mobile.r >= radius && mobile.is_photon && reference_frame === "DO")
+        else if ((mobile.r >= radius || radius === 0) && is_photon && reference_frame === "DO")
         {
-            runge_kutta_result = this.runge_kutta_equation_order2(
+            return this.runge_kutta_equation_order2(
                 mobile,
                 dtau,
                 tau,
@@ -147,11 +190,11 @@ export class Schwarzchild extends Simulation_trajectory
                 this.ESM_PH_trajectory_DO
             );
         }
-        else if (mobile.r < radius)
+        else if (mobile.r < radius && radius !== 0)
         {
-            if (!mobile.is_photon)
+            if (!is_photon)
             {
-                runge_kutta_result = this.runge_kutta_equation_order2(
+                return this.runge_kutta_equation_order2(
                     mobile,
                     dtau,
                     tau,
@@ -162,7 +205,7 @@ export class Schwarzchild extends Simulation_trajectory
             }
             else
             {
-                runge_kutta_result = this.runge_kutta_equation_order2(
+                return this.runge_kutta_equation_order2(
                     mobile,
                     dtau,
                     tau,
@@ -172,9 +215,145 @@ export class Schwarzchild extends Simulation_trajectory
                 );
             }
         }
-        tau = runge_kutta_result[0];
+    }
+
+
+    /**
+     * Updates a mobile with its new position
+     * @param mobile 
+     * @param step dtau
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
+     */
+    public mobile_new_position(mobile: Mobile, step: number, reference_frame: "A" | "DO"): void
+    {
+        let dtau = step;
+        let R_s = this.central_body.R_s;
+        let runge_kutta_result = this.mobile_trajectory(mobile, dtau, reference_frame);
         mobile.r = runge_kutta_result[1];
         mobile.U_r = runge_kutta_result[2];
+
+        if (reference_frame === "A")
+        {
+            mobile.phi += c * mobile.L * dtau / mobile.r**2;
+        }
+        else
+        {
+            mobile.phi += c * mobile.L * dtau * (1 - R_s / mobile.r)
+            / mobile.r**2 / mobile.E;
+        }
+    }
+
+
+    /**
+     * Updates the physical velocity of a mobile
+     * @param mobile 
+     */
+    public mobile_velocity(mobile: Mobile)
+    {
+        let radius = this.central_body.radius;
+        let R_s = this.central_body.R_s;
+
+        if (mobile.r >= radius || radius === 0)
+        {
+            let dt = mobile.E / (1 - R_s / mobile.r);
+            let dphi = c * mobile.L / mobile.r**2;
+            mobile.v_phi = Math.sqrt((mobile.r * dphi / dt)**2 / (1 - R_s / mobile.r));
+
+            if (!mobile.is_photon)
+            {
+                let dr = (c / mobile.E)**2 * (1 - R_s / mobile.r)**2
+                * (mobile.E**2 - (1 - R_s / mobile.r) * (1 + (mobile.L / mobile.r)**2));
+                mobile.v_r = Math.abs(dr / (1 - R_s / mobile.r)**2)**.5;
+            }
+            else
+            {
+                let dr = (c / mobile.E)**2 * (1 - R_s / mobile.r)**2
+                * (mobile.E**2 - (1 - R_s / mobile.r) * ((mobile.L / mobile.r)**2));
+                mobile.v_r = Math.abs(dr / (1 - R_s / mobile.r)**2)**.5;
+            }
+        }
+        else if (mobile.r < radius && radius !== 0)
+        {
+            let alpha = this.ISM_alpha_r(mobile);
+            let beta = this.ISM_beta_r(mobile);
+            mobile.v_phi = Math.sqrt((mobile.r**2 / beta**2)
+            * (c * mobile.L * beta**2 / mobile.r**2)**2);
+
+            if (!mobile.is_photon)
+            {
+                let dr = ((c / mobile.E)**2) * alpha * beta**4 * ((mobile.E / beta)**2
+                - (mobile.L / mobile.r)**2 - 1);
+                mobile.v_r = Math.sqrt(dr / (alpha * beta**2));
+            }
+            else
+            {
+                let dr = ((c / mobile.E)**2) * alpha * (beta**4)
+                * ((mobile.E / beta)**2 - (mobile.L / mobile.r)**2);
+                mobile.v_r = Math.sqrt(dr / (alpha * beta**2));
+            }
+        }
+        mobile.v_norm = (mobile.v_r**2 + mobile.v_phi**2)**.5;
+    }
+
+
+    /**
+     * Updates time parameters of a mobile
+     * @param mobile 
+     * @param reference_frame Astronaut (A), Distant Observer (DO)
+     */
+    public mobile_clocks(mobile: Mobile, reference_frame: "A" | "DO")
+    {
+        let radius = this.central_body.radius;
+        let R_s = this.central_body.R_s;
+
+        if (mobile.r >= radius || radius === 0)
+        {
+            if (reference_frame === "A")
+            {
+                if (!mobile.is_photon)
+                {
+                    mobile.clock_a += mobile.dtau;
+                }
+                if (mobile.r > R_s)
+                {
+                    mobile.clock_do += mobile.E / (1 - R_s / mobile.r) * mobile.dtau;
+                }
+                else
+                {
+                    mobile.clock_do = Infinity;
+                }
+            }
+            else
+            {
+                mobile.clock_do += mobile.dtau;
+
+                if (mobile.r >= R_s && !mobile.is_photon)
+                {
+                    mobile.clock_a += mobile.dtau * (1 - R_s / mobile.r) / mobile.E;
+                }
+            }
+        }
+        else if (mobile.r < radius && radius !== 0)
+        {
+            if (reference_frame === "A")
+            {
+                mobile.clock_do += mobile.dtau * mobile.E / this.ISM_beta_r(mobile)**2;
+
+                if (!mobile.is_photon)
+                {
+                    mobile.clock_a += mobile.dtau;
+                }
+            }
+            else
+            {
+                mobile.clock_do += mobile.dtau;
+
+                if (!mobile.is_photon)
+                {
+                    mobile.clock_a += mobile.dtau * this.ISM_beta_r(mobile)**2 / mobile.E;
+                }
+            }
+        }
     }
 
 
@@ -184,8 +363,8 @@ export class Schwarzchild extends Simulation_trajectory
      * r > R
      * The spacial and temporal coordinates are (r, theta, phi, t)
      * All simulations take place on the theta=pi/2 plane
-     * U_r and U_phi are the velocity coordinates
-     * this.central_body.R_s Schwarzschild radius
+     * U_r is dr and U_phi is dphi
+     * R_s is Schwarzschild radius
      * L and E are two Integration constants determined with the 
      * initial conditions. L is a length and E is adimentional.
      * The "trajectory" functions are to be called by the Runge-Kutta algorithm.
