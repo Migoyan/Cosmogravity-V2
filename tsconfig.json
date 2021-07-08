@@ -1,16 +1,16 @@
 {
-	"compilerOptions": {
-		"target": "es2018",
-		"jsx": "preserve",
-		"moduleResolution": "node",
-		"strictFunctionTypes": true,
-		"sourceMap": false,
-		"noImplicitAny": true,
+    "compilerOptions": {
+        "target": "es2018",
+        "jsx": "preserve",
+        "moduleResolution": "node",
+        "strictFunctionTypes": true,
+        "sourceMap": false,
+        "noImplicitAny": true,
         "noImplicitThis": true,
         "strictNullChecks": false,
-		"forceConsistentCasingInFileNames": true,
-		"typeRoots": [ "/node_modules/@types/" ],
-		"outDir": "./js",
-		"allowUmdGlobalAccess": true
-	}
+        "forceConsistentCasingInFileNames": true,
+        "typeRoots": [ "/node_modules/@types/" ],
+        "outDir": "./js",
+        "allowUmdGlobalAccess": true
+    }
 }

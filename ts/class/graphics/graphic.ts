@@ -7,29 +7,29 @@ import { Simulation } from '../simulation/simulation'
  * @param simulation association between graphic and simulation
  */
 export abstract class Graphic {
-	readonly _id_graph: string;
-	readonly _simulation: Simulation;
+    readonly _id_graph: string;
+    readonly _simulation: Simulation;
 
-	//-------------------------constructor-----------------------
+    //-------------------------constructor-----------------------
 
-	constructor(id_graph: string, simulation: Simulation) {
-		this._id_graph = id_graph;
-		this._simulation = simulation;
-	}
+    constructor(id_graph: string, simulation: Simulation) {
+        this._id_graph = id_graph;
+        this._simulation = simulation;
+    }
 
-	//--------------------------Accessors------------------------
+    //--------------------------Accessors------------------------
 
-	// id_graph
+    // id_graph
 
-	public get id_graph(): string {
-		return this._id_graph;
-	}
+    public get id_graph(): string {
+        return this._id_graph;
+    }
 
-	// simulation
+    // simulation
 
-	public get simulation(): Simulation {
-		return this._simulation;
-	} 
+    public get simulation(): Simulation {
+        return this._simulation;
+    } 
 
-	//---------------------------methods-------------------------
+    //---------------------------methods-------------------------
 }
