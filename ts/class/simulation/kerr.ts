@@ -18,6 +18,7 @@ import { Simulation_trajectory } from "./simulation_trajectory";
  * 
  * @method add_mobile
  * @method mobile_initialization
+ * @method mobile_dtau
  * @method mobile_trajectory
  * @method mobile_new_position
  * @method mobile_velocity
@@ -90,6 +91,52 @@ export class Kerr extends Simulation_trajectory
 				);
 				
 				this.KM_PH_integration_constants(mobile);
+			}
+		});
+	}
+
+
+	/**
+     * Determines the right dtau for each mobile and updates the parameter.
+     * The dtau and free_fall_time (temps_chute_libre in the old code) formulas
+     * are not included in the theory but are the result of trial and error.
+     * Ask Mr. Cordoni and Mr. Reboul for more information..
+     */
+	public mobile_dtau(reference_frame: "A" | "DO"): void
+	{ 
+		this.mobile_list.forEach(mobile =>
+		{
+			let free_fall_time = Math.PI * mobile.r * Math.sqrt(
+				mobile.r / (2 * G * this.central_body.mass)
+			)**.5 / 2;
+			 
+			if (!mobile.is_photon)
+			{
+				mobile.dtau = mobile.r*500
+				/ (Math.sqrt(mobile.U_r**2 + mobile.U_phi**2) + 1e-20);
+
+				if (mobile.dtau > free_fall_time/500)
+        	        {
+        	            mobile.dtau = free_fall_time/500;
+        	        }
+			}
+			else if (mobile.is_photon)
+			{
+				if (reference_frame === "A")
+				{
+					mobile.dtau = 1e-3*mobile.r
+        	        / (Math.abs(mobile.U_r) + Math.abs(mobile.U_phi) + 1);
+        	    }
+        	    else
+        	    {
+        	        mobile.dtau = mobile.r
+        	        / (Math.sqrt(mobile.U_r**2 + mobile.U_phi**2) + 1) / 1000;
+					
+        	        if (mobile.dtau > free_fall_time/500)
+        	        {
+        	            mobile.dtau = free_fall_time/500;
+        	        }
+				}
 			}
 		});
 	}
