@@ -1,6 +1,7 @@
-import { Simulation } from "./simulation";
-import { Central_body } from "./simulation objects/central_body";
-import { Mobile } from "./simulation objects/mobile";
+import { Simulation } from "./simulation.js";
+import { Central_body } from "./simulation objects/central_body.js";
+import { Mobile } from "./simulation objects/mobile.js";
+import {c,G} from "./../../constants.js";
 
 /**
  * @class Simulation_trajectory

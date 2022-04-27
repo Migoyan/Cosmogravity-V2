@@ -1,6 +1,5 @@
-import {
-	Simulation
-} from "./simulation";
+import {Simulation } from "./simulation.js"
+import {c,k,h,G,AU,parsec,k_parsec,M_parsec,ly} from "./../../constants.js"
 
 /**
  * @class Simulation_universe.

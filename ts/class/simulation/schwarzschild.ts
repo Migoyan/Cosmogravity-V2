@@ -1,6 +1,6 @@
-import { Mobile } from "./simulation objects/mobile";
-import { Simulation_trajectory } from "./simulation_trajectory";
-
+import { Mobile } from "./simulation objects/mobile.js";
+import { Simulation_trajectory } from "./simulation_trajectory.js";
+import {c,G} from "./../../constants.js"
 /** 
  * @class Schwarzschild 
  * 

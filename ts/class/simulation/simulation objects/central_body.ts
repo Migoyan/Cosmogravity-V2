@@ -1,3 +1,5 @@
+import {c,G} from "./../../../constants.js";
+
 /**
  * @class Central_body
  * 

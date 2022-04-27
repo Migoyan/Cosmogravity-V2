@@ -1,8 +1,10 @@
-import { Simulation } from '../simulation/simulation';
-import { Schwarzschild } from "../simulation/schwarzschild";
-import { Kerr } from "../simulation/kerr";
-import { Mobile } from "../simulation/simulation objects/mobile";
-import { Graphic } from './graphic';
+import { Simulation } from '../simulation/simulation.js';
+import { Schwarzschild } from "../simulation/schwarzschild.js";
+import { Kerr } from "../simulation/kerr.js";
+import { Mobile } from "../simulation/simulation objects/mobile.js";
+import { Graphic } from './graphic.js';
+
+
 
 /**
  * This is one of the two inherited class from Graphic.

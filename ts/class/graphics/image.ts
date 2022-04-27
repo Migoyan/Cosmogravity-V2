@@ -1,4 +1,4 @@
-import { Graphic } from "./graphic";
+import { Graphic } from "./graphic.js";
 /**
  * This class closely related to the Graphic class and subclasses.
  * An instance of this class is created via their save method.

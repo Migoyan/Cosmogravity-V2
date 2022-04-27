@@ -1,11 +1,12 @@
 import * as Plotly from "plotly.js";
 import { ToImgopts } from 'plotly.js';
-import { Simulation } from '../simulation/simulation'
-import { Graphic } from './graphic';
+import { Simulation } from '../simulation/simulation.js'
+import { Graphic } from './graphic.js';
 /**
  * This is one of the two inherited class from Graphic.
  * It shouldn't be used for dynamic graphic representation.
  */
+
 export class Static_graph extends Graphic {
 
 	private _plotly_parameters= {
