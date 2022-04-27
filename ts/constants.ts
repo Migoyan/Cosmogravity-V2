@@ -11,3 +11,12 @@ export const parsec: number = 3.0857e16;       // Parsec in meters
 export const k_parsec: number = 3.0857e19;     // Kiloparsec in meters
 export const M_parsec: number = 3.0857e22;     // Megaparsec in meters
 export const ly: number = 9.4607e15;           // Light-year in meters
+
+
+// Nombre de jours selon l'année choisie
+export enum TypeAnnee {
+    Siderale = 365.256363051,
+    Julienne = 365.25,
+    Tropique2000 = 365.242190517,
+    Gregorienne = 365.2425,
+}

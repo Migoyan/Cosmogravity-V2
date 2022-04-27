@@ -1,5 +1,5 @@
 import {Simulation } from "./simulation.js"
-import {c,k,h,G,AU,parsec,k_parsec,M_parsec,ly} from "./../../constants.js"
+import {TypeAnnee,c,k,h,G,AU,parsec,k_parsec,M_parsec,ly} from "./../../constants.js"
 
 /**
  * @class Simulation_universe.
@@ -58,6 +58,12 @@ export class Simulation_universe extends Simulation {
 		k: k,
 		h: h,
 		G: G,
+		AU: AU,
+		parsec: parsec,
+		k_parsec: k_parsec,
+		M_parsec: M_parsec,
+		ly: ly,
+		nbrJours: TypeAnnee.Gregorienne,
 	};
 	private _has_cmb: boolean;
 	private _has_neutrino: boolean;
@@ -191,12 +197,14 @@ export class Simulation_universe extends Simulation {
 	 * @param k Boltzmann constant
 	 * @param h Planck constant
 	 * @param G Newton constant
+	 * @param TypeAnnee Number of days in chosen Type of Year
 	 */
 	public modify_constants(
 		c ? : number,
 		k ? : number,
 		h ? : number,
-		G ? : number
+		G ? : number,
+		typeAnnee ? : string
 	): void {
 		if (c !== undefined) {
 			this._constants.c = c;
@@ -209,6 +217,16 @@ export class Simulation_universe extends Simulation {
 		}
 		if (G !== undefined) {
 			this._constants.G = G;
+		}
+
+		if (typeAnnee = "Sidérale") {
+			var nbrjours = TypeAnnee.Siderale;
+		} else if (typeAnnee = "Julienne") {
+			var nbrjours = TypeAnnee.Julienne;
+		} else if (typeAnnee = "Tropique (2000)") {
+			var nbrjours = TypeAnnee.Tropique2000;
+		} else {
+			var nbrjours = TypeAnnee.Gregorienne;
 		}
 	}
 
@@ -346,31 +364,40 @@ export class Simulation_universe extends Simulation {
 		};
 	}
 
+
+	
 	/**
 	 * compute radiation density parameter at current time
 	 * @returns the radiation density parameter
 	 */
 	public calcul_omega_r(): number {
-		let sigma: number =
-			(2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) /
-			(15 *
-				Math.pow(this.constants.h, 3) *
-				Math.pow(this.constants.c, 2));
-		let rho_r: number =
-			(4 * sigma * Math.pow(this.temperature, 4)) /
-			Math.pow(this.constants.c, 3);
 
-		// Hubble-Lemaître constant in international system units (Système International)
-		let omega_r: number =
-			(8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(this.hubble_cst, 2));
+		let H0parsec = this.hubble_cst * 1000 / ((this.constants.AU * (180 * 3600)) / Math.PI * Math.pow(10, 6));
+		let H0enannee = H0parsec * (3600 * 24 * this._constants.nbrJours);
+		let H0engannee = H0parsec * (3600 * 24 * this._constants.nbrJours) * Math.pow(10, 9);
 
-		if (this.has_neutrino) {
-			omega_r *= 1.68;
+		let omega_r: number = 0;
+		let sigma: number;
+		let rho_r: number;
+
+		if (this.has_neutrino && this.has_cmb) {
+
+			sigma =
+			(2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) /(15 * Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2));
+			rho_r =
+			(4 * sigma * Math.pow(this.temperature, 4)) / Math.pow(this.constants.c, 3);
+
+			// Hubble-Lemaître constant in international system units (Système International)
+			omega_r = 1.68*(8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(H0parsec, 2));
 		}
-		if (!this.has_cmb) {
+		else if (!this.has_neutrino && this.has_cmb) {
+			sigma = (2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) / (15 * Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2));
+			rho_r = (4 * sigma * Math.pow(this.temperature, 4)) / (Math.pow(this.constants.c, 3));
+			omega_r = (8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(H0parsec, 2));
+		} 
+		else {
 			omega_r = 0;
-		}
-
+		}  
 		return omega_r;
 	}
 
