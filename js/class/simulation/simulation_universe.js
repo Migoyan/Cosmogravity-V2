@@ -1,5 +1,5 @@
 import { Simulation } from "./simulation.js";
-import { c, k, h, G, AU } from "./../../constants.js";
+import { TypeAnnee, c, k, h, G, AU, parsec, k_parsec, M_parsec, ly } from "./../../constants.js";
 /**
  * @class Simulation_universe.
  * inheritance from Simulation class
@@ -57,6 +57,12 @@ export class Simulation_universe extends Simulation {
             k: k,
             h: h,
             G: G,
+            AU: AU,
+            parsec: parsec,
+            k_parsec: k_parsec,
+            M_parsec: M_parsec,
+            ly: ly,
+            nbrJours: TypeAnnee.Gregorienne,
         };
         this._temperature = temperature;
         this._hubble_cst = (hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
@@ -153,8 +159,9 @@ export class Simulation_universe extends Simulation {
      * @param k Boltzmann constant
      * @param h Planck constant
      * @param G Newton constant
+     * @param TypeAnnee Number of days in chosen Type of Year
      */
-    modify_constants(c, k, h, G) {
+    modify_constants(c, k, h, G, typeAnnee) {
         if (c !== undefined) {
             this._constants.c = c;
         }
@@ -166,6 +173,18 @@ export class Simulation_universe extends Simulation {
         }
         if (G !== undefined) {
             this._constants.G = G;
+        }
+        if (typeAnnee = "Sidérale") {
+            var nbrjours = TypeAnnee.Siderale;
+        }
+        else if (typeAnnee = "Julienne") {
+            var nbrjours = TypeAnnee.Julienne;
+        }
+        else if (typeAnnee = "Tropique (2000)") {
+            var nbrjours = TypeAnnee.Tropique2000;
+        }
+        else {
+            var nbrjours = TypeAnnee.Gregorienne;
         }
     }
     /**
@@ -260,18 +279,23 @@ export class Simulation_universe extends Simulation {
      * @returns the radiation density parameter
      */
     calcul_omega_r() {
+        
+        // let H0enannee = this.hubble_cst * (3600 * 24 * this._constants.nbrJours);
+        // let H0engannee = this.hubble_cst * (3600 * 24 * this._constants.nbrJours) * Math.pow(10, 9);
+        
         let sigma = (2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) /
-            (15 *
-                Math.pow(this.constants.h, 3) *
-                Math.pow(this.constants.c, 2));
-        let rho_r = (4 * sigma * Math.pow(this.temperature, 4)) /
-            Math.pow(this.constants.c, 3);
-        // Hubble-Lemaître constant in international system units (Système International)
+         (15 * Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2));
+        let rho_r =
+        (4 * sigma * Math.pow(this.temperature, 4)) / Math.pow(this.constants.c, 3);
         let omega_r = (8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(this.hubble_cst, 2));
-        if (this.has_neutrino) {
-            omega_r *= 1.68;
+
+        if (this.has_neutrino && this.has_cmb) {
+            omega_r = 1.68 * omega_r;
         }
-        if (!this.has_cmb) {
+        else if (!this.has_neutrino && this.has_cmb) {
+            omega_r = 1 * omega_r;
+        }
+        else {
             omega_r = 0;
         }
         return omega_r;
@@ -299,7 +323,7 @@ export class Simulation_universe extends Simulation {
     check_sum_omegas(modify_matter = true) {
         let is_param_modified = false;
         let omega_r = this.calcul_omega_r();
-        let sum = this.matter_parameter + omega_r + this.dark_energy.parameter_value + this.calcul_omega_k();
+        let sum = this.matter_parameter + this.calcul_omega_r() + this.dark_energy.parameter_value + this.calcul_omega_k();
         if (this.is_flat && sum !== 1) {
             is_param_modified = true;
             if (modify_matter) {
@@ -341,9 +365,9 @@ export class Simulation_universe extends Simulation {
      * @returns value of F(x)
      */
     F(x) {
-        return (Math.pow((1 + x), 2) * this.calcul_omega_k() +
-            Math.pow((1 + x), 3) * this.matter_parameter +
-            Math.pow((1 + x), 4) * this.calcul_omega_r() +
+        return ((1 + x) ** 2 * this.calcul_omega_k() +
+            (1 + x) ** 3 * this.matter_parameter +
+            (1 + x) ** 4 * this.calcul_omega_r() +
             this.Y(1 / (1 + x)) * this.dark_energy.parameter_value);
     }
     /**
@@ -382,10 +406,10 @@ export class Simulation_universe extends Simulation {
         let radiation = this.calcul_omega_r();
         let curvature = this.calcul_omega_k();
         z_array.forEach(z => {
-            omega_matter.push(this.matter_parameter * Math.pow((1 + z), 3) / this.F(z));
-            omega_rad.push(radiation * Math.pow((1 + z), 3) / this.F(z));
-            omega_de.push(this.dark_energy.parameter_value * Math.pow((1 + z), 3) / this.F(z));
-            omega_courbure.push(curvature * Math.pow((1 + z), 3) / this.F(z));
+            omega_matter.push(this.matter_parameter * (1 + z) ** 3 / this.F(z));
+            omega_rad.push(radiation * (1 + z) ** 3 / this.F(z));
+            omega_de.push(this.dark_energy.parameter_value * (1 + z) ** 3 / this.F(z));
+            omega_courbure.push(curvature * (1 + z) ** 3 / this.F(z));
         });
         return {
             omega_matter: omega_matter,
@@ -600,10 +624,10 @@ export class Simulation_universe extends Simulation {
         let omega_r = Simu.calcul_omega_r();
         let omega_m = Simu.matter_parameter;
         let omega_de = Simu.dark_energy.parameter_value;
-        return (-(omega_r / Math.pow(a, 3)) -
-            (0.5 * omega_m) / Math.pow(a, 2) +
+        return (-(omega_r / a ** 3) -
+            (0.5 * omega_m) / a ** 2 +
             omega_de *
-                (a * Simu.Y(a) + (Math.pow(a, 2) * Simu.dY(a)) / 2));
+                (a * Simu.Y(a) + (a ** 2 * Simu.dY(a)) / 2));
     }
     /**
      * Right part of the differential equation of t(z) designed to be used in runge_kutta_universe_1 method
@@ -617,3 +641,7 @@ export class Simulation_universe extends Simulation {
         return 1 / (this.hubble_cst * (1 + z) * Math.sqrt(Simu.F(z)));
     }
 }
+
+// let s = new Simulation_universe()
+// console.log("o_r:",s.calcul_omega_r().toString())
+// console.log("dm1:",s.metric_distance(1).toString())

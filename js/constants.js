@@ -9,3 +9,11 @@ export const parsec = 3.0857e16; // Parsec in meters
 export const k_parsec = 3.0857e19; // Kiloparsec in meters
 export const M_parsec = 3.0857e22; // Megaparsec in meters
 export const ly = 9.4607e15; // Light-year in meters
+// Nombre de jours selon l'année choisie
+export var TypeAnnee;
+(function (TypeAnnee) {
+    TypeAnnee[TypeAnnee["Siderale"] = 365.256363051] = "Siderale";
+    TypeAnnee[TypeAnnee["Julienne"] = 365.25] = "Julienne";
+    TypeAnnee[TypeAnnee["Tropique2000"] = 365.242190517] = "Tropique2000";
+    TypeAnnee[TypeAnnee["Gregorienne"] = 365.2425] = "Gregorienne";
+})(TypeAnnee || (TypeAnnee = {}));

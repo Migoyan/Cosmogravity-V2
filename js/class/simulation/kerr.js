@@ -52,8 +52,8 @@ export class Kerr extends Simulation_trajectory {
             let delta = this.KM_delta_r(mobile);
             if (!mobile.is_photon) {
                 mobile.U_r = mobile.v_r * Math.cos(mobile.v_alpha) * c
-                    * Math.pow(delta, .5) / (mobile.r * Math.pow((Math.pow(c, 2) - Math.pow(mobile.v_r, 2)), .5));
-                mobile.U_phi = mobile.v_r * Math.sin(mobile.v_alpha) * c * Math.sqrt(Math.abs(mobile.r * (mobile.r - R_s)) / Math.sqrt(delta * (Math.pow(c, 2) - Math.pow(mobile.v_r, 2))));
+                    * delta ** .5 / (mobile.r * (c ** 2 - mobile.v_r ** 2) ** .5);
+                mobile.U_phi = mobile.v_r * Math.sin(mobile.v_alpha) * c * Math.sqrt(Math.abs(mobile.r * (mobile.r - R_s)) / Math.sqrt(delta * (c ** 2 - mobile.v_r ** 2)));
                 this.KM_MP_integration_constants(mobile);
             }
             else {
@@ -71,10 +71,10 @@ export class Kerr extends Simulation_trajectory {
      */
     mobile_dtau(reference_frame) {
         this.mobile_list.forEach(mobile => {
-            let free_fall_time = Math.PI * mobile.r * Math.pow(Math.sqrt(mobile.r / (2 * G * this.central_body.mass)), .5) / 2;
+            let free_fall_time = Math.PI * mobile.r * Math.sqrt(mobile.r / (2 * G * this.central_body.mass)) ** .5 / 2;
             if (!mobile.is_photon) {
                 mobile.dtau = mobile.r * 500
-                    / (Math.sqrt(Math.pow(mobile.U_r, 2) + Math.pow(mobile.U_phi, 2)) + 1e-20);
+                    / (Math.sqrt(mobile.U_r ** 2 + mobile.U_phi ** 2) + 1e-20);
                 if (mobile.dtau > free_fall_time / 500) {
                     mobile.dtau = free_fall_time / 500;
                 }
@@ -86,7 +86,7 @@ export class Kerr extends Simulation_trajectory {
                 }
                 else {
                     mobile.dtau = mobile.r
-                        / (Math.sqrt(Math.pow(mobile.U_r, 2) + Math.pow(mobile.U_phi, 2)) + 1) / 1000;
+                        / (Math.sqrt(mobile.U_r ** 2 + mobile.U_phi ** 2) + 1) / 1000;
                     if (mobile.dtau > free_fall_time / 500) {
                         mobile.dtau = free_fall_time / 500;
                     }
@@ -141,7 +141,7 @@ export class Kerr extends Simulation_trajectory {
         else {
             mobile.phi += c * dtau
                 * (R_s * a * mobile.E / mobile.r + (1 - R_s / mobile.r) * mobile.L)
-                / ((Math.pow(mobile.r, 2) + Math.pow(a, 2) + R_s * Math.pow(a, 2) / mobile.r)
+                / ((mobile.r ** 2 + a ** 2 + R_s * a ** 2 / mobile.r)
                     * mobile.E - R_s * a * mobile.L / mobile.r);
         }
     }
@@ -154,27 +154,27 @@ export class Kerr extends Simulation_trajectory {
         let a = this.central_body.a;
         let delta = this.KM_delta_r(mobile);
         let dphi = c * ((R_s * a * mobile.E) / mobile.r + (1 - R_s / mobile.r) * mobile.L)
-            / ((Math.pow(mobile.r, 2) + Math.pow(a, 2) + (R_s / mobile.r) * Math.pow(a, 2))
+            / ((mobile.r ** 2 + a ** 2 + (R_s / mobile.r) * a ** 2)
                 * mobile.E - R_s * a * mobile.L / mobile.r);
-        mobile.v_phi = Math.sqrt(delta * Math.pow(dphi, 2)
-            / (1 - (R_s / mobile.r) + R_s * a * dphi / Math.pow((c * mobile.r), 2)));
+        mobile.v_phi = Math.sqrt(delta * dphi ** 2
+            / (1 - (R_s / mobile.r) + R_s * a * dphi / (c * mobile.r) ** 2));
         if (!mobile.is_photon) {
-            let dr = Math.pow(c, 2) * (Math.pow(mobile.E, 2) - 1 + (R_s / mobile.r) + (Math.pow(a, 2) * (Math.pow(mobile.E, 2) - 1)
-                - Math.pow(mobile.L, 2)) / Math.pow(mobile.r, 2) + R_s * ((Math.pow((mobile.L - a * mobile.E), 2)) / Math.pow(mobile.r, 3)));
-            dr *= (Math.pow(delta, 2)) / Math.pow(((Math.pow(mobile.r, 2) + Math.pow(a, 2) + (R_s / mobile.r) * Math.pow(a, 2))
-                * mobile.E - R_s * a * mobile.L / mobile.r), 2);
-            mobile.v_r = Math.sqrt(Math.abs((1 - R_s / mobile.r) * (Math.pow(mobile.r, 2) * dr / delta)
-                / (Math.pow((1 - (R_s / mobile.r) + R_s * a * dphi / (c * mobile.r)), 2))));
+            let dr = c ** 2 * (mobile.E ** 2 - 1 + (R_s / mobile.r) + (a ** 2 * (mobile.E ** 2 - 1)
+                - mobile.L ** 2) / mobile.r ** 2 + R_s * (((mobile.L - a * mobile.E) ** 2) / mobile.r ** 3));
+            dr *= (delta ** 2) / ((mobile.r ** 2 + a ** 2 + (R_s / mobile.r) * a ** 2)
+                * mobile.E - R_s * a * mobile.L / mobile.r) ** 2;
+            mobile.v_r = Math.sqrt(Math.abs((1 - R_s / mobile.r) * (mobile.r ** 2 * dr / delta)
+                / ((1 - (R_s / mobile.r) + R_s * a * dphi / (c * mobile.r)) ** 2)));
         }
         else {
-            let dr = Math.pow(c, 2) * (Math.pow(mobile.E, 2) + (Math.pow(a, 2) * Math.pow(mobile.E, 2) - Math.pow(mobile.L, 2)) / Math.pow(mobile.r, 2)
-                + R_s * ((Math.pow((mobile.L - a * mobile.E), 2)) / (Math.pow(mobile.r, 3))));
-            dr *= Math.pow(delta, 2) / (Math.pow(((Math.pow(mobile.r, 2) + Math.pow(a, 2) + R_s / mobile.r * Math.pow(a, 2)) * mobile.E
-                - R_s * a * mobile.L / mobile.r), 2));
-            mobile.v_r = Math.sqrt(Math.abs((1 - R_s / mobile.r) * (Math.pow(mobile.r, 2) * dr / delta)
-                / Math.pow((1 - R_s / mobile.r + R_s * a * dphi / (c * mobile.r)), 2)));
+            let dr = c ** 2 * (mobile.E ** 2 + (a ** 2 * mobile.E ** 2 - mobile.L ** 2) / mobile.r ** 2
+                + R_s * (((mobile.L - a * mobile.E) ** 2) / (mobile.r ** 3)));
+            dr *= delta ** 2 / (((mobile.r ** 2 + a ** 2 + R_s / mobile.r * a ** 2) * mobile.E
+                - R_s * a * mobile.L / mobile.r) ** 2);
+            mobile.v_r = Math.sqrt(Math.abs((1 - R_s / mobile.r) * (mobile.r ** 2 * dr / delta)
+                / (1 - R_s / mobile.r + R_s * a * dphi / (c * mobile.r)) ** 2));
         }
-        mobile.v_norm = Math.pow((Math.pow(mobile.v_r, 2) + Math.pow(mobile.v_phi, 2)), .5);
+        mobile.v_norm = (mobile.v_r ** 2 + mobile.v_phi ** 2) ** .5;
     }
     /**
      * Updates time parameters of a mobile
@@ -190,7 +190,7 @@ export class Kerr extends Simulation_trajectory {
             if (!mobile.is_photon) {
                 mobile.clock_a += mobile.dtau;
                 if (mobile.r > R_hp) {
-                    mobile.clock_do += mobile.dtau * ((Math.pow(mobile.r, 2) + Math.pow(a, 2) + R_s * Math.pow(a, 2) / mobile.E)
+                    mobile.clock_do += mobile.dtau * ((mobile.r ** 2 + a ** 2 + R_s * a ** 2 / mobile.E)
                         - R_s * a * mobile.L / mobile.r) / this.KM_delta_r(mobile);
                 }
                 else {
@@ -201,7 +201,7 @@ export class Kerr extends Simulation_trajectory {
         else {
             mobile.clock_do += mobile.dtau;
             if (!mobile.is_photon && mobile.r >= R_hp) {
-                mobile.clock_a += mobile.dtau * this.KM_delta_r(mobile) / ((Math.pow(mobile.r, 2) + Math.pow(a, 2)
+                mobile.clock_a += mobile.dtau * this.KM_delta_r(mobile) / ((mobile.r ** 2 + a ** 2
                     / mobile.r) * mobile.E - R_s * a * mobile.L / mobile.r);
             }
         }
@@ -237,10 +237,10 @@ export class Kerr extends Simulation_trajectory {
      * @param mobile
      */
     KM_MP_integration_constants(mobile) {
-        mobile.E = Math.sqrt(Math.pow(mobile.U_r, 2) * (mobile.r - this.central_body.R_s)
-            * Math.pow(mobile.r, 3) + Math.pow(c, 2) * mobile.r * (mobile.r - this.central_body.R_s)
-            * this.KM_delta_r(mobile) + Math.pow(this.KM_delta_r(mobile), 2) * Math.pow(mobile.U_phi, 2))
-            / (Math.pow(c, 2) * Math.pow(mobile.r, 2) * this.KM_delta_r(mobile));
+        mobile.E = Math.sqrt(mobile.U_r ** 2 * (mobile.r - this.central_body.R_s)
+            * mobile.r ** 3 + c ** 2 * mobile.r * (mobile.r - this.central_body.R_s)
+            * this.KM_delta_r(mobile) + this.KM_delta_r(mobile) ** 2 * mobile.U_phi ** 2)
+            / (c ** 2 * mobile.r ** 2 * this.KM_delta_r(mobile));
         mobile.L = 1 / (c * (mobile.r - this.central_body.R_s))
             * (this.KM_delta_r(mobile) * mobile.U_phi - this.central_body.R_s
                 * this.central_body.a * c * mobile.E);
@@ -254,9 +254,9 @@ export class Kerr extends Simulation_trajectory {
      */
     KM_MP_potential_A(mobile) {
         return 1 - this.central_body.R_s / mobile.r
-            - (Math.pow(this.central_body.a, 2) * (Math.pow(mobile.E, 2) - 1) - Math.pow(mobile.L, 2)) / Math.pow(mobile.r, 2)
+            - (this.central_body.a ** 2 * (mobile.E ** 2 - 1) - mobile.L ** 2) / mobile.r ** 2
             - this.central_body.R_s * Math.pow(mobile.L - this.central_body.a * mobile.E, 2)
-                / Math.pow(mobile.r, 3);
+                / mobile.r ** 3;
     }
     /**
      * Kerr metric for a massive particle (KM_MP)
@@ -269,12 +269,12 @@ export class Kerr extends Simulation_trajectory {
         let R_s = this.central_body.R_s;
         let a = this.central_body.a;
         let V_a = 1 - R_s / mobile.r
-            - (Math.pow(a, 2) * (Math.pow(mobile.E, 2) - 1) - Math.pow(mobile.L, 2)) / Math.pow(mobile.r, 2)
-            - R_s * Math.pow(mobile.L - a * mobile.E, 2) / Math.pow(mobile.r, 3);
-        let X = (Math.pow(c, 2) * Math.pow(mobile.E, 2) - V_a) * Math.pow(this.KM_delta_r(mobile), 2);
-        let Y = (Math.pow(mobile.r, 2) + Math.pow(a, 2) + R_s * Math.pow(a, 2) / mobile.r)
+            - (a ** 2 * (mobile.E ** 2 - 1) - mobile.L ** 2) / mobile.r ** 2
+            - R_s * Math.pow(mobile.L - a * mobile.E, 2) / mobile.r ** 3;
+        let X = (c ** 2 * mobile.E ** 2 - V_a) * this.KM_delta_r(mobile) ** 2;
+        let Y = (mobile.r ** 2 + a ** 2 + R_s * a ** 2 / mobile.r)
             * mobile.E - R_s * a * mobile.L / mobile.r;
-        return Math.pow(mobile.E, 2) - X / (Math.pow(Y, 2) * Math.pow(c, 2));
+        return mobile.E ** 2 - X / (Y ** 2 * c ** 2);
     }
     /**
      * Kerr metric for a massive particle (KM_MP)
@@ -288,9 +288,9 @@ export class Kerr extends Simulation_trajectory {
      * @param U_r
      */
     KM_MP_trajectory_A(mobile, t, r, U_r) {
-        return Math.pow(c, 2) / (2 * Math.pow(r, 4)) * (this.central_body.R_s * Math.pow(r, 2) + 2 * r
-            * (Math.pow(this.central_body.a, 2) * (Math.pow(mobile.E, 2) - 1) - Math.pow(mobile.L, 2))
-            + 3 * this.central_body.R_s * Math.pow((mobile.L - this.central_body.a * mobile.E), 2));
+        return c ** 2 / (2 * r ** 4) * (this.central_body.R_s * r ** 2 + 2 * r
+            * (this.central_body.a ** 2 * (mobile.E ** 2 - 1) - mobile.L ** 2)
+            + 3 * this.central_body.R_s * (mobile.L - this.central_body.a * mobile.E) ** 2);
     }
     /**
      * Kerr metric for a massive particle (KM_MP)
@@ -306,15 +306,15 @@ export class Kerr extends Simulation_trajectory {
     KM_MP_trajectory_DO(mobile, t, r, U_r) {
         let R_s = this.central_body.R_s;
         let a = this.central_body.a;
-        let W = (Math.pow(r, 2) + Math.pow(a, 2) + R_s * Math.pow(a, 2) / r)
+        let W = (r ** 2 + a ** 2 + R_s * a ** 2 / r)
             * mobile.E - R_s * a * mobile.L / r;
-        let X = Math.pow(mobile.E, 2) * Math.pow(a, 2) - Math.pow(mobile.L, 2) - Math.pow(a, 2);
-        let Y = R_s * Math.pow((mobile.L - a * mobile.E), 2);
-        let Z = 2 * (Math.pow(mobile.E, 2) - 1 + R_s / r + X / Math.pow(r, 2) + Y / Math.pow(r, 3));
-        return Math.pow(c, 2) * this.KM_delta_r(mobile) / (2 * Math.pow(W, 2))
-            * ((-R_s / Math.pow(r, 2) - 2 * X / Math.pow(r, 3) - 3 * Y / Math.pow(r, 4)) * this.KM_delta_r(mobile)
+        let X = mobile.E ** 2 * a ** 2 - mobile.L ** 2 - a ** 2;
+        let Y = R_s * (mobile.L - a * mobile.E) ** 2;
+        let Z = 2 * (mobile.E ** 2 - 1 + R_s / r + X / r ** 2 + Y / r ** 3);
+        return c ** 2 * this.KM_delta_r(mobile) / (2 * W ** 2)
+            * ((-R_s / r ** 2 - 2 * X / r ** 3 - 3 * Y / r ** 4) * this.KM_delta_r(mobile)
                 + Z * (2 * r - R_s)
-                - Z * ((2 * r - R_s * Math.pow(a, 2) / Math.pow(r, 2)) * mobile.E + R_s * a * mobile.L / Math.pow(r, 2))
+                - Z * ((2 * r - R_s * a ** 2 / r ** 2) * mobile.E + R_s * a * mobile.L / r ** 2)
                     * this.KM_delta_r(mobile) / W);
     }
     //	2) For a photon (KM_PH)
@@ -325,9 +325,9 @@ export class Kerr extends Simulation_trajectory {
      * @param mobile
      */
     KM_PH_integration_constants(mobile) {
-        mobile.E = Math.sqrt(Math.pow(mobile.U_r, 2) * (mobile.r - this.central_body.R_s)
-            * Math.pow(mobile.r, 3) + Math.pow(this.KM_delta_r(mobile), 2) * Math.pow(mobile.U_phi, 2))
-            / (Math.pow(c, 2) * Math.pow(mobile.r, 2) * this.KM_delta_r(mobile));
+        mobile.E = Math.sqrt(mobile.U_r ** 2 * (mobile.r - this.central_body.R_s)
+            * mobile.r ** 3 + this.KM_delta_r(mobile) ** 2 * mobile.U_phi ** 2)
+            / (c ** 2 * mobile.r ** 2 * this.KM_delta_r(mobile));
         mobile.L = 1 / (c * (mobile.r - this.central_body.R_s)) * (this.KM_delta_r(mobile)
             * mobile.U_phi - this.central_body.R_s * this.central_body.a * c * mobile.E);
     }
@@ -339,9 +339,9 @@ export class Kerr extends Simulation_trajectory {
      * @result potential
      */
     KM_PH_potential_A(mobile) {
-        return -(Math.pow(this.central_body.a, 2) * Math.pow(mobile.E, 2) - Math.pow(mobile.L, 2))
-            / Math.pow(mobile.r, 2) - this.central_body.R_s
-            * Math.pow(mobile.L - this.central_body.a * mobile.E, 2) / Math.pow(mobile.r, 3);
+        return -(this.central_body.a ** 2 * mobile.E ** 2 - mobile.L ** 2)
+            / mobile.r ** 2 - this.central_body.R_s
+            * Math.pow(mobile.L - this.central_body.a * mobile.E, 2) / mobile.r ** 3;
     }
     /**
      * Kerr metric for a massive particle (KM_MP)
@@ -353,12 +353,12 @@ export class Kerr extends Simulation_trajectory {
     KM_PH_potential_DO(mobile) {
         let R_s = this.central_body.R_s;
         let a = this.central_body.a;
-        let V_a = -(Math.pow(a, 2) * Math.pow(mobile.E, 2) - Math.pow(mobile.L, 2)) / Math.pow(mobile.r, 2)
-            - R_s * Math.pow(mobile.L - a * mobile.E, 2) / Math.pow(mobile.r, 3);
-        let X = (Math.pow(c, 2) * Math.pow(mobile.E, 2) - V_a) * Math.pow(this.KM_delta_r(mobile), 2);
-        let Y = (Math.pow(mobile.r, 2) + Math.pow(a, 2) + R_s * Math.pow(a, 2) / mobile.r)
+        let V_a = -(a ** 2 * mobile.E ** 2 - mobile.L ** 2) / mobile.r ** 2
+            - R_s * Math.pow(mobile.L - a * mobile.E, 2) / mobile.r ** 3;
+        let X = (c ** 2 * mobile.E ** 2 - V_a) * this.KM_delta_r(mobile) ** 2;
+        let Y = (mobile.r ** 2 + a ** 2 + R_s * a ** 2 / mobile.r)
             * mobile.E - R_s * a * mobile.L / mobile.r;
-        return Math.pow(mobile.E, 2) - X / (Math.pow(Y, 2) * Math.pow(c, 2));
+        return mobile.E ** 2 - X / (Y ** 2 * c ** 2);
     }
     /**
      * Kerr metric for a photon (KM_PH)
@@ -372,9 +372,9 @@ export class Kerr extends Simulation_trajectory {
      * @param U_r
      */
     KM_PH_trajectory_A(mobile, t, r, U_r) {
-        return -(Math.pow(c, 2) / (2 * Math.pow(r, 4)))
-            * (2 * r * (Math.pow(this.central_body.a, 2) * Math.pow(mobile.E, 2) - Math.pow(mobile.L, 2))
-                + 3 * this.central_body.R_s * Math.pow((mobile.L - this.central_body.a * mobile.E), 2));
+        return -(c ** 2 / (2 * r ** 4))
+            * (2 * r * (this.central_body.a ** 2 * mobile.E ** 2 - mobile.L ** 2)
+                + 3 * this.central_body.R_s * (mobile.L - this.central_body.a * mobile.E) ** 2);
     }
     /**
      * Kerr metric for a photon (KM_PH)
@@ -390,13 +390,13 @@ export class Kerr extends Simulation_trajectory {
     KM_PH_trajectory_DO(mobile, t, r, U_r) {
         let R_s = this.central_body.R_s;
         let a = this.central_body.a;
-        let W = (Math.pow(r, 2) + Math.pow(a, 2) + R_s * Math.pow(a, 2) / r)
+        let W = (r ** 2 + a ** 2 + R_s * a ** 2 / r)
             * mobile.E - R_s * a * mobile.L / r;
-        let X = Math.pow(mobile.E, 2) * Math.pow(a, 2) - Math.pow(mobile.L, 2);
-        let Y = R_s * Math.pow((mobile.L - a * mobile.E), 2);
-        let Z = 2 * (Math.pow(mobile.E, 2) + X / Math.pow(r, 2) + Y / Math.pow(r, 3));
-        return Math.pow(c, 2) * this.KM_delta_r(mobile) / (2 * Math.pow(W, 2)) * ((-2 * X / Math.pow(r, 3) - 3 * Y / Math.pow(r, 4))
-            * this.KM_delta_r(mobile) + Z * (2 * r - R_s) - Z * ((2 * r - R_s * Math.pow(a, 2) / Math.pow(r, 2))
-            * mobile.E + R_s * a * mobile.L / Math.pow(r, 2)) * this.KM_delta_r(mobile) / W);
+        let X = mobile.E ** 2 * a ** 2 - mobile.L ** 2;
+        let Y = R_s * (mobile.L - a * mobile.E) ** 2;
+        let Z = 2 * (mobile.E ** 2 + X / r ** 2 + Y / r ** 3);
+        return c ** 2 * this.KM_delta_r(mobile) / (2 * W ** 2) * ((-2 * X / r ** 3 - 3 * Y / r ** 4)
+            * this.KM_delta_r(mobile) + Z * (2 * r - R_s) - Z * ((2 * r - R_s * a ** 2 / r ** 2)
+            * mobile.E + R_s * a * mobile.L / r ** 2) * this.KM_delta_r(mobile) / W);
     }
 }

@@ -59,17 +59,17 @@ export class Schwarzschild extends Simulation_trajectory {
         this.mobile_list.forEach(mobile => {
             if (mobile.r >= radius || radius === 0) {
                 if (!mobile.is_photon) {
-                    let E = Math.pow((1 - R_s / mobile.r), .5)
-                        / Math.pow((1 - Math.pow(mobile.v_r / c, 2)), .5);
+                    let E = (1 - R_s / mobile.r) ** .5
+                        / (1 - Math.pow(mobile.v_r / c, 2)) ** .5;
                     mobile.U_r = Math.cos(mobile.v_alpha) * mobile.v_r * E;
                     mobile.U_phi = Math.sin(mobile.v_alpha) * mobile.v_r * E
-                        / Math.pow((1 - R_s / mobile.r), .5);
+                        / (1 - R_s / mobile.r) ** .5;
                     this.ESM_MP_integration_constants(mobile);
                 }
                 else if (mobile.is_photon) {
                     mobile.U_r = Math.cos(mobile.v_alpha) * c;
                     mobile.U_phi = Math.sin(mobile.v_alpha) * c
-                        / Math.pow((1 - R_s / mobile.r), .5);
+                        / (1 - R_s / mobile.r) ** .5;
                     this.ESM_PH_integration_constants(mobile);
                 }
             }
@@ -77,16 +77,16 @@ export class Schwarzschild extends Simulation_trajectory {
                 let alpha = this.ISM_alpha_r(mobile);
                 let beta = this.ISM_beta_r(mobile);
                 if (!mobile.is_photon) {
-                    let E = Math.pow(beta, .5)
-                        / Math.pow((1 - mobile.v_r * 2 / Math.pow(c, 2)), .5);
-                    mobile.U_r = Math.cos(mobile.v_alpha) * Math.pow(alpha, .5)
+                    let E = beta ** .5
+                        / (1 - mobile.v_r * 2 / c ** 2) ** .5;
+                    mobile.U_r = Math.cos(mobile.v_alpha) * alpha ** .5
                         * mobile.v_r * E;
                     mobile.U_phi = Math.sin(mobile.v_alpha) * mobile.v_r * E
                         / beta;
                     this.ISM_MP_integration_constants(mobile);
                 }
                 else if (mobile.is_photon) {
-                    mobile.U_r = Math.cos(mobile.v_alpha) * Math.pow(alpha, .5) * c
+                    mobile.U_r = Math.cos(mobile.v_alpha) * alpha ** .5 * c
                         / beta;
                     mobile.U_phi = Math.sin(mobile.v_alpha) * c / beta;
                     this.ISM_PH_integration_constants(mobile);
@@ -103,17 +103,17 @@ export class Schwarzschild extends Simulation_trajectory {
     mobile_dtau(reference_frame) {
         let radius = this.central_body.radius;
         this.mobile_list.forEach(mobile => {
-            let free_fall_time = Math.PI * mobile.r * Math.pow(Math.sqrt(mobile.r / (2 * G * this.central_body.mass)), .5) / 2;
+            let free_fall_time = Math.PI * mobile.r * Math.sqrt(mobile.r / (2 * G * this.central_body.mass)) ** .5 / 2;
             if (!mobile.is_photon) {
                 if (mobile.r >= radius || radius === 0) {
-                    mobile.dtau = mobile.r / (Math.sqrt(Math.pow(mobile.U_r, 2) + Math.pow(mobile.U_phi, 2)) + 1e-10) / 1e3;
+                    mobile.dtau = mobile.r / (Math.sqrt(mobile.U_r ** 2 + mobile.U_phi ** 2) + 1e-10) / 1e3;
                     if (mobile.dtau > free_fall_time / 500) {
                         mobile.dtau = free_fall_time / 500;
                     }
                 }
                 else if (mobile.r < radius && radius !== 0) {
                     mobile.dtau = mobile.r
-                        / (Math.sqrt(Math.pow(mobile.U_r, 2) + Math.pow(mobile.U_phi, 2)) + 1e-20) / 1000;
+                        / (Math.sqrt(mobile.U_r ** 2 + mobile.U_phi ** 2) + 1e-20) / 1000;
                     if (mobile.dtau > free_fall_time / 500) {
                         mobile.dtau = free_fall_time / 500;
                     }
@@ -126,7 +126,7 @@ export class Schwarzschild extends Simulation_trajectory {
                 }
                 else {
                     mobile.dtau = mobile.r
-                        / (Math.sqrt(Math.pow(mobile.U_r, 2) + Math.pow(mobile.U_phi, 2)) + 1) / 1000;
+                        / (Math.sqrt(mobile.U_r ** 2 + mobile.U_phi ** 2) + 1) / 1000;
                     if (mobile.dtau > free_fall_time / 500) {
                         mobile.dtau = free_fall_time / 500;
                     }
@@ -184,11 +184,11 @@ export class Schwarzschild extends Simulation_trajectory {
         mobile.r = runge_kutta_result[1];
         mobile.U_r = runge_kutta_result[2];
         if (reference_frame === "A") {
-            mobile.phi += c * mobile.L * dtau / Math.pow(mobile.r, 2);
+            mobile.phi += c * mobile.L * dtau / mobile.r ** 2;
         }
         else {
             mobile.phi += c * mobile.L * dtau * (1 - R_s / mobile.r)
-                / Math.pow(mobile.r, 2) / mobile.E;
+                / mobile.r ** 2 / mobile.E;
         }
     }
     /**
@@ -200,36 +200,36 @@ export class Schwarzschild extends Simulation_trajectory {
         let R_s = this.central_body.R_s;
         if (mobile.r >= radius || radius === 0) {
             let dt = mobile.E / (1 - R_s / mobile.r);
-            let dphi = c * mobile.L / Math.pow(mobile.r, 2);
-            mobile.v_phi = Math.sqrt(Math.pow((mobile.r * dphi / dt), 2) / (1 - R_s / mobile.r));
+            let dphi = c * mobile.L / mobile.r ** 2;
+            mobile.v_phi = Math.sqrt((mobile.r * dphi / dt) ** 2 / (1 - R_s / mobile.r));
             if (!mobile.is_photon) {
-                let dr = Math.pow((c / mobile.E), 2) * Math.pow((1 - R_s / mobile.r), 2)
-                    * (Math.pow(mobile.E, 2) - (1 - R_s / mobile.r) * (1 + Math.pow((mobile.L / mobile.r), 2)));
-                mobile.v_r = Math.pow(Math.abs(dr / Math.pow((1 - R_s / mobile.r), 2)), .5);
+                let dr = (c / mobile.E) ** 2 * (1 - R_s / mobile.r) ** 2
+                    * (mobile.E ** 2 - (1 - R_s / mobile.r) * (1 + (mobile.L / mobile.r) ** 2));
+                mobile.v_r = Math.abs(dr / (1 - R_s / mobile.r) ** 2) ** .5;
             }
             else {
-                let dr = Math.pow((c / mobile.E), 2) * Math.pow((1 - R_s / mobile.r), 2)
-                    * (Math.pow(mobile.E, 2) - (1 - R_s / mobile.r) * (Math.pow((mobile.L / mobile.r), 2)));
-                mobile.v_r = Math.pow(Math.abs(dr / Math.pow((1 - R_s / mobile.r), 2)), .5);
+                let dr = (c / mobile.E) ** 2 * (1 - R_s / mobile.r) ** 2
+                    * (mobile.E ** 2 - (1 - R_s / mobile.r) * ((mobile.L / mobile.r) ** 2));
+                mobile.v_r = Math.abs(dr / (1 - R_s / mobile.r) ** 2) ** .5;
             }
         }
         else if (mobile.r < radius && radius !== 0) {
             let alpha = this.ISM_alpha_r(mobile);
             let beta = this.ISM_beta_r(mobile);
-            mobile.v_phi = Math.sqrt((Math.pow(mobile.r, 2) / Math.pow(beta, 2))
-                * Math.pow((c * mobile.L * Math.pow(beta, 2) / Math.pow(mobile.r, 2)), 2));
+            mobile.v_phi = Math.sqrt((mobile.r ** 2 / beta ** 2)
+                * (c * mobile.L * beta ** 2 / mobile.r ** 2) ** 2);
             if (!mobile.is_photon) {
-                let dr = (Math.pow((c / mobile.E), 2)) * alpha * Math.pow(beta, 4) * (Math.pow((mobile.E / beta), 2)
-                    - Math.pow((mobile.L / mobile.r), 2) - 1);
-                mobile.v_r = Math.sqrt(dr / (alpha * Math.pow(beta, 2)));
+                let dr = ((c / mobile.E) ** 2) * alpha * beta ** 4 * ((mobile.E / beta) ** 2
+                    - (mobile.L / mobile.r) ** 2 - 1);
+                mobile.v_r = Math.sqrt(dr / (alpha * beta ** 2));
             }
             else {
-                let dr = (Math.pow((c / mobile.E), 2)) * alpha * (Math.pow(beta, 4))
-                    * (Math.pow((mobile.E / beta), 2) - Math.pow((mobile.L / mobile.r), 2));
-                mobile.v_r = Math.sqrt(dr / (alpha * Math.pow(beta, 2)));
+                let dr = ((c / mobile.E) ** 2) * alpha * (beta ** 4)
+                    * ((mobile.E / beta) ** 2 - (mobile.L / mobile.r) ** 2);
+                mobile.v_r = Math.sqrt(dr / (alpha * beta ** 2));
             }
         }
-        mobile.v_norm = Math.pow((Math.pow(mobile.v_r, 2) + Math.pow(mobile.v_phi, 2)), .5);
+        mobile.v_norm = (mobile.v_r ** 2 + mobile.v_phi ** 2) ** .5;
     }
     /**
      * Updates time parameters of a mobile
@@ -260,7 +260,7 @@ export class Schwarzschild extends Simulation_trajectory {
         }
         else if (mobile.r < radius && radius !== 0) {
             if (reference_frame === "A") {
-                mobile.clock_do += mobile.dtau * mobile.E / Math.pow(this.ISM_beta_r(mobile), 2);
+                mobile.clock_do += mobile.dtau * mobile.E / this.ISM_beta_r(mobile) ** 2;
                 if (!mobile.is_photon) {
                     mobile.clock_a += mobile.dtau;
                 }
@@ -268,7 +268,7 @@ export class Schwarzschild extends Simulation_trajectory {
             else {
                 mobile.clock_do += mobile.dtau;
                 if (!mobile.is_photon) {
-                    mobile.clock_a += mobile.dtau * Math.pow(this.ISM_beta_r(mobile), 2) / mobile.E;
+                    mobile.clock_a += mobile.dtau * this.ISM_beta_r(mobile) ** 2 / mobile.E;
                 }
             }
         }
@@ -308,7 +308,7 @@ export class Schwarzschild extends Simulation_trajectory {
      */
     ESM_MP_potential_A(mobile) {
         return (1 - this.central_body.R_s / mobile.r)
-            * (1 + Math.pow((mobile.L / mobile.r), 2));
+            * (1 + (mobile.L / mobile.r) ** 2);
     }
     /**
      * External Schwarzschild metric for a Massive Particle (ESM_MP)
@@ -319,9 +319,9 @@ export class Schwarzschild extends Simulation_trajectory {
      */
     ESM_MP_potential_DO(mobile) {
         let V_a = (1 - this.central_body.R_s / mobile.r)
-            * (1 + Math.pow((mobile.L / mobile.r), 2));
-        return Math.pow(mobile.E, 2) - (Math.pow(c, 2) - V_a / Math.pow(mobile.E, 2))
-            * Math.pow((1 - this.central_body.R_s / mobile.r), 2) / Math.pow(c, 2);
+            * (1 + (mobile.L / mobile.r) ** 2);
+        return mobile.E ** 2 - (c ** 2 - V_a / mobile.E ** 2)
+            * (1 - this.central_body.R_s / mobile.r) ** 2 / c ** 2;
     }
     /**
      * External Schwarzschild metric for a Massive Particle (ESM_MP)
@@ -335,8 +335,8 @@ export class Schwarzschild extends Simulation_trajectory {
      * @param U_r
      */
     ESM_MP_trajectory_A(mobile, t, r, U_r) {
-        return Math.pow(c, 2) / (2 * Math.pow(r, 4)) * (-this.central_body.R_s * Math.pow(r, 2)
-            + (2 * r - 3 * this.central_body.R_s) * Math.pow(mobile.L, 2));
+        return c ** 2 / (2 * r ** 4) * (-this.central_body.R_s * r ** 2
+            + (2 * r - 3 * this.central_body.R_s) * mobile.L ** 2);
     }
     /**
      * External Schwarzschild metric for a Massive Particle (ESM_MP)
@@ -350,10 +350,10 @@ export class Schwarzschild extends Simulation_trajectory {
      * @param U_r
      */
     ESM_MP_trajectory_DO(mobile, t, r, U_r) {
-        return Math.pow(c, 2) * (r - this.central_body.R_s) * (2 * Math.pow(mobile.E, 2) * Math.pow(r, 3) * this.central_body.R_s
-            + 2 * Math.pow((mobile.L * r), 2) - 7 * Math.pow(mobile.L, 2) * r * this.central_body.R_s
-            + 5 * Math.pow((mobile.L * this.central_body.R_s), 2) - 3 * Math.pow(r, 3) * this.central_body.R_s
-            + 3 * Math.pow((r * this.central_body.R_s), 2)) / (2 * Math.pow(mobile.E, 2) * Math.pow(r, 6));
+        return c ** 2 * (r - this.central_body.R_s) * (2 * mobile.E ** 2 * r ** 3 * this.central_body.R_s
+            + 2 * (mobile.L * r) ** 2 - 7 * mobile.L ** 2 * r * this.central_body.R_s
+            + 5 * (mobile.L * this.central_body.R_s) ** 2 - 3 * r ** 3 * this.central_body.R_s
+            + 3 * (r * this.central_body.R_s) ** 2) / (2 * mobile.E ** 2 * r ** 6);
     }
     //  2) For a photon (ESM_PH)
     /**
@@ -378,7 +378,7 @@ export class Schwarzschild extends Simulation_trajectory {
      */
     ESM_PH_potential_A(mobile) {
         return (1 - this.central_body.R_s / mobile.r)
-            * (1 + Math.pow((mobile.L / mobile.r), 2));
+            * (1 + (mobile.L / mobile.r) ** 2);
     }
     /**
      * External Schwarzschild metric for a photon (ESM_PH)
@@ -389,9 +389,9 @@ export class Schwarzschild extends Simulation_trajectory {
      */
     ESM_PH_potential_DO(mobile) {
         let V_a = (1 - this.central_body.R_s / mobile.r)
-            * (1 + Math.pow((mobile.L / mobile.r), 2));
-        return Math.pow(mobile.E, 2) - (Math.pow(c, 2) - V_a / Math.pow(mobile.E, 2))
-            * Math.pow((1 - this.central_body.R_s / mobile.r), 2) / Math.pow(c, 2);
+            * (1 + (mobile.L / mobile.r) ** 2);
+        return mobile.E ** 2 - (c ** 2 - V_a / mobile.E ** 2)
+            * (1 - this.central_body.R_s / mobile.r) ** 2 / c ** 2;
     }
     /**
      * External Schwarzschild metric for a photon (ESM_PH)
@@ -405,7 +405,7 @@ export class Schwarzschild extends Simulation_trajectory {
      * @param U_r
      */
     ESM_PH_trajectory_A(mobile, t, r, U_r) {
-        return Math.pow(c, 2) / (2 * Math.pow(r, 4)) * (2 * r - 3 * this.central_body.R_s) * Math.pow(mobile.L, 2);
+        return c ** 2 / (2 * r ** 4) * (2 * r - 3 * this.central_body.R_s) * mobile.L ** 2;
     }
     /**
      * External Schwarzschild metric for a photon (ESM_PH)
@@ -419,10 +419,10 @@ export class Schwarzschild extends Simulation_trajectory {
      * @param U_r
      */
     ESM_PH_trajectory_DO(mobile, t, r, U_r) {
-        return Math.pow(c, 2) * (r - this.central_body.R_s) * (2 * Math.pow(mobile.E, 2) * Math.pow(r, 3)
-            * this.central_body.R_s + 2 * Math.pow((mobile.L * r), 2) - 7 * Math.pow(mobile.L, 2) * r
-            * this.central_body.R_s + 5 * Math.pow((mobile.L * this.central_body.R_s), 2))
-            / (2 * Math.pow(mobile.E, 2) * Math.pow(r, 6));
+        return c ** 2 * (r - this.central_body.R_s) * (2 * mobile.E ** 2 * r ** 3
+            * this.central_body.R_s + 2 * (mobile.L * r) ** 2 - 7 * mobile.L ** 2 * r
+            * this.central_body.R_s + 5 * (mobile.L * this.central_body.R_s) ** 2)
+            / (2 * mobile.E ** 2 * r ** 6);
     }
     //  II/ The internal Schwarzschild metric (ISM)
     /*
@@ -438,8 +438,8 @@ export class Schwarzschild extends Simulation_trajectory {
      * @returns alpha(r)
      */
     ISM_alpha_r(mobile) {
-        return 1 - Math.pow(mobile.r, 2) * this.central_body.R_s
-            / Math.pow(this.central_body.radius, 3);
+        return 1 - mobile.r ** 2 * this.central_body.R_s
+            / this.central_body.radius ** 3;
     }
     /**
      * Internal Schwarzschild metric (ISM)
@@ -449,10 +449,10 @@ export class Schwarzschild extends Simulation_trajectory {
      * @returns beta(r)
      */
     ISM_beta_r(mobile) {
-        return 3 / 2 * Math.pow((1 - this.central_body.R_s
-            / this.central_body.radius), .5) - .5
-            * Math.pow((1 - Math.pow(mobile.r, 2) * this.central_body.R_s
-                / Math.pow(this.central_body.radius, 3)), .5);
+        return 3 / 2 * (1 - this.central_body.R_s
+            / this.central_body.radius) ** .5 - .5
+            * (1 - mobile.r ** 2 * this.central_body.R_s
+                / this.central_body.radius ** 3) ** .5;
     }
     //  1) For a massive particle (ISM_MP)
     /**
@@ -464,8 +464,8 @@ export class Schwarzschild extends Simulation_trajectory {
      */
     ISM_MP_integration_constants(mobile) {
         mobile.L = mobile.U_phi * mobile.r / c;
-        mobile.E = this.ISM_beta_r(mobile) / c * Math.sqrt(Math.pow(mobile.U_r, 2)
-            / this.ISM_alpha_r(mobile) + Math.pow(mobile.U_phi, 2) + Math.pow(c, 2));
+        mobile.E = this.ISM_beta_r(mobile) / c * Math.sqrt(mobile.U_r ** 2
+            / this.ISM_alpha_r(mobile) + mobile.U_phi ** 2 + c ** 2);
     }
     /**
      * Internal Schwarzschild metric for a massive particle (ISM_MP)
@@ -475,7 +475,7 @@ export class Schwarzschild extends Simulation_trajectory {
      * @returns Potential
      */
     ISM_MP_potential_A(mobile) {
-        return Math.pow(mobile.E, 2) - this.ISM_alpha_r(mobile)
+        return mobile.E ** 2 - this.ISM_alpha_r(mobile)
             * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2)
                 - Math.pow(mobile.L / mobile.r, 2) - 1);
     }
@@ -491,11 +491,11 @@ export class Schwarzschild extends Simulation_trajectory {
      * @param U_r
      */
     ISM_MP_trajectory_A(mobile, t, r, U_r) {
-        return -(Math.pow(c, 2) * r * this.central_body.R_s / Math.pow(this.central_body.radius, 3))
+        return -(c ** 2 * r * this.central_body.R_s / this.central_body.radius ** 3)
             * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2) - Math.pow(mobile.L / r, 2) - 1)
-            + Math.pow(c, 2) * this.ISM_alpha_r(mobile) * .5 * (-(Math.pow(mobile.E, 2) * r * this.central_body.R_s)
-                / (Math.pow((this.ISM_beta_r(mobile) * this.central_body.radius), 3)
-                    * Math.pow(this.ISM_alpha_r(mobile), .5)) + 2 * Math.pow(mobile.L, 2) / Math.pow(r, 3));
+            + c ** 2 * this.ISM_alpha_r(mobile) * .5 * (-(mobile.E ** 2 * r * this.central_body.R_s)
+                / ((this.ISM_beta_r(mobile) * this.central_body.radius) ** 3
+                    * this.ISM_alpha_r(mobile) ** .5) + 2 * mobile.L ** 2 / r ** 3);
     }
     //  2) For a photon (ISM_PH)
     /**
@@ -508,7 +508,7 @@ export class Schwarzschild extends Simulation_trajectory {
     ISM_PH_integration_constants(mobile) {
         mobile.L = mobile.U_phi * mobile.r / c;
         mobile.E = this.ISM_beta_r(mobile) / c
-            * Math.sqrt(Math.pow(mobile.U_r, 2) / this.ISM_alpha_r(mobile) + Math.pow(mobile.U_phi, 2));
+            * Math.sqrt(mobile.U_r ** 2 / this.ISM_alpha_r(mobile) + mobile.U_phi ** 2);
     }
     /**
      * Internal Schwarzschild metric for a photon (ISM_PH)
@@ -518,7 +518,7 @@ export class Schwarzschild extends Simulation_trajectory {
      * @returns Potential
      */
     ISM_PH_potential_A(mobile) {
-        return Math.pow(mobile.E, 2) - this.ISM_alpha_r(mobile)
+        return mobile.E ** 2 - this.ISM_alpha_r(mobile)
             * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2)
                 - Math.pow(mobile.L / mobile.r, 2));
     }
@@ -534,10 +534,10 @@ export class Schwarzschild extends Simulation_trajectory {
      * @param U_r
      */
     ISM_PH_trajectory_A(mobile, t, r, U_r) {
-        return -(Math.pow(c, 2) * r * this.central_body.R_s / Math.pow(this.central_body.radius, 3))
+        return -(c ** 2 * r * this.central_body.R_s / this.central_body.radius ** 3)
             * (Math.pow(mobile.E / this.ISM_beta_r(mobile), 2) - Math.pow(mobile.L / r, 2))
-            + Math.pow(c, 2) * this.ISM_alpha_r(mobile) * .5 * (-(Math.pow(mobile.E, 2) * r * this.central_body.R_s)
-                / (Math.pow((this.ISM_beta_r(mobile) * this.central_body.radius), 3)
-                    * Math.pow(this.ISM_alpha_r(mobile), .5)) + 2 * Math.pow(mobile.L, 2) / Math.pow(r, 3));
+            + c ** 2 * this.ISM_alpha_r(mobile) * .5 * (-(mobile.E ** 2 * r * this.central_body.R_s)
+                / ((this.ISM_beta_r(mobile) * this.central_body.radius) ** 3
+                    * this.ISM_alpha_r(mobile) ** .5) + 2 * mobile.L ** 2 / r ** 3);
     }
 }

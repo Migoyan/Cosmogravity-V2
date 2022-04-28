@@ -1,18 +1,16 @@
-"use strict";
-exports.__esModule = true;
-var simulation_universe_1 = require("./class/simulation/simulation_universe");
-var universe = new simulation_universe_1.Simulation_universe("universe");
-var universe_1 = new simulation_universe_1.Simulation_universe("matter_universe", 0, 32, 1, false, false, true);
+import { Simulation_universe } from "./class/simulation/simulation_universe";
+let universe = new Simulation_universe("universe");
+let universe_1 = new Simulation_universe("matter_universe", 0, 32, 1, false, false, true);
 function trace_scale_factor() {
     console.log(universe.universe_age() / (3600 * 24 * 365.2425 * 1e9));
-    var result_a_tau = universe.compute_scale_factor(0.0001, [0.01, 10]);
+    let result_a_tau = universe.compute_scale_factor(0.0001, [0.01, 10]);
     universe_1.compute_scale_factor(0.01);
-    var trace_1 = {
+    let trace_1 = {
         x: result_a_tau.x,
         y: result_a_tau.y,
         mode: 'lines'
     };
-    var graphic = document.getElementById("graphic_scale_factor");
+    let graphic = document.getElementById("graphic_scale_factor");
     Plotly.newPlot(graphic, [trace_1], { margin: { t: 0 } });
 }
 function update_universe_value(x) {
@@ -26,7 +24,7 @@ function update_universe_value(x) {
     document.getElementById("resultat_omegak0").innerHTML = universe.calcul_omega_k().toExponential(4);
 }
 function update_universe_rayonment() {
-    var param_ray = Number(document.getElementById("liste").value);
+    let param_ray = Number(document.getElementById("liste").value);
     if (param_ray === 0) {
         universe.has_cmb = true;
         universe.has_neutrino = true;

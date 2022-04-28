@@ -21,7 +21,7 @@ export class Central_body {
     constructor(collidable, mass, radius, angular_m) {
         this._collidable = collidable;
         this._mass = mass;
-        this._R_s = 2 * G * this._mass / Math.pow(c, 2);
+        this._R_s = 2 * G * this._mass / c ** 2;
         /* If the radius of a body is smaller than its Schwarzschild radius,
         it becomes a black hole and therefore a singularity in the framework
         of general relativity. */
@@ -43,9 +43,9 @@ export class Central_body {
             this._angular_m = angular_m;
             this._a = this._angular_m / (c * this._mass);
             this._R_hp = (this._R_s
-                + Math.sqrt(Math.pow(this._R_s, 2) - 4 * Math.pow(this._a, 2))) / 2;
+                + Math.sqrt(this._R_s ** 2 - 4 * this._a ** 2)) / 2;
             this._R_hm = (this._R_s
-                - Math.sqrt(Math.pow(this._R_s, 2) - 4 * Math.pow(this._a, 2))) / 2;
+                - Math.sqrt(this._R_s ** 2 - 4 * this._a ** 2)) / 2;
         }
     }
     //--------------------- Accessors ----------------------
@@ -90,7 +90,7 @@ export class Central_body {
      * if one of the primordial parameters is modified.
      */
     update_parameters() {
-        this._R_s = 2 * G * this._mass / Math.pow(c, 2);
+        this._R_s = 2 * G * this._mass / c ** 2;
         if (this._angular_m === 0) {
             this._a = 0;
             this._R_hp = this._R_s;
@@ -99,9 +99,9 @@ export class Central_body {
         else {
             this._a = this._angular_m / (c * this._mass);
             this._R_hp = (this._R_s
-                + Math.sqrt(Math.pow(this._R_s, 2) - 4 * Math.pow(this._a, 2))) / 2;
+                + Math.sqrt(this._R_s ** 2 - 4 * this._a ** 2)) / 2;
             this._R_hm = (this._R_s
-                - Math.sqrt(Math.pow(this._R_s, 2) - 4 * Math.pow(this._a, 2))) / 2;
+                - Math.sqrt(this._R_s ** 2 - 4 * this._a ** 2)) / 2;
         }
     }
 }

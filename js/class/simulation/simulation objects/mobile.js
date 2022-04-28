@@ -33,7 +33,7 @@ export class Mobile {
         this._v_r = v_r;
         this._v_alpha = v_alpha * Math.PI / 180;
         this._v_phi = v_r * Math.sin(this.v_alpha);
-        this._v_norm = Math.pow((Math.pow(v_r, 2) + Math.pow(this.v_phi, 2)), .5);
+        this._v_norm = (v_r ** 2 + this.v_phi ** 2) ** .5;
         this._clock_a = 0;
         this._clock_do = 0;
         if (is_photon) {

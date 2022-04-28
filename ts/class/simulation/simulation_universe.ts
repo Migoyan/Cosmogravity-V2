@@ -372,33 +372,25 @@ export class Simulation_universe extends Simulation {
 	 */
 	public calcul_omega_r(): number {
 
-		let H0parsec = this.hubble_cst * 1000 / ((this.constants.AU * (180 * 3600)) / Math.PI * Math.pow(10, 6));
-		let H0enannee = H0parsec * (3600 * 24 * this._constants.nbrJours);
-		let H0engannee = H0parsec * (3600 * 24 * this._constants.nbrJours) * Math.pow(10, 9);
+		// let H0enannee = H0parsec * (3600 * 24 * this._constants.nbrJours);
+		// let H0engannee = H0parsec * (3600 * 24 * this._constants.nbrJours) * Math.pow(10, 9);
 
-		let omega_r: number = 0;
-		let sigma: number;
-		let rho_r: number;
+        let sigma = (2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) /
+         (15 * Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2));
+        let rho_r =
+        (4 * sigma * Math.pow(this.temperature, 4)) / Math.pow(this.constants.c, 3);
+        let omega_r = (8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(this.hubble_cst, 2));
 
-		if (this.has_neutrino && this.has_cmb) {
-
-			sigma =
-			(2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) /(15 * Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2));
-			rho_r =
-			(4 * sigma * Math.pow(this.temperature, 4)) / Math.pow(this.constants.c, 3);
-
-			// Hubble-Lemaître constant in international system units (Système International)
-			omega_r = 1.68*(8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(H0parsec, 2));
-		}
-		else if (!this.has_neutrino && this.has_cmb) {
-			sigma = (2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) / (15 * Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2));
-			rho_r = (4 * sigma * Math.pow(this.temperature, 4)) / (Math.pow(this.constants.c, 3));
-			omega_r = (8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(H0parsec, 2));
-		} 
-		else {
-			omega_r = 0;
-		}  
-		return omega_r;
+        if (this.has_neutrino && this.has_cmb) {
+            omega_r = 1.68 * omega_r;
+        }
+        else if (!this.has_neutrino && this.has_cmb) {
+            omega_r = 1 * omega_r;
+        }
+        else {
+            omega_r = 0;
+        }
+        return omega_r;
 	}
 
 	/**
@@ -426,7 +418,7 @@ export class Simulation_universe extends Simulation {
 	protected check_sum_omegas(modify_matter: Boolean = true): Boolean {
 		let is_param_modified = false;
 		let omega_r = this.calcul_omega_r();
-		let sum = this.matter_parameter + omega_r + this.dark_energy.parameter_value + this.calcul_omega_k();
+		let sum = this.matter_parameter + this.calcul_omega_r() + this.dark_energy.parameter_value + this.calcul_omega_k();
 		if (this.is_flat && sum !== 1) {
 			is_param_modified = true;
 			if (modify_matter) {
