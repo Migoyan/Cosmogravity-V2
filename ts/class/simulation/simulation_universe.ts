@@ -48,11 +48,14 @@ export class Simulation_universe extends Simulation {
 	private _temperature: number;
 	private _hubble_cst: number;
 	private _matter_parameter: number;
+	private _H0parsec : number;
 	private _dark_energy = {
 		parameter_value: 6.911e-1,
 		w_0: -1,
 		w_1: 0,
 	};
+
+
 	private _constants = {
 		c: c,
 		k: k,
@@ -81,7 +84,8 @@ export class Simulation_universe extends Simulation {
 	) {
 		super(id);
 		this._temperature = temperature;
-		this._hubble_cst = (hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
+		this._hubble_cst = hubble_cst;
+		this._H0parsec = (hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
 		this._matter_parameter = matter_parameter;
 		this._has_cmb = has_cmb;
 		this._has_neutrino = has_neutrino;
@@ -105,9 +109,20 @@ export class Simulation_universe extends Simulation {
 	}
 
 	public set hubble_cst(hubble_cst: number) {
-		this._hubble_cst = (hubble_cst * 1e3) / (((AU * (180 * 3600)) / Math.PI) * 1e6);
+		this._hubble_cst = hubble_cst;
 		this.check_sum_omegas();
 	}
+
+	//H0parsec
+	public get H0parsec(): number{
+		return this.H0parsec;
+	}
+
+	public set H0parsec(H0: number) {
+		this._H0parsec = H0;
+		this.check_sum_omegas();
+	}
+
 
 	// matter_parameter
 	public get matter_parameter(): number {
@@ -365,33 +380,46 @@ export class Simulation_universe extends Simulation {
 	}
 
 
+	public calcul_rho_r():number {
+		let sigma: number =
+		(2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) /
+		(15 *Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2));
+	return	(4 * sigma * Math.pow(this.temperature, 4)) /Math.pow(this.constants.c, 3);
+	}
+
+	calcul_rho_lambda() {
+        let omega = this.dark_energy.parameter_value;
+        let const_cosmo = 3*Math.pow(this._H0parsec,2)*omega/Math.pow(this.constants.c,2);
+        return const_cosmo * Math.pow(c,2) / (8 * Math.PI * G);
+    }
+
+	calcul_rho_m(){
+    return 3 * Math.pow(this.hubble_cst*3.086*Math.pow(10,-16),2) / (8 * Math.PI* G); 
+    }
+
 	
 	/**
 	 * compute radiation density parameter at current time
 	 * @returns the radiation density parameter
 	 */
-	public calcul_omega_r(): number {
+	 public calcul_omega_r(): number {
 
-		// let H0enannee = H0parsec * (3600 * 24 * this._constants.nbrJours);
-		// let H0engannee = H0parsec * (3600 * 24 * this._constants.nbrJours) * Math.pow(10, 9);
 
-        let sigma = (2 * Math.pow(Math.PI, 5) * Math.pow(this.constants.k, 4)) /
-         (15 * Math.pow(this.constants.h, 3) * Math.pow(this.constants.c, 2));
-        let rho_r =
-        (4 * sigma * Math.pow(this.temperature, 4)) / Math.pow(this.constants.c, 3);
-        let omega_r = (8 * Math.PI * this.constants.G * rho_r) / (3 * Math.pow(this.hubble_cst, 2));
+		// Hubble-Lemaître constant in international system units (Système International)
+		let omega_r: number =
+			(8 * Math.PI * this.constants.G * this.calcul_rho_r()) / (3 * Math.pow(this._H0parsec, 2));
 
-        if (this.has_neutrino && this.has_cmb) {
-            omega_r = 1.68 * omega_r;
-        }
-        else if (!this.has_neutrino && this.has_cmb) {
-            omega_r = 1 * omega_r;
-        }
-        else {
-            omega_r = 0;
-        }
-        return omega_r;
+		if (this.has_neutrino) {
+			omega_r *= 1.68;
+		}
+		if (!this.has_cmb) {
+			omega_r = 0;
+		}
+
+		return omega_r;
 	}
+
+
 
 	/**
 	 * Compute curvature density parameter at current time
@@ -418,7 +446,7 @@ export class Simulation_universe extends Simulation {
 	protected check_sum_omegas(modify_matter: Boolean = true): Boolean {
 		let is_param_modified = false;
 		let omega_r = this.calcul_omega_r();
-		let sum = this.matter_parameter + this.calcul_omega_r() + this.dark_energy.parameter_value + this.calcul_omega_k();
+		let sum = this.matter_parameter + omega_r + this.dark_energy.parameter_value + this.calcul_omega_k();
 		if (this.is_flat && sum !== 1) {
 			is_param_modified = true;
 			if (modify_matter) {
@@ -788,3 +816,4 @@ export class Simulation_universe extends Simulation {
 		return 1 / (this.hubble_cst * (1 + z) * Math.sqrt(Simu.F(z)));
 	}
 }
+
