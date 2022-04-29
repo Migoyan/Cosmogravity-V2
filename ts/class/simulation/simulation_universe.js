@@ -7,6 +7,7 @@ import { TypeAnnee, c, k, h, G, AU, parsec, k_parsec, M_parsec, ly } from "./../
  * attributes :
  * @param temperature : current temperature of the universe.
  * @param hubble_cst : current value of the Hubble-LeMaître constant.
+ * @param H0parsec : Hubble-Lemaître constant in international system units
  * @param matter_parameter : current value of the matter density parameter.
  * @param dark_energy : object containing current value of dark energy density parameter, value of w_0 and value of w_1.\
  * 	Note : When w_0 = -1 and w_0 = 0, the universe is equivalent to his counterpart with only a cosmologic constant.
@@ -20,12 +21,22 @@ import { TypeAnnee, c, k, h, G, AU, parsec, k_parsec, M_parsec, ly } from "./../
  * @method modify_constants
  * @method runge_kutta_universe_1
  * @method runge_kutta_universe_2
+ * @method calcul_rho_r
+ * @method calcul_rho_lambda
+ * @method calcul_rho_m
  * @method calcul_omega_r
  * @method calcul_omega_k
  * @method check_sum_omegas
  * @method Y
  * @method dY
  * @method F
+ * @method function_E
+ * @method T(z)
+ * @method H(z)
+ * @method omega_m_shift
+ * @method omega_k_shift
+ * @method omega_DE_shift
+ * @method omega_r_shift
  * @method compute_scale_factor
  * @method compute_omegas
  * @method time
@@ -382,6 +393,82 @@ export class Simulation_universe extends Simulation {
             this.Y(1 / (1 + x)) * this.dark_energy.parameter_value);
     }
     /**
+     * E function \
+     * will be used tu calculate the Omegas in function of the shift z
+     * @param x
+     * @param omegam0 matter density parameter
+     * @param omegalambda0 dark energy parameter
+     * @param Or radiation density parameter
+     * @returns
+     */
+    function_E(x, omegam0, omegalambda0, Or) {
+        return (Number(Or) * Math.pow((1 + x), 4) + Number(omegam0) * Math.pow((1 + x), 3)
+            + (1 - Number(omegam0) - Number(Or) - Number(omegalambda0)) * Math.pow((1 + x), 2)
+            + Number(omegalambda0));
+    }
+    /**
+     * calculates the temperature as a function of the shift z
+     * @param z shift
+     *
+     */
+    T(z) {
+        return this.temperature * (1 + Number(z));
+    }
+    /**
+     * calculates the Hubble constant as a function of the shift z
+     * @param z
+     */
+    H(z) {
+        let omega_m0 = this.matter_parameter;
+        let omega_DE0 = this.dark_energy.parameter_value;
+        let omega_r0 = this.calcul_omega_r();
+        return this.hubble_cst * Math.pow(this.function_E(Number(z), omega_m0, Number(omega_DE0), omega_r0), 0.5);
+    }
+    /**
+     * calculates the matter density parameter as a function of the shif z
+     * @param z Redshift
+     * */
+    omega_m_shift(z) {
+        //		return this.matter_parameter * (1 + z)**3 / this.F(z);
+        let omega_m0 = this.matter_parameter;
+        let omega_DE0 = this.dark_energy.parameter_value;
+        let omega_r0 = this.calcul_omega_r();
+        return omega_m0 * Math.pow(1 + Number(z), 3) / this.function_E(Number(z), omega_m0, Number(omega_DE0), omega_r0);
+    }
+    /**
+ * calculates the curvature density parameter as a function of the shif z
+ * @param z Redshift
+ * */
+    omega_k_shift(z) {
+        let omega_k0 = this.calcul_omega_k();
+        let omega_m0 = this.matter_parameter;
+        let omega_DE0 = this.dark_energy.parameter_value;
+        let omega_r0 = this.calcul_omega_r();
+        return omega_k0 * Math.pow(1 + Number(z), 2) /
+            this.function_E(Number(z), omega_m0, Number(omega_DE0), omega_r0);
+    }
+    /**
+    * calculates the dark energy parameter as a function of the shif z
+    * @param z Redshift
+    * */
+    omega_DE_shift(z) {
+        let omegaDE0 = this.dark_energy.parameter_value;
+        let omega_m0 = this.matter_parameter;
+        let omega_r0 = this.calcul_omega_r();
+        return omegaDE0 / this.function_E(Number(z), omega_m0, omegaDE0, omega_r0);
+    }
+    /**
+    * calculates the radiation density parameter as a function of the shif z
+    * @param z Redshift
+    * */
+    omega_r_shift(z) {
+        let omega_r0 = this.calcul_omega_r();
+        let omega_m0 = this.matter_parameter;
+        let omega_DE0 = this.dark_energy.parameter_value;
+        return omega_r0 * Math.pow(1 + Number(z), 4) / this.function_E(Number(z), omega_m0, omega_DE0, omega_r0);
+        //return this.calcul_omega_r() * (1 + z)**3 / this.F(z);
+    }
+    /**
      * compute the scale factor of the universe as function of time
      * @param step Computation step
      * @param interval_a Array containing a_min et a_max value
@@ -652,4 +739,3 @@ export class Simulation_universe extends Simulation {
         return 1 / (this.hubble_cst * (1 + z) * Math.sqrt(Simu.F(z)));
     }
 }
-
