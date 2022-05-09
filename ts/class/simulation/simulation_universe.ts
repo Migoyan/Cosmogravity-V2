@@ -20,6 +20,8 @@ import {TypeAnnee,c,k,h,G,AU,parsec,k_parsec,M_parsec,ly} from "./../../constant
  * methods names :
  * @method modify_dark_energy
  * @method modify_constants
+ * @method meter_to_light_year
+ * @method meter_to_parsec
  * @method runge_kutta_universe_1
  * @method runge_kutta_universe_2
  * @method calcul_rho_r
@@ -257,6 +259,25 @@ export class Simulation_universe extends Simulation {
 	}
 
 	/**
+	 * Converts a length in meters to a lenght in light years
+	 */
+
+	public meter_to_light_year(l){
+		return Number(l)/9460730472580800;
+	}
+
+		/**
+	 * Converts a length in meters to a lenght in parsec
+	 */
+	 public meter_to_parsec(l){
+		let astro_unit = 149597870700; //value of an astronmical unit in meters
+		let pc = astro_unit*648000/Math.PI; //value of 1 parsec
+		return Number(l)/pc;
+	}
+
+
+
+	/**
 	 * Fourth order Runge-Kutta method for second order derivatives for universe computation.
 	 *
 	 * @param step The step of computation
@@ -476,12 +497,12 @@ export class Simulation_universe extends Simulation {
 	 * @param x variable
 	 * @returns value of Y at position x
 	 */
-	protected Y(x: number): number {
+	protected Y(x): number {
 		return Math.exp(
 			-3 *
 			(this.dark_energy.w_0 + this.dark_energy.w_1 + 1) *
-			Math.log(x) -
-			3 * this.dark_energy.w_1 * (1 - x)
+			Math.log(Number(x)) -
+			3 * this.dark_energy.w_1 * (1 - Number(x))
 		);
 	}
 
@@ -557,7 +578,7 @@ export class Simulation_universe extends Simulation {
 	 * calculates the matter density parameter as a function of the shif z
 	 * @param z Redshift
 	 * */
-	public omega_m_shift(z:number){
+	public omega_m_shift(z){
 //		return this.matter_parameter * (1 + z)**3 / this.F(z);
 		let omega_m0 = this.matter_parameter;
 		let omega_DE0 = this.dark_energy.parameter_value;
@@ -569,14 +590,14 @@ export class Simulation_universe extends Simulation {
 	 * calculates the curvature density parameter as a function of the shif z
 	 * @param z Redshift
 	 * */
-		 public omega_k_shift(z){
-			let omega_k0=this.calcul_omega_k();
-			let omega_m0=this.matter_parameter;
-			let omega_DE0=this.dark_energy.parameter_value;
-			let omega_r0=this.calcul_omega_r();
+	 public omega_k_shift(z){
+		let omega_k0=this.calcul_omega_k();
+		let omega_m0=this.matter_parameter;
+		let omega_DE0=this.dark_energy.parameter_value;
+		let omega_r0=this.calcul_omega_r();
 
-			return omega_k0 * Math.pow(1 + Number(z), 2) / 
-							this.function_E(Number(z), omega_m0, Number(omega_DE0), omega_r0);
+		return omega_k0 * Math.pow(1 + Number(z), 2) / 
+					this.function_E(Number(z), omega_m0, Number(omega_DE0), omega_r0);
 		}	
 
 
@@ -756,7 +777,7 @@ export class Simulation_universe extends Simulation {
 				Math.sin(Math.sqrt(Math.abs(curvature)) * distance) /
 				Math.sqrt(Math.abs(curvature));
 		}
-		distance *= this.constants.c / this.hubble_cst;
+		distance *= this.constants.c / this._H0parsec;
 		return distance;
 	}
 

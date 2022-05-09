@@ -19,6 +19,8 @@ import { TypeAnnee, c, k, h, G, AU, parsec, k_parsec, M_parsec, ly } from "./../
  * methods names :
  * @method modify_dark_energy
  * @method modify_constants
+ * @method meter_to_light_year
+ * @method meter_to_parsec
  * @method runge_kutta_universe_1
  * @method runge_kutta_universe_2
  * @method calcul_rho_r
@@ -208,6 +210,20 @@ export class Simulation_universe extends Simulation {
         }
     }
     /**
+     * Converts a length in meters to a lenght in light years
+     */
+    meter_to_light_year(l) {
+        return Number(l) / 9460730472580800;
+    }
+    /**
+ * Converts a length in meters to a lenght in parsec
+ */
+    meter_to_parsec(l) {
+        let astro_unit = 149597870700; //value of an astronmical unit in meters
+        let pc = astro_unit * 648000 / Math.PI; //value of 1 parsec
+        return Number(l) / pc;
+    }
+    /**
      * Fourth order Runge-Kutta method for second order derivatives for universe computation.
      *
      * @param step The step of computation
@@ -366,8 +382,8 @@ export class Simulation_universe extends Simulation {
     Y(x) {
         return Math.exp(-3 *
             (this.dark_energy.w_0 + this.dark_energy.w_1 + 1) *
-            Math.log(x) -
-            3 * this.dark_energy.w_1 * (1 - x));
+            Math.log(Number(x)) -
+            3 * this.dark_energy.w_1 * (1 - Number(x)));
     }
     /**
      * Y' function \
@@ -595,7 +611,7 @@ export class Simulation_universe extends Simulation {
                 Math.sin(Math.sqrt(Math.abs(curvature)) * distance) /
                     Math.sqrt(Math.abs(curvature));
         }
-        distance *= this.constants.c / this.hubble_cst;
+        distance *= this.constants.c / this._H0parsec;
         return distance;
     }
     /**
