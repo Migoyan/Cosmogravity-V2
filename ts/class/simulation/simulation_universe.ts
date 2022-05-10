@@ -218,6 +218,7 @@ export class Simulation_universe extends Simulation {
 		}
 	}
 
+	
 	/**
 	 * replace the setter for the constants attribute
 	 *
@@ -794,8 +795,10 @@ export class Simulation_universe extends Simulation {
 		} else {
 			distance = distance_metric;
 		}
-
-		return distance * (1 + z);
+	    let lum_dis:number=distance*(1+z);
+		// dictionnaire test 
+		let values_unit={pc:this.meter_to_parsec(lum_dis),meter:lum_dis,ly:this.meter_to_light_year(lum_dis)};
+		return values_unit;
 	}
 
 	/**
@@ -869,7 +872,9 @@ export class Simulation_universe extends Simulation {
 			distance = distance_metric;
 		}
 
-		return (D_e * (1 + z)) / distance;
+		let values_unit2={meter:(D_e * (1 + z)) / distance,pc:this.meter_to_parsec((D_e * (1 + z)) / distance),ly:this.meter_to_light_year((D_e * (1 + z)) / distance)};
+
+		return values_unit2;
 	}
 
 	/**
