@@ -785,6 +785,9 @@ export class Simulation_universe extends Simulation {
 				Math.sqrt(Math.abs(curvature));
 		}
 		distance *= this.constants.c / this._H0parsec;
+		// test pour limiter la valeur de dm 
+		if (distance <=1e15){return distance;} else if (distance > 1e15){throw new Error(" Erreur de calcul");}
+		
 		return distance;
 	}
 
