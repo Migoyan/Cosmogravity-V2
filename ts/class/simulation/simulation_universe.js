@@ -21,6 +21,7 @@ import { TypeAnnee, c, k, h, G, AU, parsec, k_parsec, M_parsec, ly } from "./../
  * @method modify_constants
  * @method meter_to_light_year
  * @method meter_to_parsec
+ * @method seconds_to_years
  * @method runge_kutta_universe_1
  * @method runge_kutta_universe_2
  * @method calcul_rho_r
@@ -222,6 +223,12 @@ export class Simulation_universe extends Simulation {
         let astro_unit = 149597870700; //value of an astronmical unit in meters
         let pc = astro_unit * 648000 / Math.PI; //value of 1 parsec
         return Number(l) / pc;
+    }
+    /**
+     * Convert a duration in seconds to a duration in years
+     */
+    seconds_to_years(t) {
+        return Number(t) / (Number(this.constants.nbrJours) * 24 * 60 * 60);
     }
     /**
      * Fourth order Runge-Kutta method for second order derivatives for universe computation.
@@ -504,7 +511,7 @@ export class Simulation_universe extends Simulation {
         }
         let result = this.runge_kutta_universe_2(step, 0, 1, 1, this.equa_diff_a, interval_a);
         for (let index = 0; index < result.x.length; index++) {
-            result.x[index] = (result.x[index] / this.hubble_cst + age) / (3600 * 24 * 365.2425);
+            result.x[index] = (result.x[index] / this.H0parsec + age) / (3600 * 24 * 365.2425);
         }
         return result;
     }
@@ -562,7 +569,7 @@ export class Simulation_universe extends Simulation {
         let age;
         age =
             this.simpson(this, this.integral_duration_substituated, 0, 1, 10000) /
-                this.hubble_cst;
+                this._H0parsec;
         return age;
     }
     /**
@@ -573,7 +580,7 @@ export class Simulation_universe extends Simulation {
         let age;
         age =
             this.simpson(this, this.integral_duration_substituated, infimum, 1, 1000) /
-                this.hubble_cst;
+                this._H0parsec;
         return age;
     }
     /**
@@ -589,7 +596,7 @@ export class Simulation_universe extends Simulation {
         let infimum = z_1 / (1 + z_1);
         let supremum = z_2 / (1 + z_2);
         let duration;
-        duration = this.simpson(this, this.integral_duration_substituated, infimum, supremum, 1000) / this.hubble_cst;
+        duration = this.simpson(this, this.integral_duration_substituated, infimum, supremum, 1000) / this._H0parsec;
         return duration;
     }
     /**
@@ -628,7 +635,10 @@ export class Simulation_universe extends Simulation {
         else {
             distance = distance_metric;
         }
-        return distance * (1 + z);
+        let lum_dis = distance * (1 + z);
+        // dictionnaire test 
+        let values_unit = { pc: this.meter_to_parsec(lum_dis), meter: lum_dis, ly: this.meter_to_light_year(lum_dis) };
+        return values_unit;
     }
     /**
      * @param z Cosmologic shift
@@ -693,7 +703,8 @@ export class Simulation_universe extends Simulation {
         else {
             distance = distance_metric;
         }
-        return (D_e * (1 + z)) / distance;
+        let values_unit2 = { meter: (D_e * (1 + z)) / distance, pc: this.meter_to_parsec((D_e * (1 + z)) / distance), ly: this.meter_to_light_year((D_e * (1 + z)) / distance) };
+        return values_unit2;
     }
     /**
      * formula 1/(1 + x) * sqrt(1 / F)
@@ -752,6 +763,6 @@ export class Simulation_universe extends Simulation {
      * Note: t is not used but has to be defined for this method to be accepted in the runge_kutta_equation_order1 method of simulation class
      */
     equa_diff_time(Simu, z, t = 0) {
-        return 1 / (this.hubble_cst * (1 + z) * Math.sqrt(Simu.F(z)));
+        return 1 / (this.H0parsec * (1 + z) * Math.sqrt(Simu.F(z)));
     }
 }

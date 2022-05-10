@@ -22,6 +22,7 @@ import {TypeAnnee,c,k,h,G,AU,parsec,k_parsec,M_parsec,ly} from "./../../constant
  * @method modify_constants
  * @method meter_to_light_year
  * @method meter_to_parsec
+ * @method seconds_to_years
  * @method runge_kutta_universe_1
  * @method runge_kutta_universe_2
  * @method calcul_rho_r
@@ -276,7 +277,12 @@ export class Simulation_universe extends Simulation {
 		return Number(l)/pc;
 	}
 
-
+/**
+ * Convert a duration in seconds to a duration in years
+ */
+ seconds_to_years(t){
+	return Number(t)/(Number(this.constants.nbrJours)*24*60*60);
+}
 
 	/**
 	 * Fourth order Runge-Kutta method for second order derivatives for universe computation.
@@ -656,7 +662,7 @@ export class Simulation_universe extends Simulation {
 			interval_a
 		);
 		for (let index = 0; index < result.x.length; index++) {
-			result.x[index] = (result.x[index] / this.hubble_cst + age) / (3600 * 24 * 365.2425);
+			result.x[index] = (result.x[index] / this.H0parsec + age) / (3600 * 24 * 365.2425);
 		}
 		return result;
 	}
@@ -725,7 +731,7 @@ export class Simulation_universe extends Simulation {
 		let age: number;
 		age =
 			this.simpson(this, this.integral_duration_substituated, 0, 1, 10000) /
-			this.hubble_cst;
+			this._H0parsec;
 		return age;
 	}
 
@@ -737,7 +743,7 @@ export class Simulation_universe extends Simulation {
 		let age: number;
 		age =
 			this.simpson(this, this.integral_duration_substituated, infimum, 1, 1000) /
-			this.hubble_cst;
+			this._H0parsec;
 		return age;
 	}
 
@@ -756,7 +762,7 @@ export class Simulation_universe extends Simulation {
 		let supremum = z_2 / (1 + z_2);
 
 		let duration: number;
-		duration = this.simpson(this, this.integral_duration_substituated, infimum, supremum, 1000) / this.hubble_cst;
+		duration = this.simpson(this, this.integral_duration_substituated, infimum, supremum, 1000) / this._H0parsec;
 		return duration;
 	}
 
@@ -781,6 +787,7 @@ export class Simulation_universe extends Simulation {
 		distance *= this.constants.c / this._H0parsec;
 		return distance;
 	}
+
 
 	/**
 	 * Compute the luminosity distance
@@ -944,6 +951,6 @@ export class Simulation_universe extends Simulation {
 	 * Note: t is not used but has to be defined for this method to be accepted in the runge_kutta_equation_order1 method of simulation class
 	 */
 	protected equa_diff_time(Simu: Simulation_universe, z: number, t: number = 0): number {
-		return 1 / (this.hubble_cst * (1 + z) * Math.sqrt(Simu.F(z)));
+		return 1 / (this.H0parsec * (1 + z) * Math.sqrt(Simu.F(z)));
 	}
 }
